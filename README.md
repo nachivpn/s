@@ -1,0 +1,1 @@
+# Functors, Applicatives and Monads as Modalities
