@@ -73,21 +73,28 @@ private
 
   syntax ◇'-≋[]-syn 𝒫 x y = x ◇'-≋[ 𝒫 ] y
 
-  -- map over ◇'-Fam
-  module _ {𝒫 𝒬 : Psh} where
+  abstract
     ◇'-map : (t : 𝒫 →̇ 𝒬) → ({Γ : C} → ◇'-Fam 𝒫 Γ → ◇'-Fam 𝒬 Γ)
     ◇'-map t (elem (Δ , r , p)) = elem (Δ , r , t .apply p)
 
     ◇'-map-pres-≋ : (t : 𝒫 →̇ 𝒬) → {p p' : ◇'-Fam 𝒫 Γ} → p ◇'-≋[ 𝒫 ] p' → (◇'-map t p) ◇'-≋[ 𝒬 ] (◇'-map t p')
     ◇'-map-pres-≋ t (proof (refl , refl , p≋p')) = proof (refl , refl , t .apply-≋ p≋p')
 
-    ◇'-transport : 𝒫 ₀ Γ' → ◇'-Fam 𝒬 Γ' → ◇'-Fam (𝒫 ×' 𝒬) Γ'
-    ◇'-transport p (elem (Δ , r , q)) = elem (Δ , r , elem (wk[ 𝒫 ] (R-to-⊆ r) p , q))
+    ◇'-transport : 𝒫 ₀ Γ → ◇'-Fam 𝒬 Γ → ◇'-Fam (𝒫 ×' 𝒬) Γ
+    ◇'-transport {𝒫} p (elem (Δ , r , q)) = elem (Δ , r , elem (wk[ 𝒫 ] (R-to-⊆ r) p , q))
 
-    ◇'-transport-pres-≋ : {p p' : Psh.Fam 𝒫 Γ'} {q q' : ◇'-Fam 𝒬 Γ'}
-      → p ≋[ 𝒫 ] p' → q ◇'-≋[ 𝒬 ] q'
-      → (◇'-transport p q) ◇'-≋[ 𝒫 ×' 𝒬 ] (◇'-transport p' q')
-    ◇'-transport-pres-≋ p≋p' (proof (refl , refl , q≋q')) = proof (refl , refl , proof (wk[ 𝒫 ]-pres-≋ _ p≋p' , q≋q'))
+    ◇'-transport-pres-≋ : {p p' : 𝒫 ₀ Γ'} {q q' : ◇'-Fam 𝒬 Γ'}
+        → p ≋[ 𝒫 ] p' → q ◇'-≋[ 𝒬 ] q'
+        → (◇'-transport p q) ◇'-≋[ 𝒫 ×' 𝒬 ] (◇'-transport p' q')
+    ◇'-transport-pres-≋ {𝒫} p≋p' (proof (refl , refl , q≋q')) = proof (refl , refl , proof (wk[ 𝒫 ]-pres-≋ _ p≋p' , q≋q'))
+
+    ◇'-transport-square₁ : (t : 𝒫 →̇ 𝒫') {p : 𝒫 ₀ Γ} {q : ◇'-Fam 𝒬 Γ}
+     → ◇'-transport (t .apply p) q ◇'-≋[ 𝒫' ×' 𝒬 ] ◇'-map (t ×'-map id') (◇'-transport p q)
+    ◇'-transport-square₁ {𝒫} {𝒫'} {𝒬 = 𝒬} t = proof (refl , refl , proof (t .natural _ _ , ≋[ 𝒬 ]-refl))
+
+    ◇'-transport-square₂ : (t : 𝒬 →̇ 𝒬') {p : 𝒫 ₀ Γ} {q : ◇'-Fam 𝒬 Γ}
+     → ◇'-transport p (◇'-map t q) ◇'-≋[ 𝒫 ×' 𝒬' ] ◇'-map (id' ×'-map t) (◇'-transport p q)
+    ◇'-transport-square₂ {𝒬} {𝒬'} {𝒫 = 𝒫} t = proof (refl , refl , ≋[ 𝒫 ×' 𝒬' ]-refl)
 
 record ◯'-Fam (𝒫 : Psh) (Γ : C) : Set where
   constructor elem
@@ -150,8 +157,8 @@ abstract
   ◯'-map-pres-∘ _t' _t = record { proof = λ _p → proof λ w → ◇'-≋-refl }
 
 -- Refer to `https://ncatlab.org/nlab/show/tensorial+strength`
-strength : (𝒫 𝒬 : Psh) → 𝒫 ×' (◯' 𝒬) →̇ ◯' (𝒫 ×' 𝒬)
-strength 𝒫 𝒬 = record
+◯'-strength : (𝒫 𝒬 : Psh) → 𝒫 ×' (◯' 𝒬) →̇ ◯' (𝒫 ×' 𝒬)
+◯'-strength 𝒫 𝒬 = record
   { fun     = λ p×◯q → elem λ w →
               let p   = π₁' .apply p×◯q
                   ◯q  = π₂' . apply p×◯q
@@ -163,17 +170,23 @@ strength 𝒫 𝒬 = record
                   ◯q≋◯q' = π₂' .apply-≋ p×◯q≋p'×◯q'
                   ◇q≋◇q' = ◯q≋◯q' .pw w
               in ◇'-transport-pres-≋ (wk[ 𝒫 ]-pres-≋ _ p≋p') ◇q≋◇q'
-  ; natural = λ w _p×◯q → proof λ w' →
-            proof
-              ( refl
-              , refl
-              , proof (wk[ 𝒫 ]-pres-≋ _ (wk[ 𝒫 ]-pres-trans w w' _) , ≋[ 𝒬 ]-refl)
-              )
+  ; natural = λ w _p×◯q → proof λ w' → ◇'-transport-pres-≋ (wk[ 𝒫 ]-pres-trans w w' _) ◇'-≋-refl
   }
 
 abstract
-  strength-assoc : ◯'-map assoc' ∘ strength (𝒫 ×' 𝒬) ℛ ≈̇ (strength 𝒫 (𝒬 ×' ℛ) ∘ (id' ×'-map (strength 𝒬 ℛ)) ∘ assoc')
-  strength-assoc = record { proof = λ p → proof λ w → ◇'-≋-refl }
+  ◯'-strength-natural₁ : (t : 𝒫 →̇ 𝒫') → ◯'-strength 𝒫' 𝒬 ∘ (t ×'-map id') ≈̇ (◯'-map (t ×'-map id')) ∘ ◯'-strength 𝒫 𝒬
+  ◯'-strength-natural₁ t = record
+    { proof = λ _p → proof λ w →
+                ◇'-≋-trans
+                  (◇'-transport-pres-≋ (t .natural w _) ◇'-≋-refl)
+                  (◇'-transport-square₁ t)
+    }
 
-  strength-unit :  ◯'-map π₂' ∘ strength []' 𝒫 ≈̇ π₂'
-  strength-unit = record { proof = λ p → proof λ w → ◇'-≋-refl }
+  ◯'-strength-natural₂ : (t : 𝒬 →̇ 𝒬') → ◯'-strength 𝒫 𝒬' ∘ (id' ×'-map (◯'-map t)) ≈̇ (◯'-map (id' ×'-map t)) ∘ ◯'-strength 𝒫 𝒬
+  ◯'-strength-natural₂ t = record { proof = λ _p → proof λ _w → ◇'-transport-square₂ t }
+
+  ◯'-strength-assoc : ◯'-map assoc' ∘ ◯'-strength (𝒫 ×' 𝒬) ℛ ≈̇ (◯'-strength 𝒫 (𝒬 ×' ℛ) ∘ (id' ×'-map (◯'-strength 𝒬 ℛ)) ∘ assoc')
+  ◯'-strength-assoc = record { proof = λ _p → proof λ _w → ◇'-≋-refl }
+
+  ◯'-strength-unit :  ◯'-map π₂' ∘ ◯'-strength []' 𝒫 ≈̇ π₂'
+  ◯'-strength-unit = record { proof = λ _p → proof λ _w → ◇'-≋-refl }
