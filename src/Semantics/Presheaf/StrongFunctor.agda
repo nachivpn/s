@@ -190,3 +190,16 @@ abstract
 
   ◯'-strength-unit :  ◯'-map π₂' ∘ ◯'-strength []' 𝒫 ≈̇ π₂'
   ◯'-strength-unit = record { proof = λ _p → proof λ _w → ◇'-≋-refl }
+
+letin' : (t : 𝒫 →̇ ◯' 𝒬) → (u : (𝒫 ×' 𝒬) →̇ ℛ) → 𝒫 →̇ ◯' ℛ
+letin' t u = (◯'-map u) ∘ ◯'-strength _ _ ∘ pr' id' t
+
+-- TODO: rewrite the proofs using the strength-related and other known laws
+abstract
+  ◯'-beta : {t : 𝒫 →̇ ◯' 𝒬} → {u : (𝒫 ×' 𝒬) →̇ ℛ} {u' : (𝒫 ×' ℛ →̇ ℛ')}
+    → letin' (letin' t u) u' ≈̇ letin' t (u' [ pr' π₁' u ]' )
+  ◯'-beta = record { proof = λ _p → proof λ _w → ◇'-≋-refl }
+
+  ◯'-eta : {t : 𝒫 →̇ ◯' 𝒬}
+    → t ≈̇ letin' t π₂'
+  ◯'-eta = record { proof = λ _p → proof λ _w → ◇'-≋-refl }
