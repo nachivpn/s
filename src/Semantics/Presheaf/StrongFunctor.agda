@@ -2,7 +2,7 @@
 open import Data.Product using (∃; _×_; _,_; -,_) renaming (proj₁ to fst; proj₂ to snd)
 open import Data.Product using () renaming (∃ to Σ; _×_ to _∧_)
 
-open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence)
+open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; subst; cong)
 
 module Semantics.Presheaf.StrongFunctor
@@ -16,6 +16,8 @@ module Semantics.Presheaf.StrongFunctor
   (_R_               : (Γ Δ : C) → Set)
   (R-to-⊆            : ∀ {Γ Δ : C} → Γ R Δ → Γ ⊆ Δ)
   where
+
+import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Semantics.Presheaf.Base C _⊆_ ⊆-refl ⊆-trans
 
@@ -79,6 +81,9 @@ private
 
     ◇'-map-pres-≋ : (t : 𝒫 →̇ 𝒬) → {p p' : ◇'-Fam 𝒫 Γ} → p ◇'-≋[ 𝒫 ] p' → (◇'-map t p) ◇'-≋[ 𝒬 ] (◇'-map t p')
     ◇'-map-pres-≋ t (proof (refl , refl , p≋p')) = proof (refl , refl , t .apply-≋ p≋p')
+
+    ◇'-map-pres-≈̇ : {t t' : 𝒫 →̇ 𝒬} → t ≈̇ t' → ∀ (p : ◇'-Fam 𝒫 Γ) → ◇'-map t p ◇'-≋[ 𝒬 ] ◇'-map t' p
+    ◇'-map-pres-≈̇ {𝒫} t≈̇t' (elem (Δ , r , p)) = proof (refl , (refl , apply-sq t≈̇t' ≋[ 𝒫 ]-refl))
 
     ◇'-transport : 𝒫 ₀ Γ → ◇'-Fam 𝒬 Γ → ◇'-Fam (𝒫 ×' 𝒬) Γ
     ◇'-transport {𝒫} p (elem (Δ , r , q)) = elem (Δ , r , elem (wk[ 𝒫 ] (R-to-⊆ r) p , q))
@@ -150,6 +155,9 @@ open _◯'-≋_ using (pw) public
     }
 
 abstract
+  ◯'-map-pres-≈̇ : t ≈̇ t' → ◯'-map t ≈̇ ◯'-map t'
+  ◯'-map-pres-≈̇ t≈̇t' = record { proof = λ p → proof λ w → ◇'-map-pres-≈̇ t≈̇t' (p .apply-◯ w) }
+
   ◯'-map-pres-id : ◯'-map id'[ 𝒫 ] ≈̇ id'
   ◯'-map-pres-id = record { proof = λ _p → proof λ _w → ◇'-≋-refl }
 
@@ -191,15 +199,34 @@ abstract
   ◯'-strength-unit :  ◯'-map π₂' ∘ ◯'-strength []' 𝒫 ≈̇ π₂'
   ◯'-strength-unit = record { proof = λ _p → proof λ _w → ◇'-≋-refl }
 
-letin' : (t : 𝒫 →̇ ◯' 𝒬) → (u : (𝒫 ×' 𝒬) →̇ ℛ) → 𝒫 →̇ ◯' ℛ
-letin' t u = (◯'-map u) ∘ ◯'-strength _ _ ∘ pr' id' t
+-- derived categorical laws
+abstract
+  ◯'-strength-π₂ : {𝒫 𝒬 : Psh} → ◯'-map π₂' ∘ ◯'-strength 𝒫 𝒬 ≈̇ π₂'
+  ◯'-strength-π₂ {𝒫} {𝒬} = let open EqReasoning (→̇-setoid (𝒫 ×' (◯' 𝒬)) (◯' 𝒬)) in begin
+    ◯'-map π₂' ∘ ◯'-strength 𝒫 𝒬
+      ≈⟨ ∘-pres-≈̇-left (≈̇-sym (◯'-map-pres-≈̇ (≈̇-trans (×'-beta-right π₂') (id'-unit-left 𝒬 π₂')))) (◯'-strength 𝒫 𝒬) ⟩
+    ◯'-map (π₂' ∘ (unit' ×'-map id')) ∘ ◯'-strength 𝒫 𝒬
+      ≈⟨ ∘-pres-≈̇-left (◯'-map-pres-∘ π₂' (unit' ×'-map id')) (◯'-strength 𝒫 𝒬) ⟩
+    (◯'-map π₂' ∘ ◯'-map (unit' ×'-map id')) ∘ ◯'-strength 𝒫 𝒬
+      ≈⟨ ∘-assoc (◯'-map π₂') ( ◯'-map (unit' ×'-map id')) (◯'-strength 𝒫 𝒬) ⟩
+    ◯'-map π₂' ∘ ◯'-map (unit' ×'-map id') ∘ ◯'-strength 𝒫 𝒬
+       ≈⟨ ∘-pres-≈̇-right (◯'-map π₂') (≈̇-sym (◯'-strength-natural₁ unit')) ⟩
+    ◯'-map π₂' ∘ (◯'-strength []' 𝒬) ∘ (unit' ×'-map id')
+       ≈˘⟨ ∘-assoc (◯'-map π₂') (◯'-strength []' 𝒬) (unit' ×'-map id') ⟩
+    (◯'-map π₂' ∘ ◯'-strength []' 𝒬) ∘ unit' ×'-map id'
+       ≈⟨ ∘-pres-≈̇-left ◯'-strength-unit (unit' ×'-map id') ⟩
+    π₂' ∘ (unit' ×'-map id')
+      ≈⟨ ≈̇-trans (×'-beta-right π₂') (id'-unit-left (◯' 𝒬) π₂') ⟩
+    π₂' ∎
 
--- TODO: rewrite the proofs using the strength-related and other known laws
+letin' : (t : 𝒫 →̇ ◯' 𝒬) → (u : (𝒫 ×' 𝒬) →̇ ℛ) → 𝒫 →̇ ◯' ℛ
+letin' t u = (◯'-map u ∘ ◯'-strength _ _) ∘ pr' id' t
+
+-- TODO: rewrite proof using the strength-related and other known laws
 abstract
   ◯'-beta : {t : 𝒫 →̇ ◯' 𝒬} → {u : (𝒫 ×' 𝒬) →̇ ℛ} {u' : (𝒫 ×' ℛ →̇ ℛ')}
     → letin' (letin' t u) u' ≈̇ letin' t (u' [ pr' π₁' u ]' )
   ◯'-beta = record { proof = λ _p → proof λ _w → ◇'-≋-refl }
 
-  ◯'-eta : {t : 𝒫 →̇ ◯' 𝒬}
-    → t ≈̇ letin' t π₂'
-  ◯'-eta = record { proof = λ _p → proof λ _w → ◇'-≋-refl }
+◯'-eta : {t : 𝒫 →̇ ◯' 𝒬} → t ≈̇ letin' t π₂'
+◯'-eta {t = t} = ≈̇-sym (≈̇-trans (∘-pres-≈̇-left ◯'-strength-π₂ (pr' id' t)) (×'-beta-right t))
