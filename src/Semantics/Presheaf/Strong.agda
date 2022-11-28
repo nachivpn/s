@@ -5,7 +5,7 @@ open import Data.Product using () renaming (∃ to Σ; _×_ to _∧_)
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; subst; cong)
 
-module Semantics.Presheaf.StrongFunctor
+module Semantics.Presheaf.Strong
   (C                 : Set)
   (_⊆_               : (Γ Δ : C) → Set)
   (⊆-trans           : ∀ {Γ Γ' Γ'' : C} (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') → Γ ⊆ Γ'')
