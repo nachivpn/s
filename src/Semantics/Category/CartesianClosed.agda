@@ -18,3 +18,10 @@ record IsCartesianClosed (C : Category) (isCartesian : IsCartesian C) : Set₂ w
     ⇒'-eta      : ∀ {R P Q : Obj} (φ : R →̇ P ⇒' Q) → φ ≈̇ lam' (app' (φ [ π₁'[ P ] ]') π₂'[ R ])
     lam'-nat    : ∀ {R' R P Q : Obj} (φ : R ×' P →̇ Q) (ψ : R' →̇ R) → lam' φ ∘ ψ ≈̇ lam' (φ ∘ ψ ×'-map id'[ P ])
     app'-nat    : ∀ {R' R P Q : Obj} (φ : R →̇ P ⇒' Q) (ψ : R →̇ P) (ω : R' →̇ R) → app' φ ψ ∘ ω ≈̇ app' (φ ∘ ω) (ψ ∘ ω)
+
+  abstract
+    app'-pres-≈̇-left : ∀ {R : Obj} {P Q : Obj} {φ φ' : R →̇ P ⇒' Q} (φ≈̇φ' : φ ≈̇ φ') (ψ : R →̇ P) → app' φ ψ ≈̇ app' φ' ψ
+    app'-pres-≈̇-left φ≈̇φ' ψ = app'-pres-≈̇ φ≈̇φ' (≈̇-refl {φ = ψ})
+
+    app'-pres-≈̇-right : ∀ {R : Obj} {P Q : Obj} (φ : R →̇ P ⇒' Q) {ψ ψ' : R →̇ P} (ψ≈̇ψ' : ψ ≈̇ ψ') → app' φ ψ ≈̇ app' φ ψ'
+    app'-pres-≈̇-right φ ψ≈̇ψ' = app'-pres-≈̇ (≈̇-refl {φ = φ}) ψ≈̇ψ'
