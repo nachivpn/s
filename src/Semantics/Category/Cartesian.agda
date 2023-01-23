@@ -9,10 +9,15 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 record IsCartesian (C : Category) : Set₂ where
   open Category C
+
+  -- terminal object
   field
     []'     : Obj
     unit'   : {P : Obj} → P →̇ []'
     []'-eta : ∀ {P : Obj} {φ : P →̇ []'} → φ ≈̇ unit'
+
+  -- products
+  field
     _×'_    : (P Q : Obj) → Obj
     ⟨_,_⟩'        : {R P Q : Obj} → (φ : R →̇ P) → (ψ : R →̇ Q) → R →̇ P ×' Q
     ⟨,⟩'-pres-≈̇   : ∀ {R P Q : Obj} {φ φ' : R →̇ P} {ψ ψ' : R →̇ Q} (φ≈̇φ' : φ ≈̇ φ') (ψ≈̇ψ' : ψ ≈̇ ψ') → ⟨ φ , ψ ⟩' ≈̇ ⟨ φ' , ψ' ⟩'
@@ -20,7 +25,6 @@ record IsCartesian (C : Category) : Set₂ where
     π₂'[_]        : (P : Obj) → {Q : Obj} → P ×' Q →̇ Q
 
   pr'        = ⟨_,_⟩'
-  pr'-pres-≈̇ = ⟨,⟩'-pres-≈̇
 
   π₁' : {P Q : Obj} → P ×' Q →̇ P
   π₁' = π₁'[ _ ]
@@ -43,16 +47,14 @@ record IsCartesian (C : Category) : Set₂ where
   _×'-map_ : {P P' Q Q' : Obj} (t : P →̇ P') → (u : Q →̇ Q') → P ×' Q →̇ P' ×' Q'
   _×'-map_ {P} {P'} {Q} {Q'} φ ψ = ⟨ φ ∘ π₁'[ Q ] , ψ ∘ π₂'[ P ] ⟩'
 
+  assoc' : ∀ {P Q R : Obj} → (P ×' Q) ×' R →̇ P ×' (Q ×' R)
+  assoc' = ⟨ π₁' ∘ π₁' , ⟨ π₂' ∘ π₁' , π₂' ⟩' ⟩'
+
+
   field
     ×'-beta-left  : ∀ {R P Q : Obj} {φ : R →̇ P} (ψ : R →̇ Q) → π₁'[ Q ] ∘ ⟨ φ , ψ ⟩' ≈̇ φ
     ×'-beta-right : ∀ {R P Q : Obj} (φ : R →̇ P) {ψ : R →̇ Q} → π₂'[ P ] ∘ ⟨ φ , ψ ⟩' ≈̇ ψ
     ×'-eta        : ∀ {R P Q : Obj} {φ : R →̇ P ×' Q} → φ ≈̇ ⟨ π₁'[ Q ] ∘ φ , π₂'[ P ] ∘ φ ⟩'
-    ⟨,⟩'-nat       : ∀ {R' R P Q : Obj} (φ : R →̇ P) (ψ : R →̇ Q) (ω : R' →̇ R) → ⟨ φ , ψ ⟩' ∘ ω ≈̇ ⟨ φ ∘ ω , ψ ∘ ω ⟩'
-
-  pr'-nat = ⟨,⟩'-nat
-
-  assoc' : ∀ {P Q R : Obj} → (P ×' Q) ×' R →̇ P ×' (Q ×' R)
-  assoc' = ⟨ π₁' ∘ π₁' , ⟨ π₂' ∘ π₁' , π₂' ⟩' ⟩'
 
   private
     variable
@@ -62,26 +64,32 @@ record IsCartesian (C : Category) : Set₂ where
       ω ω' : P →̇ Q
 
   abstract
-    ⟨,⟩'-pres-≈̇-left : ∀ {R P Q : Obj} {φ φ' : R →̇ P} (φ≈̇φ' : φ ≈̇ φ') (ψ : R →̇ Q) → ⟨ φ , ψ ⟩' ≈̇ ⟨ φ' , ψ ⟩'
+    ⟨,⟩'-pres-≈̇-left : {φ φ' : R →̇ P} (φ≈̇φ' : φ ≈̇ φ') (ψ : R →̇ Q) → ⟨ φ , ψ ⟩' ≈̇ ⟨ φ' , ψ ⟩'
     ⟨,⟩'-pres-≈̇-left ψ≈̇ψ' φ = ⟨,⟩'-pres-≈̇ ψ≈̇ψ' (≈̇-refl {φ = φ})
 
-    ⟨,⟩'-pres-≈̇-right : ∀ {R P Q : Obj} (φ : R →̇ P) {ψ ψ' : R →̇ Q} (ψ≈̇ψ' : ψ ≈̇ ψ') → ⟨ φ , ψ ⟩' ≈̇ ⟨ φ , ψ' ⟩'
+    ⟨,⟩'-pres-≈̇-right : (φ : R →̇ P) {ψ ψ' : R →̇ Q} (ψ≈̇ψ' : ψ ≈̇ ψ') → ⟨ φ , ψ ⟩' ≈̇ ⟨ φ , ψ' ⟩'
     ⟨,⟩'-pres-≈̇-right ψ φ≈̇φ' = ⟨,⟩'-pres-≈̇ (≈̇-refl {φ = ψ}) φ≈̇φ'
 
-  pr'-pres-≈̇-left  = ⟨,⟩'-pres-≈̇-left
-  pr'-pres-≈̇-right = ⟨,⟩'-pres-≈̇-right
+    ⟨,⟩'-nat : (φ : R →̇ P) (ψ : R →̇ Q) (ω : R' →̇ R) → ⟨ φ , ψ ⟩' ∘ ω ≈̇ ⟨ φ ∘ ω , ψ ∘ ω ⟩'
+    ⟨,⟩'-nat φ ψ ω = let open EqReasoning (→̇-setoid _ _) in begin
+      ⟨ φ , ψ ⟩' ∘ ω
+        ≈⟨ ×'-eta ⟩
+      ⟨ π₁' ∘ ⟨ φ , ψ ⟩' ∘ ω , π₂' ∘ ⟨ φ , ψ ⟩' ∘ ω ⟩'
+        ≈⟨ ⟨,⟩'-pres-≈̇ (≈̇-sym (∘-assoc _ _ _)) (≈̇-sym (∘-assoc _ _ _)) ⟩
+      ⟨ (π₁' ∘ ⟨ φ , ψ ⟩') ∘ ω , (π₂' ∘ ⟨ φ , ψ ⟩') ∘ ω ⟩'
+        ≈⟨ ⟨,⟩'-pres-≈̇ (∘-pres-≈̇-left (×'-beta-left _) _) (∘-pres-≈̇-left (×'-beta-right _) _) ⟩
+      ⟨ φ ∘ ω , ψ ∘ ω ⟩' ∎
 
-  abstract
-    ×'-map-pres-≈̇ : {P Q P' Q' : Obj} {φ φ' : P →̇ P'} (φ≈̇φ' : φ ≈̇ φ') {ψ ψ' : Q →̇ Q'} (ψ≈̇ψ' : ψ ≈̇ ψ') → φ ×'-map ψ ≈̇ φ' ×'-map ψ'
+    ×'-map-pres-≈̇ : {φ φ' : P →̇ P'} (φ≈̇φ' : φ ≈̇ φ') {ψ ψ' : Q →̇ Q'} (ψ≈̇ψ' : ψ ≈̇ ψ') → φ ×'-map ψ ≈̇ φ' ×'-map ψ'
     ×'-map-pres-≈̇ {φ = φ} {φ'} φ≈̇φ' {ψ} {ψ'} ψ≈̇ψ' = let open EqReasoning (→̇-setoid _ _) in begin
       φ ×'-map ψ                ≡⟨⟩
       ⟨ φ  ∘ π₁' , ψ  ∘ π₂' ⟩'  ≈⟨ ⟨,⟩'-pres-≈̇ (∘-pres-≈̇-left φ≈̇φ' π₁') (∘-pres-≈̇-left ψ≈̇ψ' π₂') ⟩
       ⟨ φ' ∘ π₁' , ψ' ∘ π₂' ⟩'  ∎
 
-    ×'-map-pres-≈̇-left : {P Q P' : Obj} {φ φ' : P →̇ P'} (φ≈̇φ' : φ ≈̇ φ') (ψ : Q →̇ Q) → φ ×'-map ψ ≈̇ φ' ×'-map ψ
+    ×'-map-pres-≈̇-left : {φ φ' : P →̇ P'} (φ≈̇φ' : φ ≈̇ φ') (ψ : Q →̇ Q) → φ ×'-map ψ ≈̇ φ' ×'-map ψ
     ×'-map-pres-≈̇-left = λ φ≈̇φ' ψ → ×'-map-pres-≈̇ φ≈̇φ' (≈̇-refl {φ = ψ})
 
-    ×'-map-pres-≈̇-right : {P Q Q' : Obj} (φ : P →̇ P) {ψ ψ' : Q →̇ Q'} (ψ≈̇ψ' : ψ ≈̇ ψ') → φ ×'-map ψ ≈̇ φ ×'-map ψ'
+    ×'-map-pres-≈̇-right : (φ : P →̇ P) {ψ ψ' : Q →̇ Q'} (ψ≈̇ψ' : ψ ≈̇ ψ') → φ ×'-map ψ ≈̇ φ ×'-map ψ'
     ×'-map-pres-≈̇-right = λ φ ψ≈̇ψ' → ×'-map-pres-≈̇ (≈̇-refl {φ = φ}) ψ≈̇ψ'
 
     ×'-map-pres-id' : {P Q : Obj} → id'[ P ] ×'-map id'[ Q ] ≈̇ id'[ P ×' Q ]
@@ -92,9 +100,12 @@ record IsCartesian (C : Category) : Set₂ where
       ⟨ π₁' ∘ id' , π₂' ∘ id' ⟩'  ≈˘⟨ ×'-eta ⟩
       id'                         ∎
 
-
     ×'-map-∘-⟨,⟩' : (φ : Q →̇ Q') (ψ : R →̇  R') (ω : P →̇ Q) (ω' : P →̇ R) → φ ×'-map ψ ∘ ⟨ ω , ω' ⟩' ≈̇ ⟨ φ ∘ ω , ψ ∘ ω' ⟩'
-    ×'-map-∘-⟨,⟩' _ _ _ _ = ≈̇-trans (⟨,⟩'-nat _ _ _)
-      (⟨,⟩'-pres-≈̇
-        (≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right _ (×'-beta-left _)))
-        (≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right _ (×'-beta-right _))))
+    ×'-map-∘-⟨,⟩' φ ψ ω ω' = let open EqReasoning (→̇-setoid _ _) in begin
+      (φ ×'-map ψ ∘ ⟨ ω , ω' ⟩')
+        ≈⟨ ⟨,⟩'-nat _ _ _  ⟩
+      ⟨ (φ ∘ π₁') ∘ ⟨ ω , ω' ⟩' , (ψ ∘ π₂') ∘ ⟨ ω , ω' ⟩' ⟩'
+        ≈⟨ ⟨,⟩'-pres-≈̇ (∘-assoc _ _ _) (∘-assoc _ _ _) ⟩
+      ⟨ φ ∘ π₁' ∘ ⟨ ω , ω' ⟩' , ψ ∘ π₂' ∘ ⟨ ω , ω' ⟩' ⟩'
+        ≈⟨ ⟨,⟩'-pres-≈̇ (∘-pres-≈̇-right _ (×'-beta-left _)) (∘-pres-≈̇-right _ (×'-beta-right _)) ⟩
+      ⟨ φ ∘ ω , ψ ∘ ω' ⟩' ∎
