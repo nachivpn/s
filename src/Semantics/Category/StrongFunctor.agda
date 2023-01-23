@@ -25,7 +25,7 @@ record HasStrongFunctor (C : Category) (isCartesian : IsCartesian C) : Set₂ wh
     ◯'-strength : (P Q : Obj) → P ×' (◯' Q) →̇ ◯' (P ×' Q)
     ◯'-strength-natural₁ : {P P' Q : Obj} (φ : P →̇ P') → ◯'-strength P' Q ∘ (φ ×'-map id'[ ◯' Q ]) ≈̇ (◯'-map (φ ×'-map id'[ Q ])) ∘ ◯'-strength P Q
     ◯'-strength-natural₂ : {P Q Q' : Obj} (t : Q →̇ Q') → ◯'-strength P Q' ∘ (id'[ P ] ×'-map (◯'-map t)) ≈̇ (◯'-map (id'[ P ] ×'-map t)) ∘ ◯'-strength P Q
-    ◯'-strength-assoc    : {P Q R : Obj} → ◯'-map assoc' ∘ ◯'-strength (P ×' Q) R ≈̇ (◯'-strength P (Q ×' R) ∘ (id'[ P ] ×'-map (◯'-strength Q R)) ∘ assoc')
+    ◯'-strength-assoc    : {P Q R : Obj} → ◯'-map ×'-assoc ∘ ◯'-strength (P ×' Q) R ≈̇ (◯'-strength P (Q ×' R) ∘ (id'[ P ] ×'-map (◯'-strength Q R)) ∘ ×'-assoc)
     ◯'-strength-unit     : {P : Obj} → ◯'-map π₂' ∘ ◯'-strength []' P ≈̇ π₂'
 
   -- derived constructs and laws
@@ -93,11 +93,11 @@ record HasStrongFunctor (C : Category) (isCartesian : IsCartesian C) : Set₂ wh
         ≈⟨ ∘-pres-≈̇-right _ step1-with-◯'-strength-natural₂ ⟩
       ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-strength P (P ×' Q) ∘ ⟨ id' , ◯'-strength P Q ∘ ⟨ id' , φ ⟩' ⟩'
         ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ step2-with-◯'-strength-assoc) ⟩
-      ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map assoc' ∘ ◯'-strength (P ×' P) Q ∘ ⟨ ⟨ id' , id' ⟩' , φ ⟩'
+      ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map ×'-assoc ∘ ◯'-strength (P ×' P) Q ∘ ⟨ ⟨ id' , id' ⟩' , φ ⟩'
         ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (∘-pres-≈̇-right _ step3-with-◯'-strength-natural₁)) ⟩
-      ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map assoc' ∘ ◯'-map (⟨ id' , id' ⟩' ×'-map id') ∘ ◯'-strength P Q ∘ ⟨ id' , φ ⟩'
+      ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map ×'-assoc ∘ ◯'-map (⟨ id' , id' ⟩' ×'-map id') ∘ ◯'-strength P Q ∘ ⟨ id' , φ ⟩'
         ≈˘⟨ ≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right _ (≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right _ (∘-assoc _ _ _)))) ⟩
-      (◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map assoc' ∘ ◯'-map (⟨ id' , id' ⟩' ×'-map id')) ∘ ◯'-strength P Q ∘ ⟨ id' , φ ⟩'
+      (◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map ×'-assoc ∘ ◯'-map (⟨ id' , id' ⟩' ×'-map id')) ∘ ◯'-strength P Q ∘ ⟨ id' , φ ⟩'
         ≈⟨ ∘-pres-≈̇-left step4-with-◯'-map-pres-≈̇ _ ⟩
       ◯'-map (ψ' ∘ ⟨ π₁' , ψ ⟩') ∘ (◯'-strength P Q ∘ ⟨ id' , φ ⟩')
           ≈˘⟨ ∘-assoc _ _ _ ⟩
@@ -115,15 +115,15 @@ record HasStrongFunctor (C : Category) (isCartesian : IsCartesian C) : Set₂ wh
         _ ∎
 
       step2-with-◯'-strength-assoc : ◯'-strength P (P ×' Q) ∘ ⟨ id' , ◯'-strength P Q ∘ ⟨ id' , φ ⟩' ⟩'
-            ≈̇ ◯'-map assoc' ∘ ◯'-strength (P ×' P) Q ∘ ⟨ ⟨ id' , id' ⟩' , φ ⟩'
+            ≈̇ ◯'-map ×'-assoc ∘ ◯'-strength (P ×' P) Q ∘ ⟨ ⟨ id' , id' ⟩' , φ ⟩'
       step2-with-◯'-strength-assoc = let open EqReasoning (→̇-setoid _ _) in begin
         ◯'-strength P (P ×' Q) ∘ ⟨ id' , ◯'-strength P Q ∘ ⟨ id' , φ ⟩' ⟩'
           ≈⟨ ∘-pres-≈̇-right _ {!!} ⟩
-        ◯'-strength P (P ×' Q) ∘ (id' ×'-map ◯'-strength P Q ∘ assoc' ∘ ⟨ ⟨ id' , id' ⟩'  , φ ⟩')
+        ◯'-strength P (P ×' Q) ∘ (id' ×'-map ◯'-strength P Q ∘ ×'-assoc ∘ ⟨ ⟨ id' , id' ⟩'  , φ ⟩')
           ≈˘⟨ ≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right _ (∘-assoc _ _ _)) ⟩
-        (◯'-strength P (P ×' Q) ∘ id' ×'-map ◯'-strength P Q ∘ assoc') ∘ ⟨ ⟨ id' , id' ⟩'  , φ ⟩'
+        (◯'-strength P (P ×' Q) ∘ id' ×'-map ◯'-strength P Q ∘ ×'-assoc) ∘ ⟨ ⟨ id' , id' ⟩'  , φ ⟩'
           ≈˘⟨ ∘-pres-≈̇-left ◯'-strength-assoc _ ⟩
-        (◯'-map assoc' ∘ ◯'-strength (P ×' P) Q) ∘ ⟨ ⟨ id' , id' ⟩'  , φ ⟩'
+        (◯'-map ×'-assoc ∘ ◯'-strength (P ×' P) Q) ∘ ⟨ ⟨ id' , id' ⟩'  , φ ⟩'
           ≈⟨ ∘-assoc _ _ _ ⟩
         _ ∎
 
@@ -140,12 +140,12 @@ record HasStrongFunctor (C : Category) (isCartesian : IsCartesian C) : Set₂ wh
           ≈⟨ ∘-assoc _ _ _ ⟩
         _ ∎
 
-      step4-with-◯'-map-pres-≈̇ : ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map assoc' ∘ ◯'-map (⟨ id' , id' ⟩' ×'-map id')
+      step4-with-◯'-map-pres-≈̇ : ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map ×'-assoc ∘ ◯'-map (⟨ id' , id' ⟩' ×'-map id')
             ≈̇ ◯'-map (ψ' ∘ ⟨ π₁' , ψ ⟩')
       step4-with-◯'-map-pres-≈̇ = let open EqReasoning (→̇-setoid _ _) in begin
-        ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map assoc' ∘ ◯'-map (⟨ id' , id' ⟩' ×'-map id')
+        ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map ×'-assoc ∘ ◯'-map (⟨ id' , id' ⟩' ×'-map id')
             ≈˘⟨ ∘-pres-≈̇-right _ (≈̇-trans (◯'-map-pres-∘ _ _) (∘-pres-≈̇-right _ (◯'-map-pres-∘ _ _))) ⟩
-        ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ ∘ (assoc' ∘ ⟨ id' , id' ⟩' ×'-map id'))
+        ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ ∘ (×'-assoc ∘ ⟨ id' , id' ⟩' ×'-map id'))
             ≈⟨ ∘-pres-≈̇-right _ (◯'-map-pres-≈̇ {!!}) ⟩
          ◯'-map ψ' ∘ ◯'-map ⟨ π₁' , ψ ⟩'
             ≈˘⟨ ◯'-map-pres-∘ _ _ ⟩

@@ -47,9 +47,11 @@ record IsCartesian (C : Category) : Set₂ where
   _×'-map_ : {P P' Q Q' : Obj} (t : P →̇ P') → (u : Q →̇ Q') → P ×' Q →̇ P' ×' Q'
   _×'-map_ {P} {P'} {Q} {Q'} φ ψ = ⟨ φ ∘ π₁'[ Q ] , ψ ∘ π₂'[ P ] ⟩'
 
-  assoc' : ∀ {P Q R : Obj} → (P ×' Q) ×' R →̇ P ×' (Q ×' R)
-  assoc' = ⟨ π₁' ∘ π₁' , ⟨ π₂' ∘ π₁' , π₂' ⟩' ⟩'
+  ×'-assoc[_,_,_] : (P Q R : Obj) → (P ×' Q) ×' R →̇ P ×' (Q ×' R)
+  ×'-assoc[ _ , _ , _ ] = ⟨ π₁' ∘ π₁' , ⟨ π₂' ∘ π₁' , π₂' ⟩' ⟩'
 
+  ×'-assoc : {P Q R : Obj} → (P ×' Q) ×' R →̇ P ×' (Q ×' R)
+  ×'-assoc = ×'-assoc[ _ , _ , _ ]
 
   field
     ×'-beta-left  : ∀ {R P Q : Obj} {φ : R →̇ P} (ψ : R →̇ Q) → π₁'[ Q ] ∘ ⟨ φ , ψ ⟩' ≈̇ φ
