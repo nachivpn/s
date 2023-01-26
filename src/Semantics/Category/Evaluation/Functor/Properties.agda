@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K #-}
+{-# OPTIONS  --safe --without-K #-}
 
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian

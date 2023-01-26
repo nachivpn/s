@@ -5,11 +5,15 @@ open import Data.Product using () renaming (∃ to Σ; _×_ to _∧_)
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; subst; cong)
 
+open import Semantics.Category.Base
+open import Semantics.Category.Cartesian
+open import Semantics.Category.StrongFunctor
+
 module Semantics.Presheaf.Strong
   (C                 : Set)
   (_⊆_               : (Γ Δ : C) → Set)
   (⊆-trans           : ∀ {Γ Γ' Γ'' : C} (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') → Γ ⊆ Γ'')
-  (⊆-trans-assoc     : ∀ {Γ Γ' Γ'' Γ''' : C} (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') (w'' : Γ'' ⊆ Γ''') → ⊆-trans w (⊆-trans w' w'') ≡ ⊆-trans (⊆-trans w w') w'')
+  (⊆-trans-assoc     : ∀ {Γ Γ' Γ'' Γ''' : C} (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') (w'' : Γ'' ⊆ Γ''') → ⊆-trans (⊆-trans w w') w'' ≡ ⊆-trans w (⊆-trans w' w''))
   (⊆-refl            : ∀ {Γ : C} → Γ ⊆ Γ)
   (⊆-refl-unit-left  : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans w ⊆-refl ≡ w)
   (⊆-refl-unit-right : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans ⊆-refl w ≡ w)
@@ -19,9 +23,9 @@ module Semantics.Presheaf.Strong
 
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-open import Semantics.Presheaf.Base C _⊆_ ⊆-refl ⊆-trans
+open import Semantics.Presheaf.Base C _⊆_ ⊆-refl ⊆-trans public
 
-open import Semantics.Presheaf.CartesianClosure C _⊆_ ⊆-trans ⊆-trans-assoc ⊆-refl ⊆-refl-unit-left ⊆-refl-unit-right
+open import Semantics.Presheaf.CartesianClosure C _⊆_ ⊆-trans ⊆-trans-assoc ⊆-refl ⊆-refl-unit-left ⊆-refl-unit-right public
 
 private
   variable
@@ -145,7 +149,7 @@ open _◯'-≋_ using (pw) public
       wk-pres-refl f = proof (λ w → ≡-to-◇'-≋ (cong (f .apply-◯) (⊆-refl-unit-right w)))
 
       wk-pres-trans : (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') (f : ◯'-Fam 𝒫 Γ) → wk (⊆-trans w w') f ◯'-≋ wk w' (wk w f)
-      wk-pres-trans w w' f = proof (λ w'' → ≡-to-◇'-≋ (cong (f .apply-◯) (sym (⊆-trans-assoc w w' w''))))
+      wk-pres-trans w w' f = proof (λ w'' → ≡-to-◇'-≋ (cong (f .apply-◯) (⊆-trans-assoc w w' w'')))
 
 ◯'-map_ : (t : 𝒫 →̇ 𝒬) → (◯' 𝒫 →̇ ◯' 𝒬)
 ◯'-map_ {𝒫} {𝒬} = λ t → record
@@ -230,3 +234,17 @@ abstract
 
 ◯'-eta : {t : 𝒫 →̇ ◯' 𝒬} → t ≈̇ letin' t π₂'
 ◯'-eta {t = t} = ≈̇-sym (≈̇-trans (∘-pres-≈̇-left ◯'-strength-π₂ (pr' id' t)) (×'-beta-right t))
+
+◯'StrongFunctor : HasStrongFunctor PshCat PshCatIsCC
+◯'StrongFunctor = record
+               { ◯'_ = ◯'_
+               ; ◯'-map_ = ◯'-map_
+               ; ◯'-map-pres-≈̇ = ◯'-map-pres-≈̇
+               ; ◯'-map-pres-id = ◯'-map-pres-id
+               ; ◯'-map-pres-∘ = ◯'-map-pres-∘
+               ; ◯'-strength[_,_] = ◯'-strength
+               ; ◯'-strength-natural₁ = ◯'-strength-natural₁
+               ; ◯'-strength-natural₂ = ◯'-strength-natural₂
+               ; ◯'-strength-assoc = ◯'-strength-assoc
+               ; ◯'-strength-unit = ◯'-strength-unit
+               }

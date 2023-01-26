@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K #-}
+{-# OPTIONS  --safe --without-K #-}
 
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
@@ -28,9 +28,9 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Functor.Term
 
-module Eval (N : Ty') where
+module Eval (ι' : Ty') where
   evalTy : (a : Ty) → Ty'
-  evalTy ι       = N
+  evalTy ι       = ι'
   evalTy (a ⇒ b) = evalTy a ⇒' evalTy b
   evalTy (◯ a)   = ◯' evalTy a
 
