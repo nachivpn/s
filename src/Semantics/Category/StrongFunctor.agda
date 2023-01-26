@@ -102,7 +102,7 @@ record HasStrongFunctor (C : Category) (isCartesian : IsCartesian C) : Set₂ wh
       ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map ×'-assoc ∘ ◯'-map (⟨ id' , id' ⟩' ×'-map id') ∘ ◯'-strength[ P , Q ] ∘ ⟨ id' , φ ⟩'
         ≈˘⟨ ≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right _ (≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right _ (∘-assoc _ _ _)))) ⟩
       (◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map ×'-assoc ∘ ◯'-map (⟨ id' , id' ⟩' ×'-map id')) ∘ ◯'-strength[ P , Q ] ∘ ⟨ id' , φ ⟩'
-        ≈⟨ ∘-pres-≈̇-left step4-with-◯'-map-pres-≈̇ _ ⟩
+        ≈⟨ ∘-pres-≈̇-left step4-with-◯'-map-pres-∘ _ ⟩
       ◯'-map (ψ' ∘ ⟨ π₁' , ψ ⟩') ∘ (◯'-strength[ P , Q ] ∘ ⟨ id' , φ ⟩')
           ≈˘⟨ ∘-assoc _ _ _ ⟩
       (◯'-map (ψ' ∘ ⟨ π₁' , ψ ⟩') ∘ ◯'-strength[ P , Q ]) ∘ ⟨ id' , φ ⟩' ∎
@@ -148,9 +148,9 @@ record HasStrongFunctor (C : Category) (isCartesian : IsCartesian C) : Set₂ wh
           ≈⟨ ∘-assoc _ _ _ ⟩
         _ ∎
 
-      step4-with-◯'-map-pres-≈̇ : ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map ×'-assoc ∘ ◯'-map (⟨ id' , id' ⟩' ×'-map id')
+      step4-with-◯'-map-pres-∘ : ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map ×'-assoc ∘ ◯'-map (⟨ id' , id' ⟩' ×'-map id')
             ≈̇ ◯'-map (ψ' ∘ ⟨ π₁' , ψ ⟩')
-      step4-with-◯'-map-pres-≈̇ = let open EqReasoning (→̇-setoid _ _) in begin
+      step4-with-◯'-map-pres-∘ = let open EqReasoning (→̇-setoid _ _) in begin
         ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map ×'-assoc ∘ ◯'-map (⟨ id' , id' ⟩' ×'-map id')
             ≈˘⟨ ∘-pres-≈̇-right _ (≈̇-trans (◯'-map-pres-∘ _ _) (∘-pres-≈̇-right _ (◯'-map-pres-∘ _ _))) ⟩
         ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ ∘ (×'-assoc ∘ ⟨ id' , id' ⟩' ×'-map id'))
