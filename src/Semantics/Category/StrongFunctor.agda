@@ -1,4 +1,5 @@
 {-# OPTIONS --without-K #-}
+
 module Semantics.Category.StrongFunctor where
 
 open import Semantics.Category.Base
@@ -121,7 +122,11 @@ record HasStrongFunctor (C : Category) (isCartesian : IsCartesian C) : Set₂ wh
             ≈̇ ◯'-map ×'-assoc ∘ ◯'-strength[ P ×' P , Q ] ∘ ⟨ ⟨ id' , id' ⟩' , φ ⟩'
       step2-with-◯'-strength-assoc = let open EqReasoning (→̇-setoid _ _) in begin
         ◯'-strength[ P , P ×' Q ] ∘ ⟨ id' , ◯'-strength[ P , Q ] ∘ ⟨ id' , φ ⟩' ⟩'
-          ≈⟨ ∘-pres-≈̇-right _ {!!} ⟩
+          ≈˘⟨ ∘-pres-≈̇-right _ (⟨,⟩'-pres-≈̇-left (id'-unit-left P id') _) ⟩
+        ◯'-strength[ P , P ×' Q ] ∘ ⟨ id' ∘ id' , ◯'-strength[ P , Q ] ∘ ⟨ id' , φ ⟩' ⟩'
+          ≈˘⟨ ∘-pres-≈̇-right _ (×'-map-∘-⟨,⟩' _ _ _ _) ⟩
+        ◯'-strength[ P , P ×' Q ] ∘ (id' ×'-map ◯'-strength[ P , Q ] ∘ ⟨ id' , ⟨ id' , φ ⟩' ⟩')
+          ≈˘⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (×'-assoc-∘-⟨⟨,⟩',⟩' _ _ _)) ⟩
         ◯'-strength[ P , P ×' Q ] ∘ (id' ×'-map ◯'-strength[ P , Q ] ∘ ×'-assoc ∘ ⟨ ⟨ id' , id' ⟩'  , φ ⟩')
           ≈˘⟨ ≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right _ (∘-assoc _ _ _)) ⟩
         (◯'-strength[ P , P ×' Q ] ∘ id' ×'-map ◯'-strength[ P , Q ] ∘ ×'-assoc) ∘ ⟨ ⟨ id' , id' ⟩'  , φ ⟩'
@@ -149,15 +154,31 @@ record HasStrongFunctor (C : Category) (isCartesian : IsCartesian C) : Set₂ wh
         ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ) ∘ ◯'-map ×'-assoc ∘ ◯'-map (⟨ id' , id' ⟩' ×'-map id')
             ≈˘⟨ ∘-pres-≈̇-right _ (≈̇-trans (◯'-map-pres-∘ _ _) (∘-pres-≈̇-right _ (◯'-map-pres-∘ _ _))) ⟩
         ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ ∘ (×'-assoc ∘ ⟨ id' , id' ⟩' ×'-map id'))
-            ≈⟨ ∘-pres-≈̇-right _ (◯'-map-pres-≈̇ {!!}) ⟩
-         ◯'-map ψ' ∘ ◯'-map ⟨ π₁' , ψ ⟩'
+           ≈⟨ ∘-pres-≈̇-right _ (◯'-map-pres-≈̇ (∘-pres-≈̇-right _ step4a)) ⟩
+        ◯'-map ψ' ∘ ◯'-map (id' ×'-map ψ ∘ ⟨ π₁' , id' ⟩'  )
+            ≈⟨ ∘-pres-≈̇-right _ (◯'-map-pres-≈̇ (×'-map-∘-⟨,⟩' _ _ _ _)) ⟩
+        ◯'-map ψ' ∘ ◯'-map ⟨ id' ∘ π₁' , ψ ∘ id' ⟩'
+            ≈⟨ ∘-pres-≈̇-right _ (◯'-map-pres-≈̇ (⟨,⟩'-pres-≈̇ (id'-unit-left _ _) (id'-unit-right _ _))) ⟩
+        ◯'-map ψ' ∘ ◯'-map ⟨ π₁' , ψ ⟩'
             ≈˘⟨ ◯'-map-pres-∘ _ _ ⟩
         _ ∎
+        where
+        step4a : ×'-assoc[ P , P , Q ] ∘ ⟨ id' , id' ⟩' ×'-map id' ≈̇ ⟨ π₁' , id' ⟩'
+        step4a = let open EqReasoning (→̇-setoid _ _) in begin
+          ×'-assoc ∘ ⟨ id' , id' ⟩' ×'-map id'
+            ≈⟨ ∘-pres-≈̇-right _ (⟨,⟩'-pres-≈̇-right _ (id'-unit-left _ _)) ⟩
+          ×'-assoc ∘ ⟨ ⟨ id' , id' ⟩' ∘ π₁' , π₂' ⟩'
+            ≈⟨ ∘-pres-≈̇-right _ (⟨,⟩'-pres-≈̇-left (≈̇-trans (⟨,⟩'-nat _ _ _) (⟨,⟩'-pres-≈̇ (id'-unit-left _ _) (id'-unit-left _ _))) _) ⟩
+          ×'-assoc ∘ ⟨ ⟨ π₁' , π₁' ⟩' , π₂' ⟩'
+            ≈⟨ ×'-assoc-∘-⟨⟨,⟩',⟩' _ _ _ ⟩
+          ⟨ π₁' , ⟨ π₁' , π₂' ⟩' ⟩'
+            ≈˘⟨ ⟨,⟩'-pres-≈̇-right _ (≈̇-trans ×'-eta (⟨,⟩'-pres-≈̇ (id'-unit-right _ _) (id'-unit-right _ _))) ⟩
+          _ ∎
 
 
   module _ (isCartesianClosed : IsCartesianClosed C isCartesian) where
 
     open IsCartesianClosed isCartesianClosed
 
-    fmap : {P Q R : Obj} (φ : P →̇ ◯' Q) → (ψ : P →̇ (Q ⇒' R)) → (P →̇ ◯' R)
-    fmap {P} {Q} {R} φ ψ = letin' φ (app' (ψ [ π₁' ]') π₂')
+    fmap : {P Q R : Obj} (φ : P →̇ (Q ⇒' R)) (ψ : P →̇ ◯' Q) → (P →̇ ◯' R)
+    fmap {P} {Q} {R} φ ψ = letin' ψ (app' (φ [ π₁' ]') π₂')
