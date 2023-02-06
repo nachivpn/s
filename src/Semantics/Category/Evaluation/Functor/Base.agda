@@ -1,4 +1,4 @@
-{-# OPTIONS  --safe --without-K #-}
+{-# OPTIONS --safe --without-K #-}
 
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
@@ -12,15 +12,15 @@ module Semantics.Category.Evaluation.Functor.Base
   (hasSF : HasStrongFunctor C isCC)
   where
 
-open Category C renaming (Obj to Ctx')
+open Category C
 open IsCartesian isCC
 open IsCartesianClosed isCCC
 open HasStrongFunctor hasSF
 
-Ty' = Ctx'
+Ty'  = Obj
+Ctx' = Obj
 
 open import Level using (0ℓ)
-
 
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 

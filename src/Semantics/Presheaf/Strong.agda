@@ -226,17 +226,16 @@ abstract
 letin' : (t : 𝒫 →̇ ◯' 𝒬) → (u : (𝒫 ×' 𝒬) →̇ ℛ) → 𝒫 →̇ ◯' ℛ
 letin' t u = (◯'-map u ∘ ◯'-strength _ _) ∘ pr' id' t
 
--- TODO: rewrite proof using the strength-related and other known laws
 abstract
   ◯'-beta : {t : 𝒫 →̇ ◯' 𝒬} → {u : (𝒫 ×' 𝒬) →̇ ℛ} {u' : (𝒫 ×' ℛ →̇ ℛ')}
     → letin' (letin' t u) u' ≈̇ letin' t (u' [ pr' π₁' u ]' )
   ◯'-beta = record { proof = λ _p → proof λ _w → ◇'-≋-refl }
 
-◯'-eta : {t : 𝒫 →̇ ◯' 𝒬} → t ≈̇ letin' t π₂'
-◯'-eta {t = t} = ≈̇-sym (≈̇-trans (∘-pres-≈̇-left ◯'-strength-π₂ (pr' id' t)) (×'-beta-right t))
+  ◯'-eta : {t : 𝒫 →̇ ◯' 𝒬} → t ≈̇ letin' t π₂'
+  ◯'-eta {t = t} = ≈̇-sym (≈̇-trans (∘-pres-≈̇-left ◯'-strength-π₂ (pr' id' t)) (×'-beta-right t))
 
-◯'StrongFunctor : HasStrongFunctor PshCat PshCatIsCC
-◯'StrongFunctor = record
+◯'IsStrongFunctor : HasStrongFunctor PshCat PshCatIsCC
+◯'IsStrongFunctor = record
                { ◯'_ = ◯'_
                ; ◯'-map_ = ◯'-map_
                ; ◯'-map-pres-≈̇ = ◯'-map-pres-≈̇

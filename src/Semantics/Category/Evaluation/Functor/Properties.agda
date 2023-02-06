@@ -1,4 +1,4 @@
-{-# OPTIONS  --safe --without-K #-}
+{-# OPTIONS --safe --without-K #-}
 
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
@@ -14,13 +14,16 @@ module Semantics.Category.Evaluation.Functor.Properties
   (isCC  : IsCartesian C)
   (isCCC : IsCartesianClosed C isCC)
   (hasSF : HasStrongFunctor C isCC)
-  (N     : Category.Obj C)
+  (ι'    : Category.Obj C)
   where
 
-open Category C renaming (Obj to Ctx')
+open Category C
 open IsCartesian isCC
 open IsCartesianClosed isCCC
 open HasStrongFunctor hasSF
+
+Ty'  = Obj
+Ctx' = Obj
 
 open import Level using (0ℓ)
 
@@ -35,7 +38,7 @@ open import Semantics.Category.Evaluation.Functor.Base
    C isCC isCCC hasSF
   renaming (module Eval to FunctorBaseEval)
 
-open FunctorBaseEval N
+open FunctorBaseEval ι'
 
 abstract
   evalWk-pres-id : ∀ (Γ : Ctx) → evalWk idWk[ Γ ] ≈̇ id'

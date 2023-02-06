@@ -104,7 +104,7 @@ record IsCartesian (C : Category) : Set₂ where
 
     ×'-map-∘-⟨,⟩' : (φ : Q →̇ Q') (ψ : R →̇  R') (ω : P →̇ Q) (ω' : P →̇ R) → φ ×'-map ψ ∘ ⟨ ω , ω' ⟩' ≈̇ ⟨ φ ∘ ω , ψ ∘ ω' ⟩'
     ×'-map-∘-⟨,⟩' φ ψ ω ω' = let open EqReasoning (→̇-setoid _ _) in begin
-      (φ ×'-map ψ ∘ ⟨ ω , ω' ⟩')
+      φ ×'-map ψ ∘ ⟨ ω , ω' ⟩'
         ≈⟨ ⟨,⟩'-nat _ _ _  ⟩
       ⟨ (φ ∘ π₁') ∘ ⟨ ω , ω' ⟩' , (ψ ∘ π₂') ∘ ⟨ ω , ω' ⟩' ⟩'
         ≈⟨ ⟨,⟩'-pres-≈̇ (∘-assoc _ _ _) (∘-assoc _ _ _) ⟩
@@ -112,8 +112,8 @@ record IsCartesian (C : Category) : Set₂ where
         ≈⟨ ⟨,⟩'-pres-≈̇ (∘-pres-≈̇-right _ (×'-beta-left _)) (∘-pres-≈̇-right _ (×'-beta-right _)) ⟩
       ⟨ φ ∘ ω , ψ ∘ ω' ⟩' ∎
 
-    ×'-assoc-∘-⟨⟨,⟩',⟩' : {P' P Q R : Obj} → (φ : P' →̇ P) (ψ : P' →̇ Q) (ω : P' →̇ R)→
-      (×'-assoc ∘ ⟨ ⟨ φ , ψ ⟩' , ω ⟩') ≈̇ ⟨ φ , ⟨ ψ , ω ⟩' ⟩'
+    ×'-assoc-∘-⟨⟨,⟩',⟩' : {P' P Q R : Obj} → (φ : P' →̇ P) (ψ : P' →̇ Q) (ω : P' →̇ R)
+      → ×'-assoc ∘ ⟨ ⟨ φ , ψ ⟩' , ω ⟩' ≈̇ ⟨ φ , ⟨ ψ , ω ⟩' ⟩'
     ×'-assoc-∘-⟨⟨,⟩',⟩' φ ψ ω = let open EqReasoning (→̇-setoid _ _) in begin
       ⟨ π₁' ∘ π₁' , ⟨ π₂' ∘ π₁' , π₂' ⟩' ⟩' ∘ ⟨ ⟨ φ , ψ ⟩' , ω ⟩'
         ≈⟨ ⟨,⟩'-nat _ _ _ ⟩
