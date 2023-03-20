@@ -3,19 +3,22 @@
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
 open import Semantics.Category.CartesianClosed
+open import Semantics.Category.EndoFunctor
 open import Semantics.Category.StrongFunctor
 
 module Semantics.Category.Evaluation.Functor.Base
-  (C     : Category)
-  (isCC  : IsCartesian C)
-  (isCCC : IsCartesianClosed C isCC)
-  (hasSF : HasStrongFunctor C isCC)
+  (𝒞             : Category)
+  (𝒞-is-CC       : IsCartesian 𝒞)
+  (𝒞-is-CCC      : IsCartesianClosed 𝒞 𝒞-is-CC)
+  (◯'            : EndoFunctor 𝒞)
+  (◯'-is-strong  : StrongFunctor 𝒞-is-CC ◯')
   where
 
-open Category C
-open IsCartesian isCC
-open IsCartesianClosed isCCC
-open HasStrongFunctor hasSF
+open Category 𝒞
+open IsCartesian 𝒞-is-CC
+open IsCartesianClosed 𝒞-is-CCC
+open EndoFunctor ◯' renaming (◯'_ to ◯'₀_)
+open StrongFunctor ◯'-is-strong
 
 Ty'  = Obj
 Ctx' = Obj
@@ -32,7 +35,7 @@ module Eval (ι' : Ty') where
   evalTy : (a : Ty) → Ty'
   evalTy ι       = ι'
   evalTy (a ⇒ b) = evalTy a ⇒' evalTy b
-  evalTy (◯ a)   = ◯' evalTy a
+  evalTy (◯ a)   = ◯'₀ evalTy a
 
   evalCtx : (Γ : Ctx) → Ty'
   evalCtx []       = []'

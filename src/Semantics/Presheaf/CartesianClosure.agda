@@ -295,8 +295,8 @@ abstract
                             )
       }
 
-PshCatIsCC : IsCartesian PshCat
-PshCatIsCC = record
+PshCat-is-CC : IsCartesian PshCat
+PshCat-is-CC = record
                { []' = []'
                ; unit' = unit'
                ; []'-eta = []'-eta
@@ -310,8 +310,8 @@ PshCatIsCC = record
                ; ×'-eta = ×'-eta
                }
 
-PshCatIsCCC : IsCartesianClosed PshCat PshCatIsCC
-PshCatIsCCC = record
+PshCat-is-CCC : IsCartesianClosed PshCat PshCat-is-CC
+PshCat-is-CCC = record
                 { _⇒'_ = _⇒'_
                 ; lam' = lam'
                 ; lam'-pres-≈̇ = lam'-pres-≈̇

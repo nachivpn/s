@@ -4,24 +4,17 @@ module Semantics.Category.StrongFunctor where
 
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
-open import Semantics.Category.CartesianClosed
+open import Semantics.Category.EndoFunctor
 
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-record HasStrongFunctor (C : Category) (isCartesian : IsCartesian C) : Set₂ where
+record StrongFunctor {C : Category} (isCartesian : IsCartesian C) (isEndo : EndoFunctor C) : Set₂ where
   open Category C
   open IsCartesian isCartesian
+  open EndoFunctor isEndo
 
-  -- endofunctor
-  field
-    ◯'_     : (P : Obj) → Obj
-    ◯'-map_ : {P Q : Obj} (φ : P →̇ Q) → (◯' P →̇ ◯' Q)
-    ◯'-map-pres-≈̇  : {P Q : Obj} {φ φ' : P →̇ Q} → φ ≈̇ φ' → ◯'-map φ ≈̇ ◯'-map φ'
-    ◯'-map-pres-id : {P : Obj} → ◯'-map id'[ P ] ≈̇ id'
-    ◯'-map-pres-∘  : {P Q R : Obj} → (ψ : Q →̇ R) (φ : P →̇ Q) → ◯'-map (ψ ∘ φ) ≈̇ ◯'-map ψ ∘ ◯'-map φ
-
-  -- strength
+  -- tensorial strength taking the tensor product as the cartesian product
   field
     ◯'-strength[_,_] : (P Q : Obj) → P ×' (◯' Q) →̇ ◯' (P ×' Q)
     ◯'-strength-natural₁ : {P P' Q : Obj} (φ : P →̇ P') → ◯'-strength[ P' , Q ] ∘ (φ ×'-map id'[ ◯' Q ]) ≈̇ (◯'-map (φ ×'-map id'[ Q ])) ∘ ◯'-strength[ P , Q ]
@@ -174,11 +167,3 @@ record HasStrongFunctor (C : Category) (isCartesian : IsCartesian C) : Set₂ wh
           ⟨ π₁' , ⟨ π₁' , π₂' ⟩' ⟩'
             ≈˘⟨ ⟨,⟩'-pres-≈̇-right _ (≈̇-trans ×'-eta (⟨,⟩'-pres-≈̇ (id'-unit-right _ _) (id'-unit-right _ _))) ⟩
           _ ∎
-
-
-  module _ (isCartesianClosed : IsCartesianClosed C isCartesian) where
-
-    open IsCartesianClosed isCartesianClosed
-
-    fmap : {P Q R : Obj} (φ : P →̇ (Q ⇒' R)) (ψ : P →̇ ◯' Q) → (P →̇ ◯' R)
-    fmap {P} {Q} {R} φ ψ = letin' ψ (app' (φ [ π₁' ]') π₂')

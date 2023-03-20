@@ -3,6 +3,7 @@
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
 open import Semantics.Category.CartesianClosed
+open import Semantics.Category.EndoFunctor
 open import Semantics.Category.StrongFunctor
 
 open import Data.Product using (∃; _,_; -,_) renaming (_×_ to _∧_; proj₁ to fst; proj₂ to snd)
@@ -10,17 +11,19 @@ open import Data.Product using (∃; _,_; -,_) renaming (_×_ to _∧_; proj₁ 
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; subst)
 
 module Semantics.Category.Evaluation.Functor.Properties
-  (C     : Category)
-  (isCC  : IsCartesian C)
-  (isCCC : IsCartesianClosed C isCC)
-  (hasSF : HasStrongFunctor C isCC)
-  (ι'    : Category.Obj C)
+  (𝒞             : Category)
+  (𝒞-is-CC       : IsCartesian 𝒞)
+  (𝒞-is-CCC      : IsCartesianClosed 𝒞 𝒞-is-CC)
+  (◯'            : EndoFunctor 𝒞)
+  (◯'-is-strong  : StrongFunctor 𝒞-is-CC ◯')
+  (ι'            : Category.Obj 𝒞)
   where
 
-open Category C
-open IsCartesian isCC
-open IsCartesianClosed isCCC
-open HasStrongFunctor hasSF
+open Category 𝒞
+open IsCartesian 𝒞-is-CC
+open IsCartesianClosed 𝒞-is-CCC
+open EndoFunctor ◯'
+open StrongFunctor ◯'-is-strong
 
 Ty'  = Obj
 Ctx' = Obj
@@ -35,7 +38,7 @@ open import Functor.Term
 open import Functor.Term.Reduction
 
 open import Semantics.Category.Evaluation.Functor.Base
-   C isCC isCCC hasSF
+   𝒞 𝒞-is-CC 𝒞-is-CCC ◯' ◯'-is-strong
   renaming (module Eval to FunctorBaseEval)
 
 open FunctorBaseEval ι'
