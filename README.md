@@ -1,1 +1,1 @@
-# Functors, Applicatives and Monads as Modalities
+# (Strong) Functors as Modalities
