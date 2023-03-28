@@ -14,7 +14,6 @@ module Semantics.Presheaf.Pointed
   (⊆-refl-unit-left  : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans w ⊆-refl ≡ w)
   (⊆-refl-unit-right : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans ⊆-refl w ≡ w)
   (_R_               : (Γ Δ : C) → Set)
-  (R-to-⊆            : ∀ {Γ Δ : C} → Γ R Δ → Γ ⊆ Δ)
   (R-refl[_]         : ∀ Γ → Γ R Γ)
   (let R-refl        = λ {Γ} → R-refl[ Γ ])
   where
@@ -23,7 +22,6 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Semantics.Presheaf.Base C _⊆_ ⊆-refl ⊆-trans
 open import Semantics.Presheaf.LaxLax C _⊆_ ⊆-trans ⊆-trans-assoc ⊆-refl ⊆-refl-unit-left ⊆-refl-unit-right _R_
-open import Semantics.Presheaf.Strong C _⊆_ ⊆-trans ⊆-trans-assoc ⊆-refl ⊆-refl-unit-left ⊆-refl-unit-right _R_ R-to-⊆
 
 private
   variable
