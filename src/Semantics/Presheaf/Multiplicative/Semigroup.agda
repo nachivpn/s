@@ -28,8 +28,6 @@ private
     𝒫 𝒫'     : Psh
     𝒬 𝒬'     : Psh
 
-import Semantics.Presheaf.LaxLax as LL
-
 mult-horizontal-comp : mult'[ 𝒫 ] ∘ (◯'-map mult'[ 𝒫 ]) ≈̇ mult'[ 𝒫 ] ∘ mult'[ ◯' 𝒫 ]
 mult-horizontal-comp {𝒫} = record { proof = λ p → proof (λ w → proof
   (refl
