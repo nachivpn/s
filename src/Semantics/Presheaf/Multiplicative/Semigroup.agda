@@ -28,8 +28,8 @@ private
     𝒫 𝒫'     : Psh
     𝒬 𝒬'     : Psh
 
-mult-horizontal-comp : mult'[ 𝒫 ] ∘ (◯'-map mult'[ 𝒫 ]) ≈̇ mult'[ 𝒫 ] ∘ mult'[ ◯' 𝒫 ]
-mult-horizontal-comp {𝒫} = record { proof = λ p → proof (λ w → proof
+mult'-assoc : mult'[ 𝒫 ] ∘ (◯'-map mult'[ 𝒫 ]) ≈̇ mult'[ 𝒫 ] ∘ mult'[ ◯' 𝒫 ]
+mult'-assoc {𝒫} = record { proof = λ p → proof (λ w → proof
   (refl
   , sym (R-trans-assoc _ _ _)
   , ≋[ 𝒫 ]-refl)) }

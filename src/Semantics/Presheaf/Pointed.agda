@@ -14,9 +14,11 @@ module Semantics.Presheaf.Pointed
   (⊆-refl-unit-left  : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans w ⊆-refl ≡ w)
   (⊆-refl-unit-right : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans ⊆-refl w ≡ w)
   (_R_               : (Γ Δ : C) → Set)
-  (R-refl[_]         : ∀ Γ → Γ R Γ)
-  (let R-refl        = λ {Γ} → R-refl[ Γ ])
+  (R-refl            : ∀ {Γ} → Γ R Γ)
   where
+
+R-refl[_] : ∀ Γ → Γ R Γ
+R-refl[ Γ ] = R-refl {Γ}
 
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
@@ -31,10 +33,16 @@ private
     𝒫 𝒫'     : Psh
     𝒬 𝒬'     : Psh
 
+◇'-point' : 𝒫 ₀ Γ → ◇'-Fam 𝒫 Γ
+◇'-point' x = elem (_ , (R-refl , x))
+
+◇'-point'-pres-≋ : {x y : 𝒫 ₀ Γ} → x ≋[ 𝒫 ] y → ◇'-point' {𝒫} x ◇'-≋ ◇'-point' y
+◇'-point'-pres-≋ x≋y = proof (refl , refl , x≋y)
+
 point'[_] : ∀ 𝒫 → 𝒫 →̇ ◯' 𝒫
 point'[_] 𝒫 = record
-  { fun     = λ p → elem λ {Γ'} w → elem (Γ' , (R-refl[ _ ] , wk[ 𝒫 ] w p))
-  ; pres-≋  = λ p≋p' → proof λ w → proof (refl , (refl , (wk[ 𝒫 ]-pres-≋ w p≋p')))
+  { fun     = λ p → elem λ {Γ'} w → ◇'-point' (wk[ 𝒫 ] w p)
+  ; pres-≋  = λ p≋p' → proof λ w → ◇'-point'-pres-≋ (wk[ 𝒫 ]-pres-≋ w p≋p')
   ; natural = λ w p → proof (λ w' → proof (refl , (refl , wk[ 𝒫 ]-pres-trans w w' p)))
   }
 
