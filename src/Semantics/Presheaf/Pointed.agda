@@ -15,10 +15,8 @@ module Semantics.Presheaf.Pointed
   (⊆-refl-unit-right : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans ⊆-refl w ≡ w)
   (_R_               : (Γ Δ : C) → Set)
   (R-refl            : ∀ {Γ} → Γ R Γ)
+  (let R-refl[_]     : ∀ Γ → Γ R Γ ; R-refl[ Γ ] = R-refl {Γ})
   where
-
-R-refl[_] : ∀ Γ → Γ R Γ
-R-refl[ Γ ] = R-refl {Γ}
 
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
