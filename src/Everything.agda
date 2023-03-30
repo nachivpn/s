@@ -27,4 +27,5 @@ import Semantics.Presheaf.StrongPointed
 import Semantics.Presheaf.Multiplicative.Magma
 import Semantics.Presheaf.Multiplicative.Semigroup
 import Semantics.Presheaf.Multiplicative
+import Semantics.Presheaf.StrongMultiplicative
 import Semantics.Presheaf.Monad
