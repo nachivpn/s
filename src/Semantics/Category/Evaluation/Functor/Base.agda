@@ -1,43 +1,27 @@
 {-# OPTIONS --safe --without-K #-}
-open import Data.Product using (∃; _,_; -,_) renaming (_×_ to _∧_; proj₁ to fst; proj₂ to snd)
 
-open import Relation.Binary.PropositionalEquality using (_≡_; refl; subst)
+open import Semantics.Category.Base
+open import Semantics.Category.Cartesian
+open import Semantics.Category.CartesianClosed
+open import Semantics.Category.EndoFunctor
+open import Semantics.Category.StrongFunctor
 
 module Semantics.Category.Evaluation.Functor.Base
-  (Ctx' : Set₁)
-
-  (_→̇_ : (P Q : Ctx') → Set) (let infixr 19 _→̇_; _→̇_ = _→̇_)
-
-  (_≈̇_     : {P Q : Ctx'} → (φ ψ : P →̇ Q) → Set) (let infix 18 _≈̇_; _≈̇_ = _≈̇_)
-  (≈̇-refl  : ∀ {P Q : Ctx'} {φ : P →̇ Q} → φ ≈̇ φ)
-  (≈̇-sym   : ∀ {P Q : Ctx'} {φ ψ : P →̇ Q} → (φ≈̇ψ : φ ≈̇ ψ) → ψ ≈̇ φ)
-  (≈̇-trans : ∀ {P Q : Ctx'} {φ ψ ω : P →̇ Q} → (φ≈̇ψ : φ ≈̇ ψ) → (ψ≈̇ω : ψ ≈̇ ω) → φ ≈̇ ω)
-
-  (_∘_ : {P Q R : Ctx'} → (ψ : Q →̇ R) → (φ : P →̇ Q) → (P →̇ R)) (let infixr 19 _∘_; _∘_ = _∘_)
-  (let _[_]' = _∘_)
-
-  (id'[_] : (P : Ctx') → P →̇ P)
-
-  ([]'   : Ctx')
-  (unit' : {P : Ctx'} → P →̇ []')
-
-  (_×'_   : (P Q : Ctx') → Ctx')
-  (⟨_,_⟩' : {R P Q : Ctx'} → (φ : R →̇ P) → (ψ : R →̇ Q) → R →̇ P ×' Q)
-  (π₁'[_] : {P : Ctx'} → (Q : Ctx') → P ×' Q →̇ P)
-  (π₂'[_] : (P : Ctx') → {Q : Ctx'} → P ×' Q →̇ Q)
-  (let fst'[_]_ = λ {R} {P} Q φ → _∘_ {R} {P ×' Q} {P} π₁'[ Q ] φ)
-  (let snd'[_]_ = λ {R} P {Q} φ → _∘_ {R} {P ×' Q} {Q} π₂'[ P ] φ)
-  (let _×'-map_ = λ {P} {P'} {Q} {Q'} φ ψ → ⟨_,_⟩' {P ×' Q} {P'} {Q'} (φ ∘ π₁'[ Q ]) (ψ ∘ π₂'[ P ]))
-
-  (let Ty' = Ctx')
-
-  (_⇒'_ : (P Q : Ty') → Ty')
-  (lam' : {R P Q : Ty'} → (φ : R ×' P →̇ Q) → R →̇ P ⇒' Q)
-  (app' : {R P Q : Ty'} → (φ : R →̇ P ⇒' Q) → (ψ : R →̇ P) → R →̇ Q)
-
-  (◯'_  : (P : Ty') → Ty')
-  (letin' : {P Q R : Ty'} → (φ : P →̇ ◯' Q) → (ψ : (P ×' Q) →̇ R) → P →̇ ◯' R)
+  (𝒞             : Category)
+  (𝒞-is-CC       : IsCartesian 𝒞)
+  (𝒞-is-CCC      : IsCartesianClosed 𝒞 𝒞-is-CC)
+  (◯'            : EndoFunctor 𝒞)
+  (◯'-is-strong  : StrongFunctor 𝒞-is-CC ◯')
   where
+
+open Category 𝒞
+open IsCartesian 𝒞-is-CC
+open IsCartesianClosed 𝒞-is-CCC
+open EndoFunctor ◯' renaming (◯'_ to ◯'₀_)
+open StrongFunctor ◯'-is-strong
+
+Ty'  = Obj
+Ctx' = Obj
 
 open import Level using (0ℓ)
 
@@ -47,26 +31,11 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Functor.Term
 
--- XXX: make parameters
-≈̇-equiv : ∀ (P Q : Ctx') → IsEquivalence (_≈̇_ {P} {Q})
-≈̇-equiv  P Q = record { refl = ≈̇-refl {P} {Q} ; sym = ≈̇-sym {P} {Q} ; trans = ≈̇-trans {P} {Q} }
-
-→̇-setoid : (P Q : Ctx') → Setoid 0ℓ 0ℓ
-→̇-setoid P Q = record { Carrier = P →̇ Q ; _≈_ = _≈̇_ ; isEquivalence = ≈̇-equiv P Q }
-
-id' = λ {P} → id'[ P ]
-
-π₁'       = λ {P} {Q} → π₁'[_] {P} Q
-π₁'[_][_] = λ P Q → π₁'[_] {P} Q
-
-π₂'       = λ {P} {Q} → π₂'[_] P {Q}
-π₂'[_][_] = λ P Q → π₂'[_] P {Q}
-
-module Eval (N : Ty') where
+module Eval (ι' : Ty') where
   evalTy : (a : Ty) → Ty'
-  evalTy ι       = N
+  evalTy ι       = ι'
   evalTy (a ⇒ b) = evalTy a ⇒' evalTy b
-  evalTy (◯ a)   = ◯' evalTy a
+  evalTy (◯ a)   = ◯'₀ evalTy a
 
   evalCtx : (Γ : Ctx) → Ty'
   evalCtx []       = []'

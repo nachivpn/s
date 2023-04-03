@@ -1,66 +1,32 @@
 {-# OPTIONS --safe --without-K #-}
+
+open import Semantics.Category.Base
+open import Semantics.Category.Cartesian
+open import Semantics.Category.CartesianClosed
+open import Semantics.Category.EndoFunctor
+open import Semantics.Category.StrongFunctor
+
 open import Data.Product using (∃; _,_; -,_) renaming (_×_ to _∧_; proj₁ to fst; proj₂ to snd)
 
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; subst)
 
 module Semantics.Category.Evaluation.Functor.Properties
-  (Ctx' : Set₁)
-
-  (_→̇_ : (P Q : Ctx') → Set) (let infixr 19 _→̇_; _→̇_ = _→̇_)
-
-  (_≈̇_     : {P Q : Ctx'} → (φ ψ : P →̇ Q) → Set) (let infix 18 _≈̇_; _≈̇_ = _≈̇_)
-  (≈̇-refl  : ∀ {P Q : Ctx'} {φ : P →̇ Q} → φ ≈̇ φ)
-  (≈̇-sym   : ∀ {P Q : Ctx'} {φ ψ : P →̇ Q} → (φ≈̇ψ : φ ≈̇ ψ) → ψ ≈̇ φ)
-  (≈̇-trans : ∀ {P Q : Ctx'} {φ ψ ω : P →̇ Q} → (φ≈̇ψ : φ ≈̇ ψ) → (ψ≈̇ω : ψ ≈̇ ω) → φ ≈̇ ω)
-
-  (_∘_      : {P Q R : Ctx'} → (ψ : Q →̇ R) → (φ : P →̇ Q) → (P →̇ R)) (let infixr 19 _∘_; _∘_ = _∘_)
-  (∘-pres-≈̇ : ∀ {P Q R : Ctx'} {ψ ψ' : Q →̇ R} {φ φ' : P →̇ Q} (ψ≈̇ψ' : ψ ≈̇ ψ') (φ≈̇φ' : φ ≈̇ φ') → ψ ∘ φ ≈̇ ψ' ∘ φ')
-  (∘-assoc  : {P Q R S : Ctx'} → (ω : R →̇ S) → (ψ : Q →̇ R) → (φ : P →̇ Q) → (ω ∘ ψ) ∘ φ ≈̇ ω ∘ ψ ∘ φ)
-  (let _[_]' = _∘_)
-
-  (id'[_]         : (P : Ctx') → P →̇ P)
-  (id'-unit-left  : ∀ {P : Ctx'} (Q : Ctx') (φ : P →̇ Q) → id'[ Q ] ∘ φ ≈̇ φ)
-  (id'-unit-right : ∀ (P : Ctx') {Q : Ctx'} (φ : P →̇ Q) → φ ∘ id'[ P ] ≈̇ φ)
-
-  ([]'     : Ctx')
-  (unit'   : {P : Ctx'} → P →̇ []')
-  ([]'-eta : ∀ {P : Ctx'} {φ : P →̇ []'} → φ ≈̇ unit')
-
-  (_×'_          : (P Q : Ctx') → Ctx')
-  (⟨_,_⟩'        : {R P Q : Ctx'} → (φ : R →̇ P) → (ψ : R →̇ Q) → R →̇ P ×' Q)
-  (⟨,⟩'-pres-≈̇   : ∀ {R P Q : Ctx'} {φ φ' : R →̇ P} {ψ ψ' : R →̇ Q} (φ≈̇φ' : φ ≈̇ φ') (ψ≈̇ψ' : ψ ≈̇ ψ') → ⟨ φ , ψ ⟩' ≈̇ ⟨ φ' , ψ' ⟩')
-  (π₁'[_]        : {P : Ctx'} → (Q : Ctx') → P ×' Q →̇ P)
-  (π₂'[_]        : (P : Ctx') → {Q : Ctx'} → P ×' Q →̇ Q)
-  (let fst'[_]_ = λ {R} {P} Q φ → _∘_ {R} {P ×' Q} {P} π₁'[ Q ] φ)
-  (let snd'[_]_ = λ {R} P {Q} φ → _∘_ {R} {P ×' Q} {Q} π₂'[ P ] φ)
-  (×'-beta-left  : ∀ {R P Q : Ctx'} {φ : R →̇ P} (ψ : R →̇ Q) → π₁'[ Q ] ∘ ⟨ φ , ψ ⟩' ≈̇ φ)
-  (×'-beta-right : ∀ {R P Q : Ctx'} (φ : R →̇ P) {ψ : R →̇ Q} → π₂'[ P ] ∘ ⟨ φ , ψ ⟩' ≈̇ ψ)
-  (×'-eta        : ∀ {R P Q : Ctx'} {φ : R →̇ P ×' Q} → φ ≈̇ ⟨ fst'[ Q ] φ , snd'[ P ] φ ⟩')
-  (⟨,⟩'-nat      : ∀ {R' R P Q : Ctx'} (φ : R →̇ P) (ψ : R →̇ Q) (ω : R' →̇ R) → ⟨ φ , ψ ⟩' ∘ ω ≈̇ ⟨ φ ∘ ω , ψ ∘ ω ⟩')
-  (let _×'-map_ = λ {P} {P'} {Q} {Q'} φ ψ → ⟨_,_⟩' {P ×' Q} {P'} {Q'} (φ ∘ π₁'[ Q ]) (ψ ∘ π₂'[ P ]))
-
-  (let Ty' = Ctx')
-
-  (_⇒'_        : (P Q : Ty') → Ty')
-  (lam'        : {R P Q : Ty'} → (φ : R ×' P →̇ Q) → R →̇ P ⇒' Q)
-  (lam'-pres-≈̇ : ∀ {R P Q : Ty'} {φ φ' : R ×' P →̇ Q} (φ≈̇φ' : φ ≈̇ φ') → lam' φ ≈̇ lam' φ')
-  (app'        : {R P Q : Ty'} → (φ : R →̇ P ⇒' Q) → (ψ : R →̇ P) → R →̇ Q)
-  (app'-pres-≈̇ : ∀ {R P Q : Ty'} {φ φ' : R →̇ P ⇒' Q} {ψ ψ' : R →̇ P} (φ≈̇φ' : φ ≈̇ φ') (ψ≈̇ψ' : ψ ≈̇ ψ') → app' φ ψ ≈̇ app' φ' ψ')
-  (⇒'-beta     : ∀ {R P Q : Ty'} (φ : R ×' P →̇ Q) (ψ : R →̇ P) → app' (lam' φ) ψ ≈̇ φ [ ⟨ id'[ R ] , ψ ⟩' ]')
-  (⇒'-eta      : ∀ {R P Q : Ty'} (φ : R →̇ P ⇒' Q) → φ ≈̇ lam' (app' (φ [ π₁'[ P ] ]') π₂'[ R ]))
-  (lam'-nat    : ∀ {R' R P Q : Ty'} (φ : R ×' P →̇ Q) (ψ : R' →̇ R) → lam' φ ∘ ψ ≈̇ lam' (φ ∘ ψ ×'-map id'[ P ]))
-  (app'-nat    : ∀ {R' R P Q : Ty'} (φ : R →̇ P ⇒' Q) (ψ : R →̇ P) (ω : R' →̇ R) → app' φ ψ ∘ ω ≈̇ app' (φ ∘ ω) (ψ ∘ ω))
-
-  (◯'_          : (P : Ty') → Ty')
-  (letin' : {P Q R : Ty'} → (φ : P →̇ ◯' Q) → (ψ : (P ×' Q) →̇ R) → P →̇ ◯' R)
-  (letin'-pres-≈̇ : {P Q R : Ty'} {φ φ' : P →̇ ◯' Q} {ψ ψ' : (P ×' Q) →̇ R} → (φ≈̇φ' : φ ≈̇ φ') (ψ≈̇ψ' : ψ ≈̇ ψ') → letin' φ ψ ≈̇ letin' φ' ψ')
-  (letin'-nat    : ∀ {P P' Q R : Ty'} (φ : P →̇ ◯' Q) → (ψ : (P ×' Q) →̇ R) (ω : P' →̇ P) → letin' φ ψ ∘ ω ≈̇ letin' (φ ∘ ω) (ψ ∘ (ω ×'-map id'[ Q ])))
-  (◯'-beta : ∀ {P Q R R' : Ty'} (t : P →̇ ◯' Q) (u : (P ×' Q) →̇ R) (u' : (P ×' R →̇ R'))
-    → letin' (letin' t u) u' ≈̇ letin' t (u' ∘ ⟨ π₁'[ Q ] , u ⟩' ))
-  (◯'-eta : ∀ {P : Ctx'} {Q : Ty'} (φ : P →̇ ◯' Q) → φ ≈̇ letin' φ π₂'[ P ])
-
-  (N : Ty')
+  (𝒞             : Category)
+  (𝒞-is-CC       : IsCartesian 𝒞)
+  (𝒞-is-CCC      : IsCartesianClosed 𝒞 𝒞-is-CC)
+  (◯'            : EndoFunctor 𝒞)
+  (◯'-is-strong  : StrongFunctor 𝒞-is-CC ◯')
+  (ι'            : Category.Obj 𝒞)
   where
+
+open Category 𝒞
+open IsCartesian 𝒞-is-CC
+open IsCartesianClosed 𝒞-is-CCC
+open EndoFunctor ◯'
+open StrongFunctor ◯'-is-strong
+
+Ty'  = Obj
+Ctx' = Obj
 
 open import Level using (0ℓ)
 
@@ -72,61 +38,10 @@ open import Functor.Term
 open import Functor.Term.Reduction
 
 open import Semantics.Category.Evaluation.Functor.Base
-    Ctx' _→̇_ _≈̇_ ≈̇-refl ≈̇-sym ≈̇-trans _∘_ id'[_]
-    []' unit' _×'_ ⟨_,_⟩' π₁'[_] π₂'[_]
-    _⇒'_ lam' app'
-    ◯'_ letin'
+   𝒞 𝒞-is-CC 𝒞-is-CCC ◯' ◯'-is-strong
   renaming (module Eval to FunctorBaseEval)
 
-open FunctorBaseEval N
-
-∘-pres-≈̇-left : ∀ {P Q R : Ctx'} {ψ ψ' : Q →̇ R} (ψ≈̇ψ' : ψ ≈̇ ψ') (φ : P →̇ Q) → ψ ∘ φ ≈̇ ψ' ∘ φ
-∘-pres-≈̇-left ψ≈̇ψ' φ = ∘-pres-≈̇ ψ≈̇ψ' (≈̇-refl {φ = φ})
-
-∘-pres-≈̇-right : ∀ {P Q R : Ctx'} (ψ : Q →̇ R) {φ φ' : P →̇ Q} (φ≈̇φ' : φ ≈̇ φ') → ψ ∘ φ ≈̇ ψ ∘ φ'
-∘-pres-≈̇-right ψ φ≈̇φ' = ∘-pres-≈̇ (≈̇-refl {φ = ψ}) φ≈̇φ'
-
-abstract
-  ⟨,⟩'-pres-≈̇-left : ∀ {R P Q : Ctx'} {φ φ' : R →̇ P} (φ≈̇φ' : φ ≈̇ φ') (ψ : R →̇ Q) → ⟨ φ , ψ ⟩' ≈̇ ⟨ φ' , ψ ⟩'
-  ⟨,⟩'-pres-≈̇-left ψ≈̇ψ' φ = ⟨,⟩'-pres-≈̇ ψ≈̇ψ' (≈̇-refl {φ = φ})
-
-  ⟨,⟩'-pres-≈̇-right : ∀ {R P Q : Ctx'} (φ : R →̇ P) {ψ ψ' : R →̇ Q} (ψ≈̇ψ' : ψ ≈̇ ψ') → ⟨ φ , ψ ⟩' ≈̇ ⟨ φ , ψ' ⟩'
-  ⟨,⟩'-pres-≈̇-right ψ φ≈̇φ' = ⟨,⟩'-pres-≈̇ (≈̇-refl {φ = ψ}) φ≈̇φ'
-
-abstract
-  ×'-map-pres-≈̇ : {P Q P' Q' : Ctx'} {φ φ' : P →̇ P'} (φ≈̇φ' : φ ≈̇ φ') {ψ ψ' : Q →̇ Q'} (ψ≈̇ψ' : ψ ≈̇ ψ') → φ ×'-map ψ ≈̇ φ' ×'-map ψ'
-  ×'-map-pres-≈̇ {φ = φ} {φ'} φ≈̇φ' {ψ} {ψ'} ψ≈̇ψ' = let open EqReasoning (→̇-setoid _ _) in begin
-    φ ×'-map ψ                ≡⟨⟩
-    ⟨ φ  ∘ π₁' , ψ  ∘ π₂' ⟩'  ≈⟨ ⟨,⟩'-pres-≈̇ (∘-pres-≈̇-left φ≈̇φ' π₁') (∘-pres-≈̇-left ψ≈̇ψ' π₂') ⟩
-    ⟨ φ' ∘ π₁' , ψ' ∘ π₂' ⟩'  ∎
-
-  ×'-map-pres-≈̇-left : {P Q P' : Ctx'} {φ φ' : P →̇ P'} (φ≈̇φ' : φ ≈̇ φ') (ψ : Q →̇ Q) → φ ×'-map ψ ≈̇ φ' ×'-map ψ
-  ×'-map-pres-≈̇-left = λ φ≈̇φ' ψ → ×'-map-pres-≈̇ φ≈̇φ' (≈̇-refl {φ = ψ})
-
-  ×'-map-pres-≈̇-right : {P Q Q' : Ctx'} (φ : P →̇ P) {ψ ψ' : Q →̇ Q'} (ψ≈̇ψ' : ψ ≈̇ ψ') → φ ×'-map ψ ≈̇ φ ×'-map ψ'
-  ×'-map-pres-≈̇-right = λ φ ψ≈̇ψ' → ×'-map-pres-≈̇ (≈̇-refl {φ = φ}) ψ≈̇ψ'
-
-  ×'-map-pres-id' : {P Q : Ctx'} → id'[ P ] ×'-map id'[ Q ] ≈̇ id'[ P ×' Q ]
-  ×'-map-pres-id' {P} {Q} = let open EqReasoning (→̇-setoid _ _) in begin
-    id' ×'-map id'              ≡⟨⟩
-    ⟨ id' ∘ π₁' , id' ∘ π₂' ⟩'  ≈⟨ ⟨,⟩'-pres-≈̇ (id'-unit-left P π₁') (id'-unit-left Q π₂') ⟩
-    ⟨ π₁'       , π₂'       ⟩'  ≈˘⟨ ⟨,⟩'-pres-≈̇ (id'-unit-right (P ×' Q) π₁') (id'-unit-right (P ×' Q) π₂') ⟩
-    ⟨ π₁' ∘ id' , π₂' ∘ id' ⟩'  ≈˘⟨ ×'-eta ⟩
-    id'                         ∎
-
-abstract
-  app'-pres-≈̇-left : ∀ {R : Ctx'} {P Q : Ty'} {φ φ' : R →̇ P ⇒' Q} (φ≈̇φ' : φ ≈̇ φ') (ψ : R →̇ P) → app' φ ψ ≈̇ app' φ' ψ
-  app'-pres-≈̇-left φ≈̇φ' ψ = app'-pres-≈̇ φ≈̇φ' (≈̇-refl {φ = ψ})
-
-  app'-pres-≈̇-right : ∀ {R : Ctx'} {P Q : Ty'} (φ : R →̇ P ⇒' Q) {ψ ψ' : R →̇ P} (ψ≈̇ψ' : ψ ≈̇ ψ') → app' φ ψ ≈̇ app' φ ψ'
-  app'-pres-≈̇-right φ ψ≈̇ψ' = app'-pres-≈̇ (≈̇-refl {φ = φ}) ψ≈̇ψ'
-
-abstract
-  letin'-pres-≈̇-left : ∀ {P Q R : Ty'} {φ φ' : P →̇ ◯' Q} (φ≈̇φ' : φ ≈̇ φ') (ψ : (P ×' Q) →̇ R) → letin' φ ψ ≈̇ letin' φ' ψ
-  letin'-pres-≈̇-left φ≈̇φ' ψ = letin'-pres-≈̇ φ≈̇φ' (≈̇-refl {φ = ψ})
-
-  letin'-pres-≈̇-right : ∀ {P Q R : Ty'} (φ : P →̇ ◯' Q) {ψ ψ' : (P ×' Q) →̇ R} (ψ≈̇ψ' : ψ ≈̇ ψ')→ letin' φ ψ ≈̇ letin' φ ψ'
-  letin'-pres-≈̇-right φ ψ≈̇ψ' = letin'-pres-≈̇ (≈̇-refl {φ = φ}) ψ≈̇ψ'
+open FunctorBaseEval ι'
 
 abstract
   evalWk-pres-id : ∀ (Γ : Ctx) → evalWk idWk[ Γ ] ≈̇ id'
@@ -243,6 +158,7 @@ module _ {a : Ty} {Δ : Ctx} where
       evalVar v ∘ π₁'[ evalTy b ] ∘ evalSub (σ `, t)  ≈˘⟨ ∘-assoc (evalVar v) π₁'[ evalTy b ] (evalSub (σ `, t)) ⟩
       evalVar (succ {b = b} v) [ evalSub (σ `, t) ]'  ∎
 
+
 abstract
   evalTm-pres-∘ : ∀ (t : Tm Γ a) → (σ : Sub Δ Γ) → evalTm (substTm σ t) ≈̇ evalTm t [ evalSub σ ]'
   evalTm-pres-∘ (var v) σ = evalTm-pres-∘'' v σ
@@ -318,7 +234,7 @@ abstract
     evalTm t
       ≈⟨ ◯'-eta (evalTm t) ⟩
     letin' (evalTm t) π₂'[ evalCtx Γ ]
-      ≡⟨ refl ⟩
+      ≡⟨⟩
     evalTm (letin t (var zero))
       ∎
   evalTm-sound (cong-lam s)            = lam'-pres-≈̇        (evalTm-sound s)

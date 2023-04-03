@@ -5,7 +5,7 @@ module Semantics.Presheaf.CartesianClosure
   (C                 : Set)
   (_⊆_               : (Γ Γ' : C) → Set)
   (⊆-trans           : ∀ {Γ Γ' Γ'' : C} → (w : Γ ⊆ Γ') → (w' : Γ' ⊆ Γ'') → Γ ⊆ Γ'')
-  (⊆-trans-assoc     : ∀ {Γ Γ' Γ'' Γ''' : C} (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') (w'' : Γ'' ⊆ Γ''') → ⊆-trans w (⊆-trans w' w'') ≡ ⊆-trans (⊆-trans w w') w'')
+  (⊆-trans-assoc     : ∀ {Γ Γ' Γ'' Γ''' : C} (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') (w'' : Γ'' ⊆ Γ''') → ⊆-trans (⊆-trans w w') w'' ≡ ⊆-trans w (⊆-trans w' w''))
   (⊆-refl            : ∀ {Γ : C} → Γ ⊆ Γ)
   (⊆-refl-unit-left  : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans w ⊆-refl ≡ w)
   (⊆-refl-unit-right : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans ⊆-refl w ≡ w)
@@ -24,6 +24,10 @@ open import Relation.Binary.PropositionalEquality.Properties using () renaming (
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Semantics.Presheaf.Base C _⊆_ ⊆-refl ⊆-trans
+
+open import Semantics.Category.Base
+open import Semantics.Category.Cartesian
+open import Semantics.Category.CartesianClosed
 
 private
   variable
@@ -215,11 +219,11 @@ module _ (𝒫 𝒬 : Psh) where
     ; _≋_           = _⇒'-≋_
     ; wk            = λ w f → elem (λ w' p → f .apply (⊆-trans w w') p)
                                    (λ w' p≋p' → f .apply-≋ (⊆-trans w w') p≋p')
-                                   (λ w' w'' p → subst (λ hole → wk[ 𝒬 ] w'' (f .apply (⊆-trans w w') p) ≋[ 𝒬 ] f .apply hole (wk[ 𝒫 ] w'' p)) (≡-sym (⊆-trans-assoc w w' w'')) (f .natural (⊆-trans w w') w'' p))
+                                   (λ w' w'' p → subst (λ hole → wk[ 𝒬 ] w'' (f .apply (⊆-trans w w') p) ≋[ 𝒬 ] f .apply hole (wk[ 𝒫 ] w'' p)) (⊆-trans-assoc w w' w'') (f .natural (⊆-trans w w') w'' p))
     ; ≋-equiv       = ⇒'-≋-equiv
     ; wk-pres-≋     = λ w f≋g → proof (λ w' → f≋g .pw (⊆-trans w w'))
     ; wk-pres-refl  = λ f → proof (λ w p → ≋[ 𝒬 ]-reflexive (cong (λ hole → f .apply hole p) (⊆-refl-unit-right w)))
-    ; wk-pres-trans = λ w w' f → proof (λ w'' p → ≋[ 𝒬 ]-reflexive˘ (cong (λ hole → f .apply hole p) (⊆-trans-assoc w w' w'')))
+    ; wk-pres-trans = λ w w' f → proof (λ w'' p → ≋[ 𝒬 ]-reflexive˘ (cong (λ hole → f .apply hole p) (≡-sym (⊆-trans-assoc w w' w''))))
     }
 
 module _ {𝒫 𝒬 : Psh} where
@@ -290,3 +294,31 @@ abstract
                                t .apply (wk[ ℛ ] w r) .apply ⊆-refl p       ∎
                             )
       }
+
+PshCat-is-CC : IsCartesian PshCat
+PshCat-is-CC = record
+               { []' = []'
+               ; unit' = unit'
+               ; []'-eta = []'-eta
+               ; _×'_ = _×'_
+               ; ⟨_,_⟩' = ⟨_,_⟩'
+               ; ⟨,⟩'-pres-≈̇ = ⟨,⟩'-pres-≈̇
+               ; π₁'[_] = π₁'[_]
+               ; π₂'[_] = π₂'[_]
+               ; ×'-beta-left = ×'-beta-left
+               ; ×'-beta-right = ×'-beta-right
+               ; ×'-eta = ×'-eta
+               }
+
+PshCat-is-CCC : IsCartesianClosed PshCat PshCat-is-CC
+PshCat-is-CCC = record
+                { _⇒'_ = _⇒'_
+                ; lam' = lam'
+                ; lam'-pres-≈̇ = lam'-pres-≈̇
+                ; app' = app'
+                ; app'-pres-≈̇ = app'-pres-≈̇
+                ; ⇒'-beta = ⇒'-beta
+                ; ⇒'-eta = ⇒'-eta
+                ; lam'-nat = lam'-nat
+                ; app'-nat = app'-nat
+                }

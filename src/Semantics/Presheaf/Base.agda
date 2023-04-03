@@ -6,6 +6,7 @@ module Semantics.Presheaf.Base
   (⊆-trans : ∀ {Γ Γ' Γ'' : C} → (_w : Γ ⊆ Γ') → (_w' : Γ' ⊆ Γ'') → Γ ⊆ Γ'')
   where
 
+open import Semantics.Category.Base
 open import Level using (0ℓ)
 
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
@@ -189,3 +190,19 @@ abstract
 
   id'-unit-right : ∀ (𝒫 : Psh) {𝒬 : Psh} (φ : 𝒫 →̇ 𝒬) → φ ∘ id'[ 𝒫 ] ≈̇ φ
   id'-unit-right _ {𝒬} _ = record { proof = λ p → ≋[ 𝒬 ]-refl }
+
+PshCat : Category
+PshCat = record
+  { Obj = Psh
+  ; _→̇_ = _→̇_
+  ; _≈̇_ = _≈̇_
+  ; _∘_ = _∘_
+  ; id'[_] = id'[_]
+  ; ≈̇-refl = ≈̇-refl
+  ; ≈̇-sym = ≈̇-sym
+  ; ≈̇-trans = ≈̇-trans
+  ; ∘-pres-≈̇ = ∘-pres-≈̇
+  ; id'-unit-left  = id'-unit-left
+  ; id'-unit-right = id'-unit-right
+  ; ∘-assoc = ∘-assoc
+  }
