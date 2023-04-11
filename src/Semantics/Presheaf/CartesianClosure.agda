@@ -1,15 +1,15 @@
 {-# OPTIONS --safe --without-K #-}
 open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; cong₂) renaming (refl to ≡-refl; sym to ≡-sym; trans to ≡-trans)
+open import Semantics.Kripke.IFrame using (IFrame)
 
 module Semantics.Presheaf.CartesianClosure
-  (C                 : Set)
-  (_⊆_               : (Γ Γ' : C) → Set)
-  (⊆-trans           : ∀ {Γ Γ' Γ'' : C} → (w : Γ ⊆ Γ') → (w' : Γ' ⊆ Γ'') → Γ ⊆ Γ'')
-  (⊆-trans-assoc     : ∀ {Γ Γ' Γ'' Γ''' : C} (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') (w'' : Γ'' ⊆ Γ''') → ⊆-trans (⊆-trans w w') w'' ≡ ⊆-trans w (⊆-trans w' w''))
-  (⊆-refl            : ∀ {Γ : C} → Γ ⊆ Γ)
-  (⊆-refl-unit-left  : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans w ⊆-refl ≡ w)
-  (⊆-refl-unit-right : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans ⊆-refl w ≡ w)
+  (C   : Set)
+  (_⊆_ : (Γ Γ' : C) → Set)
+  (IF  : IFrame C _⊆_)
+  (let open IFrame IF)
   where
+
+open import Function using (id)
 
 open import Data.Unit using (⊤; tt)
 open import Data.Unit.Properties using () renaming (⊤-irrelevant to ⊤-eta)
@@ -17,13 +17,11 @@ open import Data.Unit.Properties using () renaming (⊤-irrelevant to ⊤-eta)
 open import Data.Product using (Σ; _×_; _,_) renaming (proj₁ to fst; proj₂ to snd)
 open import Data.Product using () renaming (_×_ to _∧_)
 
-open import Function using (id)
-
 open import Relation.Binary using (IsEquivalence)
 open import Relation.Binary.PropositionalEquality.Properties using () renaming (isEquivalence to ≡-equiv)
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-open import Semantics.Presheaf.Base C _⊆_ ⊆-refl ⊆-trans
+open import Semantics.Presheaf.Base C _⊆_ IF
 
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian

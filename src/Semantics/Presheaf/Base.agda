@@ -1,17 +1,21 @@
 {-# OPTIONS --safe --without-K #-}
+open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; cong₂) renaming (refl to ≡-refl; sym to ≡-sym; trans to ≡-trans)
+open import Semantics.Kripke.IFrame using (IFrame)
+
 module Semantics.Presheaf.Base
-  (C       : Set)
-  (_⊆_     : (Γ Γ' : C) → Set)
-  (⊆-refl  : ∀ {Γ : C} → Γ ⊆ Γ)
-  (⊆-trans : ∀ {Γ Γ' Γ'' : C} → (_w : Γ ⊆ Γ') → (_w' : Γ' ⊆ Γ'') → Γ ⊆ Γ'')
+  (C    : Set)
+  (_⊆_  : (Γ Γ' : C) → Set)
+  (IF   : IFrame C _⊆_)
+  (let open IFrame IF using (⊆-trans ; ⊆-refl))
   where
 
-open import Semantics.Category.Base
-open import Level using (0ℓ)
 
+open import Level using (0ℓ)
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
-import Relation.Binary.Reasoning.Setoid as EqReasoning
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; subst; cong)
+import Relation.Binary.Reasoning.Setoid as EqReasoning
+
+open import Semantics.Category.Base
 
 infixr 19 _∘_
 infix  18 _→̇_ _≈̇_

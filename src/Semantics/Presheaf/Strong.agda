@@ -1,31 +1,29 @@
 {-# OPTIONS --safe --without-K #-}
+open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; cong₂) renaming (refl to ≡-refl; sym to ≡-sym; trans to ≡-trans)
+open import Semantics.Kripke.IFrame using (IFrame)
+
+module Semantics.Presheaf.Strong
+  (C      : Set)
+  (_⊆_    : (Γ Δ : C) → Set)
+  (_R_    : (Γ Δ : C) → Set)
+  (IF     : IFrame C _⊆_)
+  (let open IFrame IF)
+  (R-to-⊆ : ∀ {Γ Δ : C} → Γ R Δ → Γ ⊆ Δ)
+  where
+
 open import Data.Product using (∃; _×_; _,_; -,_) renaming (proj₁ to fst; proj₂ to snd)
-open import Data.Product using () renaming (∃ to Σ; _×_ to _∧_)
 
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; subst; cong)
+import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
 open import Semantics.Category.StrongFunctor
 
-module Semantics.Presheaf.Strong
-  (C                 : Set)
-  (_⊆_               : (Γ Δ : C) → Set)
-  (⊆-trans           : ∀ {Γ Γ' Γ'' : C} (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') → Γ ⊆ Γ'')
-  (⊆-trans-assoc     : ∀ {Γ Γ' Γ'' Γ''' : C} (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') (w'' : Γ'' ⊆ Γ''') → ⊆-trans (⊆-trans w w') w'' ≡ ⊆-trans w (⊆-trans w' w''))
-  (⊆-refl            : ∀ {Γ : C} → Γ ⊆ Γ)
-  (⊆-refl-unit-left  : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans w ⊆-refl ≡ w)
-  (⊆-refl-unit-right : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans ⊆-refl w ≡ w)
-  (_R_               : (Γ Δ : C) → Set)
-  (R-to-⊆            : ∀ {Γ Δ : C} → Γ R Δ → Γ ⊆ Δ)
-  where
-
-import Relation.Binary.Reasoning.Setoid as EqReasoning
-
-open import Semantics.Presheaf.Base C _⊆_ ⊆-refl ⊆-trans
-open import Semantics.Presheaf.CartesianClosure C _⊆_ ⊆-trans ⊆-trans-assoc ⊆-refl ⊆-refl-unit-left ⊆-refl-unit-right
-open import Semantics.Presheaf.LaxLax C _⊆_ ⊆-trans ⊆-trans-assoc ⊆-refl ⊆-refl-unit-left ⊆-refl-unit-right _R_
+open import Semantics.Presheaf.Base C _⊆_ IF
+open import Semantics.Presheaf.CartesianClosure C _⊆_ IF
+open import Semantics.Presheaf.LaxLax C _⊆_ _R_ IF 
 
 private
   variable

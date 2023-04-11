@@ -1,19 +1,13 @@
 {-# OPTIONS --safe --without-K #-}
-open import Data.Product using (∃; _×_; _,_; -,_) renaming (proj₁ to fst; proj₂ to snd)
-open import Data.Product using () renaming (∃ to Σ; _×_ to _∧_)
-
-open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
-open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; subst; cong ; cong₂)
+open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; cong₂) renaming (refl to ≡-refl; sym to ≡-sym; trans to ≡-trans)
+open import Semantics.Kripke.IFrame using (IFrame)
 
 module Semantics.Presheaf.StrongMonad
   (C                 : Set)
   (_⊆_               : (Γ Δ : C) → Set)
-  (⊆-trans           : ∀ {Γ Γ' Γ'' : C} (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') → Γ ⊆ Γ'')
-  (⊆-trans-assoc     : ∀ {Γ Γ' Γ'' Γ''' : C} (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') (w'' : Γ'' ⊆ Γ''') → ⊆-trans (⊆-trans w w') w'' ≡ ⊆-trans w (⊆-trans w' w''))
-  (⊆-refl            : ∀ {Γ : C} → Γ ⊆ Γ)
-  (⊆-refl-unit-left  : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans w ⊆-refl ≡ w)
-  (⊆-refl-unit-right : ∀ {Γ Γ' : C} (w : Γ ⊆ Γ') → ⊆-trans ⊆-refl w ≡ w)
   (_R_               : (Γ Δ : C) → Set)
+  (IF                : IFrame C _⊆_)
+  (let open IFrame IF)
   (R-refl            : ∀ {Γ} → Γ R Γ)
   (let R-refl[_]     : ∀ Γ → Γ R Γ ; R-refl[ Γ ] = R-refl {Γ})
   (R-trans           : ∀ {Γ Δ Θ} → Γ R Δ →  Δ R Θ → Γ R Θ)
@@ -23,6 +17,6 @@ module Semantics.Presheaf.StrongMonad
   (R-to-⊆-pres-trans : ∀ {Γ Δ Θ} → (r : Γ R Δ) →  (r' : Δ R Θ) → R-to-⊆ (R-trans r r') ≡ ⊆-trans (R-to-⊆ r) (R-to-⊆ r'))
   where
 
-open import Semantics.Presheaf.Monad C _⊆_ ⊆-trans ⊆-trans-assoc ⊆-refl ⊆-refl-unit-left ⊆-refl-unit-right _R_ R-refl R-trans
-open import Semantics.Presheaf.StrongPointed C _⊆_ ⊆-trans ⊆-trans-assoc ⊆-refl ⊆-refl-unit-left ⊆-refl-unit-right _R_ R-refl R-to-⊆ R-to-⊆-pres-refl
-open import Semantics.Presheaf.StrongMultiplicative C _⊆_ ⊆-trans ⊆-trans-assoc ⊆-refl ⊆-refl-unit-left ⊆-refl-unit-right _R_ R-trans R-trans-assoc R-to-⊆ R-to-⊆-pres-trans
+open import Semantics.Presheaf.Monad C _⊆_ _R_ IF R-refl R-trans
+open import Semantics.Presheaf.StrongPointed C _⊆_ _R_ IF R-refl R-to-⊆ R-to-⊆-pres-refl
+open import Semantics.Presheaf.StrongMultiplicative C _⊆_ _R_ IF R-trans R-trans-assoc R-to-⊆ R-to-⊆-pres-trans 
