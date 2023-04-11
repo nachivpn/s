@@ -1,6 +1,7 @@
 {-# OPTIONS --safe --without-K #-}
 module Everything where
 
+-- Basics for all calculi
 import Type
 import Context
 import Substitution
@@ -21,19 +22,20 @@ import Semantics.Category.StrongFunctor
 import Semantics.Category.Evaluation.Functor.Base
 import Semantics.Category.Evaluation.Functor.Properties
 
--- Intuitionistic Kripke frames
+-- Intuitionistic possible-world frames
 import Semantics.Kripke.IFrame
 
 -- Presheaf category determined by possible-world frames
 import Semantics.Presheaf.Base
 import Semantics.Presheaf.CartesianClosure
 import Semantics.Presheaf.LaxLax
-import Semantics.Presheaf.Strong
 import Semantics.Presheaf.Pointed
-import Semantics.Presheaf.StrongPointed
 import Semantics.Presheaf.Multiplicative.Magma
 import Semantics.Presheaf.Multiplicative.Semigroup
 import Semantics.Presheaf.Multiplicative
-import Semantics.Presheaf.StrongMultiplicative
 import Semantics.Presheaf.Monad
-import Semantics.Presheaf.StrongMonad
+import Semantics.Presheaf.Strong
+import Semantics.Presheaf.Strong.Pointed
+import Semantics.Presheaf.Strong.Multiplicative
+import Semantics.Presheaf.Strong.Monad
+

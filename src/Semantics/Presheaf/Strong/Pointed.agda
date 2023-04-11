@@ -2,7 +2,7 @@
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; subst; cong ; cong₂)
 open import Semantics.Kripke.IFrame using (IFrame)
 
-module Semantics.Presheaf.StrongPointed
+module Semantics.Presheaf.Strong.Pointed
   (C                 : Set)
   (_⊆_               : (Γ Δ : C) → Set)
   (_R_               : (Γ Δ : C) → Set)

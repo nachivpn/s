@@ -2,7 +2,7 @@
 open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; cong₂) renaming (refl to ≡-refl; sym to ≡-sym; trans to ≡-trans)
 open import Semantics.Kripke.IFrame using (IFrame)
 
-module Semantics.Presheaf.StrongMonad
+module Semantics.Presheaf.Strong.Monad
   (C                 : Set)
   (_⊆_               : (Γ Δ : C) → Set)
   (_R_               : (Γ Δ : C) → Set)
@@ -18,5 +18,5 @@ module Semantics.Presheaf.StrongMonad
   where
 
 open import Semantics.Presheaf.Monad C _⊆_ _R_ IF R-refl R-trans
-open import Semantics.Presheaf.StrongPointed C _⊆_ _R_ IF R-refl R-to-⊆ R-to-⊆-pres-refl
-open import Semantics.Presheaf.StrongMultiplicative C _⊆_ _R_ IF R-trans R-trans-assoc R-to-⊆ R-to-⊆-pres-trans 
+open import Semantics.Presheaf.Strong.Pointed C _⊆_ _R_ IF R-refl R-to-⊆ R-to-⊆-pres-refl
+open import Semantics.Presheaf.Strong.Multiplicative C _⊆_ _R_ IF R-trans R-trans-assoc R-to-⊆ R-to-⊆-pres-trans 
