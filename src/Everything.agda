@@ -23,7 +23,7 @@ import Semantics.Category.Evaluation.Functor.Base
 import Semantics.Category.Evaluation.Functor.Properties
 
 -- Intuitionistic possible-world frames
-import Semantics.Kripke.IFrame
+import Semantics.Kripke.Frame
 
 -- Presheaf category determined by possible-world frames
 import Semantics.Presheaf.Base

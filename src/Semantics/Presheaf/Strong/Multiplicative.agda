@@ -1,6 +1,6 @@
 {-# OPTIONS --safe --without-K #-}
 open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; cong₂) renaming (refl to ≡-refl; sym to ≡-sym; trans to ≡-trans)
-open import Semantics.Kripke.IFrame using (IFrame)
+open import Semantics.Kripke.Frame using (IFrame)
 
 module Semantics.Presheaf.Strong.Multiplicative
   (C                 : Set)

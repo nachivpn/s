@@ -1,6 +1,6 @@
 {-# OPTIONS --safe --without-K #-}
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; subst; cong ; cong₂)
-open import Semantics.Kripke.IFrame using (IFrame)
+open import Semantics.Kripke.Frame using (IFrame)
 
 module Semantics.Presheaf.Strong.Pointed
   (C                 : Set)

@@ -2,7 +2,7 @@
 open import Relation.Binary.PropositionalEquality using (_≡_)
 open import Data.Product using (∃; _×_; _,_; -,_) renaming (proj₁ to fst; proj₂ to snd)
 
-module Semantics.Kripke.IFrame where
+module Semantics.Kripke.Frame where
 
 -- Intuitionistic Frame
 record IFrame (W : Set) (_⊆_ : W → W → Set) : Set where
