@@ -44,7 +44,7 @@ module _ where
     field
       triple : Σ λ Δ → (Γ R Δ) × 𝒫 ₀ Δ
 
-  open ◇'-Fam
+  open ◇'-Fam public
 
   record _◇'-≋_ {𝒫 : Psh} {Γ : C} (x y : ◇'-Fam 𝒫 Γ) : Set where
     constructor proof
@@ -52,14 +52,16 @@ module _ where
       pw : let (Δ , r , p) = x .triple ; (Δ' , r' , p') = y. triple
         in ∃ λ Δ≡Δ' → subst (_ R_) Δ≡Δ' r ≡ r' ∧ subst (𝒫 ₀_) Δ≡Δ' p ≋[ 𝒫 ] p'
 
+  open _◇'-≋_ public
+  
   abstract
-    ◇'-≋-refl : {x : ◇'-Fam 𝒫 Γ} → x ◇'-≋ x
+    ◇'-≋-refl : Reflexive (_◇'-≋_ {𝒫} {Γ})
     ◇'-≋-refl {𝒫} = proof (refl , refl , ≋[ 𝒫 ]-refl)
 
-    ◇'-≋-sym : {x y : ◇'-Fam 𝒫 Γ} → x ◇'-≋ y → y ◇'-≋ x
+    ◇'-≋-sym : Symmetric (_◇'-≋_ {𝒫} {Γ})
     ◇'-≋-sym {𝒫} (proof (refl , refl , p)) = proof (refl , refl , ≋[ 𝒫 ]-sym p)
 
-    ◇'-≋-trans : {x y z : ◇'-Fam 𝒫 Γ} → x ◇'-≋ y → y ◇'-≋ z → x ◇'-≋ z
+    ◇'-≋-trans : Transitive (_◇'-≋_ {𝒫} {Γ})
     ◇'-≋-trans {𝒫} (proof (refl , refl , p)) (proof (refl , refl , q)) = proof (refl , refl , ≋[ 𝒫 ]-trans p q)
 
     ≡-to-◇'-≋ : {x y : ◇'-Fam 𝒫 Γ} → x ≡ y → x ◇'-≋ y
@@ -75,18 +77,18 @@ module _ where
   ◇'-≋[]-syn : (𝒫 : Psh) → (x y : ◇'-Fam 𝒫 Γ) → Set
   ◇'-≋[]-syn {Γ = Γ} 𝒫 = _◇'-≋_ {𝒫} {Γ}
 
-  ◇'-map : (t : 𝒫 →̇ 𝒬) → ({Γ : C} → ◇'-Fam 𝒫 Γ → ◇'-Fam 𝒬 Γ)
-  ◇'-map t (elem (Δ , r , p)) = elem (Δ , r , t .apply p)
+  ◇'-map-fun : (t : 𝒫 →̇ 𝒬) → ({Γ : C} → ◇'-Fam 𝒫 Γ → ◇'-Fam 𝒬 Γ)
+  ◇'-map-fun t (elem (Δ , r , p)) = elem (Δ , r , t .apply p)
 
   syntax ◇'-≋[]-syn 𝒫 x y = x ◇'-≋[ 𝒫 ] y
 
   abstract
 
-    ◇'-map-pres-≋ : (t : 𝒫 →̇ 𝒬) → {p p' : ◇'-Fam 𝒫 Γ} → p ◇'-≋[ 𝒫 ] p' → (◇'-map t p) ◇'-≋[ 𝒬 ] (◇'-map t p')
-    ◇'-map-pres-≋ t (proof (refl , refl , p≋p')) = proof (refl , refl , t .apply-≋ p≋p')
+    ◇'-map-fun-pres-≋ : (t : 𝒫 →̇ 𝒬) → {p p' : ◇'-Fam 𝒫 Γ} → p ◇'-≋[ 𝒫 ] p' → (◇'-map-fun t p) ◇'-≋[ 𝒬 ] (◇'-map-fun t p')
+    ◇'-map-fun-pres-≋ t (proof (refl , refl , p≋p')) = proof (refl , refl , t .apply-≋ p≋p')
 
-    ◇'-map-pres-≈̇ : {t t' : 𝒫 →̇ 𝒬} → t ≈̇ t' → ∀ (p : ◇'-Fam 𝒫 Γ) → ◇'-map t p ◇'-≋[ 𝒬 ] ◇'-map t' p
-    ◇'-map-pres-≈̇ {𝒫} t≈̇t' (elem (Δ , r , p)) = proof (refl , (refl , apply-sq t≈̇t' ≋[ 𝒫 ]-refl))
+    ◇'-map-fun-pres-≈̇ : {t t' : 𝒫 →̇ 𝒬} → t ≈̇ t' → ∀ (p : ◇'-Fam 𝒫 Γ) → ◇'-map-fun t p ◇'-≋[ 𝒬 ] ◇'-map-fun t' p
+    ◇'-map-fun-pres-≈̇ {𝒫} t≈̇t' (elem (Δ , r , p)) = proof (refl , (refl , apply-sq t≈̇t' ≋[ 𝒫 ]-refl))
 
 record ◯'-Fam (𝒫 : Psh) (Γ : C) : Set where
   constructor elem
@@ -102,6 +104,15 @@ record _◯'-≋_ {𝒫 : Psh} {Γ : C} (f f' : ◯'-Fam 𝒫 Γ) : Set where
 
 open _◯'-≋_ using (pw) public
 
+◯'-≋-refl : Reflexive (_◯'-≋_ {𝒫} {Γ})
+◯'-≋-refl = proof λ _w → ◇'-≋-refl
+
+◯'-≋-sym : Symmetric (_◯'-≋_ {𝒫} {Γ})
+◯'-≋-sym = λ f≋f' → proof λ w → ◇'-≋-sym (f≋f' .pw w)
+
+◯'-≋-trans : Transitive (_◯'-≋_ {𝒫} {Γ})
+◯'-≋-trans = λ f≋f' f'≋f'' → proof λ w → ◇'-≋-trans (f≋f' .pw w) (f'≋f'' .pw w)
+
 ◯'_ : (𝒫 : Psh) → Psh -- type \bigcirc or \ci5
 ◯' 𝒫 = record
   { Fam           = ◯'-Fam 𝒫
@@ -113,12 +124,13 @@ open _◯'-≋_ using (pw) public
   ; wk-pres-trans = wk-pres-trans
   }
   where
+
     abstract
       ≋-equiv : (Γ : C) → IsEquivalence (_◯'-≋_ {𝒫} {Γ})
       ≋-equiv = λ Γ → record
-        { refl  = proof λ _w → ◇'-≋-refl
-        ; sym   = λ f≋f' → proof λ w → ◇'-≋-sym (f≋f' .pw w)
-        ; trans = λ f≋f' f'≋f'' → proof λ w → ◇'-≋-trans (f≋f' .pw w) (f'≋f'' .pw w)
+        { refl  = ◯'-≋-refl
+        ; sym   = ◯'-≋-sym
+        ; trans = ◯'-≋-trans
         }
 
     wk : Γ ⊆ Δ → ◯'-Fam 𝒫 Γ → ◯'-Fam 𝒫 Δ
@@ -136,14 +148,14 @@ open _◯'-≋_ using (pw) public
 
 ◯'-map_ : (t : 𝒫 →̇ 𝒬) → (◯' 𝒫 →̇ ◯' 𝒬)
 ◯'-map_ {𝒫} {𝒬} = λ t → record
-    { fun     = λ p → elem λ w → ◇'-map t (p .apply-◯ w)
-    ; pres-≋  = λ p≋p' → proof λ w → ◇'-map-pres-≋ t (p≋p' .pw w)
+    { fun     = λ p → elem λ w → ◇'-map-fun t (p .apply-◯ w)
+    ; pres-≋  = λ p≋p' → proof λ w → ◇'-map-fun-pres-≋ t (p≋p' .pw w)
     ; natural = λ _w _p → ≋[ ◯' 𝒬 ]-refl
     }
 
 abstract
   ◯'-map-pres-≈̇ : t ≈̇ t' → ◯'-map t ≈̇ ◯'-map t'
-  ◯'-map-pres-≈̇ t≈̇t' = record { proof = λ p → proof λ w → ◇'-map-pres-≈̇ t≈̇t' (p .apply-◯ w) }
+  ◯'-map-pres-≈̇ t≈̇t' = record { proof = λ p → proof λ w → ◇'-map-fun-pres-≈̇ t≈̇t' (p .apply-◯ w) }
 
   ◯'-map-pres-id : ◯'-map id'[ 𝒫 ] ≈̇ id'
   ◯'-map-pres-id = record { proof = λ _p → proof λ _w → ◇'-≋-refl }

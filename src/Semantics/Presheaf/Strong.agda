@@ -50,11 +50,11 @@ module _ where
     ◇'-transport-pres-≋ {𝒫} p≋p' (proof (refl , refl , q≋q')) = proof (refl , refl , proof (wk[ 𝒫 ]-pres-≋ _ p≋p' , q≋q'))
 
     ◇'-transport-square₁ : (t : 𝒫 →̇ 𝒫') {p : 𝒫 ₀ Γ} {q : ◇'-Fam 𝒬 Γ}
-     → ◇'-transport (t .apply p) q ◇'-≋[ 𝒫' ×' 𝒬 ] ◇'-map (t ×'-map id') (◇'-transport p q)
+     → ◇'-transport (t .apply p) q ◇'-≋[ 𝒫' ×' 𝒬 ] ◇'-map-fun (t ×'-map id') (◇'-transport p q)
     ◇'-transport-square₁ {𝒫} {𝒫'} {𝒬 = 𝒬} t = proof (refl , refl , proof (t .natural _ _ , ≋[ 𝒬 ]-refl))
 
     ◇'-transport-square₂ : (t : 𝒬 →̇ 𝒬') {p : 𝒫 ₀ Γ} {q : ◇'-Fam 𝒬 Γ}
-     → ◇'-transport p (◇'-map t q) ◇'-≋[ 𝒫 ×' 𝒬' ] ◇'-map (id' ×'-map t) (◇'-transport p q)
+     → ◇'-transport p (◇'-map-fun t q) ◇'-≋[ 𝒫 ×' 𝒬' ] ◇'-map-fun (id' ×'-map t) (◇'-transport p q)
     ◇'-transport-square₂ {𝒬} {𝒬'} {𝒫 = 𝒫} t = proof (refl , refl , ≋[ 𝒫 ×' 𝒬' ]-refl)
 
 -- Refer to `https://ncatlab.org/nlab/show/tensorial+strength`
