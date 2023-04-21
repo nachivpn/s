@@ -44,10 +44,10 @@ open import Semantics.Category.Evaluation.Functor.Base
 open FunctorBaseEval ι'
 
 abstract
-  evalWk-pres-id : ∀ (Γ : Ctx) → evalWk idWk[ Γ ] ≈̇ id'
+  evalWk-pres-id : ∀ (Γ : Ctx) → evalWk ⊆-refl[ Γ ] ≈̇ id'
   evalWk-pres-id []          = ≈̇-sym []'-eta
   evalWk-pres-id Γ@(Γ' `, a) = let open EqReasoning (Sub'-setoid Γ Γ) in begin
-    evalWk (keep[ a ] idWk[ Γ' ])             ≈⟨ ×'-map-pres-≈̇-left (evalWk-pres-id Γ') id'[ evalTy a ] ⟩
+    evalWk (keep[ a ] ⊆-refl[ Γ' ])             ≈⟨ ×'-map-pres-≈̇-left (evalWk-pres-id Γ') id'[ evalTy a ] ⟩
     id'[ evalCtx Γ' ] ×'-map id'[ evalTy a ]  ≈⟨ ×'-map-pres-id' ⟩
     id'[ evalCtx Γ ]                          ∎
 
@@ -144,8 +144,8 @@ abstract
 abstract
   evalSub-pres-id : ∀ (Γ : Ctx) → evalSub idₛ[ Γ ] ≈̇ id'
   evalSub-pres-id Γ = let open EqReasoning (Sub'-setoid Γ Γ) in begin
-    evalSub idₛ[ Γ ]  ≈⟨ evalSub-pres-wk idWk[ Γ ] ⟩
-    evalWk idWk[ Γ ]  ≈⟨ evalWk-pres-id Γ ⟩
+    evalSub idₛ[ Γ ]  ≈⟨ evalSub-pres-wk ⊆-refl[ Γ ] ⟩
+    evalWk ⊆-refl[ Γ ]  ≈⟨ evalWk-pres-id Γ ⟩
     id'                ∎
 
 module _ {a : Ty} {Δ : Ctx} where

@@ -46,15 +46,15 @@ pattern keep[_] a w = keep {a = a} w
 variable
   w w' w'' : Γ ⊆ Γ'
 
-idWk[_] : (Γ : Ctx) → Γ ⊆ Γ
-idWk[_] []        = base
-idWk[_] (Γ `, _a) = keep  idWk[ Γ ]
+⊆-refl[_] : (Γ : Ctx) → Γ ⊆ Γ
+⊆-refl[_] []        = base
+⊆-refl[_] (Γ `, _a) = keep  ⊆-refl[ Γ ]
 
-idWk : Γ ⊆ Γ
-idWk {Γ} = idWk[ Γ ]
+⊆-refl : Γ ⊆ Γ
+⊆-refl {Γ} = ⊆-refl[ Γ ]
 
 freshWk[_,_] : (Γ : Ctx) → (a : Ty) → Γ ⊆ (Γ `, a)
-freshWk[ Γ , a ] = drop idWk
+freshWk[ Γ , a ] = drop ⊆-refl
 
 freshWk : Γ ⊆ (Γ `, a)
 freshWk = freshWk[ _ , _ ]

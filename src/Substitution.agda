@@ -67,7 +67,7 @@ module Substitution
 
   -- identity substitution
   idₛ : Sub Γ Γ
-  idₛ = embWk idWk
+  idₛ = embWk ⊆-refl
 
   idₛ[_] = λ Γ → idₛ {Γ}
 

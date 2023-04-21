@@ -2,7 +2,7 @@
 module Functor.Term.Base where
 
 open import Type public
-import Context.Base Ty as Context
+import Context Ty as Context
 import Substitution    as Substitution
 
 open Context public

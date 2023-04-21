@@ -28,3 +28,13 @@ embNe (app  m n) = app (embNe m) (embNf n)
 embNf (up  x)     = embNe x
 embNf (lam n)     = lam (embNf n)
 embNf (letin m n) = letin (embNe m) (embNf n)
+
+wkNe : Γ ⊆ Γ' → Ne Γ a → Ne Γ' a
+wkNf : Γ ⊆ Γ' → Nf Γ a → Nf Γ' a
+
+wkNe w (var x)     = var (wkVar w x)
+wkNe w (app n m)   = app (wkNe w n) (wkNf w m)
+
+wkNf w (up n)      = up (wkNe w n)
+wkNf w (lam n)     = lam (wkNf (keep w) n)
+wkNf w (letin x n) = letin (wkNe w x) (wkNf (keep w) n)
