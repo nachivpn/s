@@ -242,3 +242,7 @@ abstract
   evalTm-sound (cong-app2 {t = t} s)   = app'-pres-≈̇-right  (evalTm t) (evalTm-sound s)
   evalTm-sound (cong-letin1 {u = u} s) = letin'-pres-≈̇-left   (evalTm-sound s) (evalTm u)
   evalTm-sound (cong-letin2 {t = t} s) = letin'-pres-≈̇-right  (evalTm t) (evalTm-sound s)
+
+  evalTm-sound* : ∀ {t t' : Tm Γ a} (t⟶*t' : t ⟶* t') → evalTm t ≈̇ evalTm t'
+  evalTm-sound* ε        = ≈̇-refl
+  evalTm-sound* (r ◅ rs) = ≈̇-trans (evalTm-sound r) (evalTm-sound* rs)

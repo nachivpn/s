@@ -57,3 +57,6 @@ wkVar-pres-⊆-trans (drop w) (drop w') (succ x) = cong succ (wkVar-pres-⊆-tra
 wkVar-pres-⊆-trans (drop w) (keep w') (succ x) = cong succ (wkVar-pres-⊆-trans w w' (succ x))
 wkVar-pres-⊆-trans (keep w) (drop w') (succ x) = cong succ (wkVar-pres-⊆-trans (keep w) w' (succ x))
 wkVar-pres-⊆-trans (keep w) (keep w') (succ x) = cong succ (wkVar-pres-⊆-trans w w' x)
+
+freshWk-natural : (w : Γ ⊆ Γ') → w ∙ freshWk[ Γ' , a ] ≡ freshWk[ Γ , a ] ∙ keep w
+freshWk-natural w = cong drop (≡-trans (⊆-refl-unit-right w) (≡-sym (⊆-refl-unit-left w)))
