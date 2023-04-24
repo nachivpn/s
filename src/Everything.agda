@@ -28,7 +28,8 @@ import Semantics.Kripke.Frame
 -- Presheaf category determined by possible-world frames
 import Semantics.Presheaf.Base
 import Semantics.Presheaf.CartesianClosure
-import Semantics.Presheaf.LaxLax
+import Semantics.Presheaf.Possibility
+import Semantics.Presheaf.Lax
 import Semantics.Presheaf.Pointed
 import Semantics.Presheaf.Multiplicative.Magma
 import Semantics.Presheaf.Multiplicative.Semigroup
