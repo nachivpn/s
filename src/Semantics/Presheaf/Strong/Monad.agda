@@ -1,22 +1,26 @@
 {-# OPTIONS --safe --without-K #-}
 open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; cong₂) renaming (refl to ≡-refl; sym to ≡-sym; trans to ≡-trans)
-open import Semantics.Kripke.Frame using (IFrame)
+open import Semantics.Kripke.Frame using (MFrame ; InclusiveMFrame ; ReflexiveMFrame ; TransitiveMFrame)
 
 module Semantics.Presheaf.Strong.Monad
-  (C                 : Set)
-  (_⊆_               : (Γ Δ : C) → Set)
-  (_R_               : (Γ Δ : C) → Set)
-  (IF                : IFrame C _⊆_)
-  (let open IFrame IF)
-  (R-refl            : ∀ {Γ} → Γ R Γ)
-  (let R-refl[_]     : ∀ Γ → Γ R Γ ; R-refl[ Γ ] = R-refl {Γ})
-  (R-trans           : ∀ {Γ Δ Θ} → Γ R Δ →  Δ R Θ → Γ R Θ)
-  (R-trans-assoc     : ∀ {Γ Δ Δ' Θ} → (r : Γ R Δ) (r' : Δ R Δ') (r'' : Δ' R Θ) → R-trans (R-trans r r') r'' ≡ R-trans r (R-trans r' r''))
-  (R-to-⊆            : ∀ {Γ Δ : C} → Γ R Δ → Γ ⊆ Δ)
-  (R-to-⊆-pres-refl  : ∀ {Γ} → R-to-⊆ R-refl[ Γ ] ≡ ⊆-refl)
+  {C      : Set}
+  {_⊆_    : (Γ Δ : C) → Set}
+  {_R_    : (Γ Δ : C) → Set}
+  (MF     : MFrame C _⊆_ _R_)
+  (IMF    : InclusiveMFrame MF)
+  (RMF    : ReflexiveMFrame MF)
+  (TMF    : TransitiveMFrame MF)
+  (let open MFrame MF)
+  (let open InclusiveMFrame IMF)
+  (let open TransitiveMFrame TMF)
+  (let open ReflexiveMFrame RMF)
+  (R-to-⊆-pres-refl  : {Γ : C} → R-to-⊆ R-refl[ Γ ] ≡ ⊆-refl)
+  (R-trans-assoc : {Γ Δ Δ' Θ : C} → (r : Γ R Δ) (r' : Δ R Δ') (r'' : Δ' R Θ) → R-trans (R-trans r r') r'' ≡ R-trans r (R-trans r' r''))
   (R-to-⊆-pres-trans : ∀ {Γ Δ Θ} → (r : Γ R Δ) →  (r' : Δ R Θ) → R-to-⊆ (R-trans r r') ≡ ⊆-trans (R-to-⊆ r) (R-to-⊆ r'))
   where
 
-open import Semantics.Presheaf.Monad C _⊆_ _R_ IF R-refl R-trans
-open import Semantics.Presheaf.Strong.Pointed C _⊆_ _R_ IF R-refl R-to-⊆ R-to-⊆-pres-refl
-open import Semantics.Presheaf.Strong.Multiplicative C _⊆_ _R_ IF R-trans R-trans-assoc R-to-⊆ R-to-⊆-pres-trans 
+open import Semantics.Presheaf.Base IF
+open import Semantics.Presheaf.CartesianClosure IF
+open import Semantics.Presheaf.Possibility MF
+open import Semantics.Presheaf.Strong.Pointed MF IMF RMF
+open import Semantics.Presheaf.Strong.Multiplicative MF IMF TMF R-trans-assoc R-to-⊆-pres-trans

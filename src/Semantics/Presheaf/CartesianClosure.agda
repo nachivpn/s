@@ -3,8 +3,8 @@ open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; con
 open import Semantics.Kripke.Frame using (IFrame)
 
 module Semantics.Presheaf.CartesianClosure
-  (C   : Set)
-  (_⊆_ : (Γ Γ' : C) → Set)
+  {C   : Set}
+  {_⊆_ : (Γ Γ' : C) → Set}
   (IF  : IFrame C _⊆_)
   (let open IFrame IF)
   where
@@ -21,7 +21,7 @@ open import Relation.Binary using (IsEquivalence)
 open import Relation.Binary.PropositionalEquality.Properties using () renaming (isEquivalence to ≡-equiv)
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-open import Semantics.Presheaf.Base C _⊆_ IF
+open import Semantics.Presheaf.Base IF
 
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian

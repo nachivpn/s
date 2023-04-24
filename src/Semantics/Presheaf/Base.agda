@@ -3,8 +3,8 @@ open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; con
 open import Semantics.Kripke.Frame using (IFrame)
 
 module Semantics.Presheaf.Base
-  (C    : Set)
-  (_⊆_  : (Γ Γ' : C) → Set)
+  {C    : Set}
+  {_⊆_  : (Γ Γ' : C) → Set}
   (IF   : IFrame C _⊆_)
   (let open IFrame IF using (⊆-trans ; ⊆-refl))
   where
