@@ -26,10 +26,10 @@ data _⟶_ : Tm Γ a → Tm Γ a → Set where
   exp-fun : (t : Tm Γ (a ⇒ b))
     → t ⟶ lam (app (wkTm freshWk t) (var zero))
 
-  red-circ : (t : Tm Γ (◇ a)) (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) c)
+  red-dia : (t : Tm Γ (◇ a)) (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) c)
     → letin (letin t u) u' ⟶ letin t (substTm (wkSub freshWk idₛ `, u) u')
 
-  exp-circ : (t : Tm Γ (◇ a))
+  exp-dia : (t : Tm Γ (◇ a))
     → t ⟶ letin t (var zero)
 
   cong-lam : {t t' : Tm (Γ `, a) b}

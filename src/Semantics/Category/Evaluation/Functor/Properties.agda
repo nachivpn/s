@@ -216,7 +216,7 @@ abstract
       ≈˘⟨ lam'-pres-≈̇ (app'-pres-≈̇-left (evalTm-pres-∘' freshWk t) π₂'[ evalCtx Γ ]) ⟩
     evalTm (lam (app (wkTm freshWk t) (var zero)))
       ∎
-  evalTm-sound (red-circ {Γ} {a} {b} {c} t u u') = let open EqReasoning (Tm'-setoid Γ (◇ c)) in begin
+  evalTm-sound (red-dia {Γ} {a} {b} {c} t u u') = let open EqReasoning (Tm'-setoid Γ (◇ c)) in begin
     evalTm (letin (letin t u) u')
       ≈⟨ ℱ'-beta (evalTm t) (evalTm u) (evalTm u') ⟩
     letin' (evalTm t) (evalTm u' [ ⟨ π₁'[ evalTy a ] , evalTm u ⟩' ]')
@@ -230,7 +230,7 @@ abstract
     letin' (evalTm t) (evalTm (substTm (wkSub freshWk (idₛ[ Γ ]) `, u) u'))
        ≡⟨⟩
     (evalTm (letin t (substTm (wkSub freshWk idₛ `, u) u'))) ∎
-  evalTm-sound (exp-circ {Γ} {a} t) = let open EqReasoning (Tm'-setoid Γ (◇ a)) in begin
+  evalTm-sound (exp-dia {Γ} {a} t) = let open EqReasoning (Tm'-setoid Γ (◇ a)) in begin
     evalTm t
       ≈⟨ ℱ'-eta (evalTm t) ⟩
     letin' (evalTm t) π₂'[ evalCtx Γ ]
