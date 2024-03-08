@@ -26,10 +26,10 @@ data _⟶_ : Tm Γ a → Tm Γ a → Set where
   exp-fun : (t : Tm Γ (a ⇒ b))
     → t ⟶ lam (app (wkTm freshWk t) (var zero))
 
-  red-circ : (t : Tm Γ (◯ a)) (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) c)
+  red-circ : (t : Tm Γ (◇ a)) (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) c)
     → letin (letin t u) u' ⟶ letin t (substTm (wkSub freshWk idₛ `, u) u')
 
-  exp-circ : (t : Tm Γ (◯ a))
+  exp-circ : (t : Tm Γ (◇ a))
     → t ⟶ letin t (var zero)
 
   cong-lam : {t t' : Tm (Γ `, a) b}
@@ -44,11 +44,11 @@ data _⟶_ : Tm Γ a → Tm Γ a → Set where
     → u ⟶ u'
     → app t u ⟶ app t u'
 
-  cong-letin1 : {t t' : Tm Γ (◯ a)} {u : Tm (Γ `, a) b}
+  cong-letin1 : {t t' : Tm Γ (◇ a)} {u : Tm (Γ `, a) b}
     → t ⟶ t'
     → letin t u ⟶ letin t' u
 
-  cong-letin2 : {t : Tm Γ (◯ a)} {u u' : Tm (Γ `, a) b}
+  cong-letin2 : {t : Tm Γ (◇ a)} {u u' : Tm (Γ `, a) b}
     → u ⟶ u'
     → letin t u ⟶ letin t u'
 
@@ -104,7 +104,7 @@ cong-app : {t t' : Tm Γ (a ⇒ b)} {u u' : Tm Γ  a}
   → app t u ⟶* app t' u'
 cong-app t⟶t' u⟶u' = cong-app1 t⟶t' ◅ cong-app2 u⟶u' ◅ ε
 
-cong-letin : {t t' : Tm Γ (◯ a)} {u u' : Tm (Γ `, a) b}
+cong-letin : {t t' : Tm Γ (◇ a)} {u u' : Tm (Γ `, a) b}
   → t ⟶ t' → u ⟶ u'
   → letin t u ⟶* letin t' u'
 cong-letin t⟶t' u⟶u' = cong-letin1 t⟶t' ◅ cong-letin2 u⟶u' ◅ ε
@@ -141,29 +141,29 @@ cong-app*  : {t t' : Tm Γ (a ⇒ b)} {u u' : Tm Γ  a}
   → app t u ⟶* app t' u'
 cong-app* t⟶*t' u⟶*u' = multi (cong-app1* t⟶*t') (cong-app2* u⟶*u')
 
-cong-letin*≡ :  {t t' : Tm Γ (◯ a)} {u u' : Tm (Γ `, a) b}
+cong-letin*≡ :  {t t' : Tm Γ (◇ a)} {u u' : Tm (Γ `, a) b}
   → t ⟶* t'
   → u ≡ u'
   → letin t u ⟶* letin t' u'
 cong-letin*≡ t⟶*t' refl = cong-⟶-to-cong-⟶* cong-letin1 t⟶*t'
 
-cong-letin1* :  {t t' : Tm Γ (◯ a)} {u  : Tm (Γ `, a) b}
+cong-letin1* :  {t t' : Tm Γ (◇ a)} {u  : Tm (Γ `, a) b}
   → t ⟶* t'
   → letin t u ⟶* letin t' u
 cong-letin1* t⟶*t' = cong-letin*≡ t⟶*t' refl
 
-cong-letin≡* :  {t t' : Tm Γ (◯ a)} {u u' : Tm (Γ `, a) b}
+cong-letin≡* :  {t t' : Tm Γ (◇ a)} {u u' : Tm (Γ `, a) b}
   → t ≡ t'
   → u ⟶* u'
   → letin t u ⟶* letin t' u'
 cong-letin≡* refl u⟶*u' = cong-⟶-to-cong-⟶* cong-letin2 u⟶*u'
 
-cong-letin2* :  {t : Tm Γ (◯ a)} {u u' : Tm (Γ `, a) b}
+cong-letin2* :  {t : Tm Γ (◇ a)} {u u' : Tm (Γ `, a) b}
   → u ⟶* u'
   → letin t u ⟶* letin t u'
 cong-letin2* u⟶*u' = cong-letin≡* refl u⟶*u'
 
-cong-letin*  :  {t t' : Tm Γ (◯ a)} {u u' : Tm (Γ `, a) b}
+cong-letin*  :  {t t' : Tm Γ (◇ a)} {u u' : Tm (Γ `, a) b}
   → t ⟶* t' → u ⟶* u'
   → letin t u ⟶* letin t' u'
 cong-letin* t⟶*t' u⟶*u' = multi (cong-letin1* t⟶*t') (cong-letin2* u⟶*u')

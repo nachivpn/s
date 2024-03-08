@@ -17,7 +17,7 @@ data Ne where
 data Nf where
   up    : Ne Γ ι → Nf Γ ι
   lam   : Nf (Γ `, a) b → Nf Γ (a ⇒ b)
-  letin : Ne Γ (◯ a) → Nf (Γ `, a) b → Nf Γ (◯ b)
+  letin : Ne Γ (◇ a) → Nf (Γ `, a) b → Nf Γ (◇ b)
 
 embNe : Ne Γ a → Tm Γ a
 embNf : Nf Γ a → Tm Γ a

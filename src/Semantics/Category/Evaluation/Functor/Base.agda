@@ -10,15 +10,15 @@ module Semantics.Category.Evaluation.Functor.Base
   (𝒞             : Category)
   (𝒞-is-CC       : IsCartesian 𝒞)
   (𝒞-is-CCC      : IsCartesianClosed 𝒞 𝒞-is-CC)
-  (◯'            : EndoFunctor 𝒞)
-  (◯'-is-strong  : StrongFunctor 𝒞-is-CC ◯')
+  (◇'            : EndoFunctor 𝒞)
+  (◇'-is-strong  : StrongFunctor 𝒞-is-CC ◇')
   where
 
 open Category 𝒞
 open IsCartesian 𝒞-is-CC
 open IsCartesianClosed 𝒞-is-CCC
-open EndoFunctor ◯' renaming (◯'_ to ◯'₀_)
-open StrongFunctor ◯'-is-strong
+open EndoFunctor ◇' renaming (ℱ'_ to ℱ'₀_)
+open StrongFunctor ◇'-is-strong
 
 Ty'  = Obj
 Ctx' = Obj
@@ -35,7 +35,7 @@ module Eval (ι' : Ty') where
   evalTy : (a : Ty) → Ty'
   evalTy ι       = ι'
   evalTy (a ⇒ b) = evalTy a ⇒' evalTy b
-  evalTy (◯ a)   = ◯'₀ evalTy a
+  evalTy (◇ a)   = ℱ'₀ evalTy a
 
   evalCtx : (Γ : Ctx) → Ty'
   evalCtx []       = []'

@@ -22,10 +22,10 @@ data Tm : Ctx → Ty → Set where
          ------------------
        → Tm Γ b
 
-  letin : (t : Tm Γ (◯ a))
+  letin : (t : Tm Γ (◇ a))
         → (u : Tm (Γ `, a) b)
           ------------------
-        → Tm Γ (◯ b)
+        → Tm Γ (◇ b)
 
 variable
   t t' t'' t''' : Tm Γ a

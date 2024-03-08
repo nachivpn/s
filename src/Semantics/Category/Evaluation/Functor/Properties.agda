@@ -14,16 +14,16 @@ module Semantics.Category.Evaluation.Functor.Properties
   (𝒞             : Category)
   (𝒞-is-CC       : IsCartesian 𝒞)
   (𝒞-is-CCC      : IsCartesianClosed 𝒞 𝒞-is-CC)
-  (◯'            : EndoFunctor 𝒞)
-  (◯'-is-strong  : StrongFunctor 𝒞-is-CC ◯')
+  (ℱ'            : EndoFunctor 𝒞)
+  (ℱ'-is-strong  : StrongFunctor 𝒞-is-CC ℱ')
   (ι'            : Category.Obj 𝒞)
   where
 
 open Category 𝒞
 open IsCartesian 𝒞-is-CC
 open IsCartesianClosed 𝒞-is-CCC
-open EndoFunctor ◯'
-open StrongFunctor ◯'-is-strong
+open EndoFunctor ℱ'
+open StrongFunctor ℱ'-is-strong
 
 Ty'  = Obj
 Ctx' = Obj
@@ -38,7 +38,7 @@ open import Functor.Term
 open import Functor.Term.Reduction
 
 open import Semantics.Category.Evaluation.Functor.Base
-   𝒞 𝒞-is-CC 𝒞-is-CCC ◯' ◯'-is-strong
+   𝒞 𝒞-is-CC 𝒞-is-CCC ℱ' ℱ'-is-strong
   renaming (module Eval to FunctorBaseEval)
 
 open FunctorBaseEval ι'
@@ -216,9 +216,9 @@ abstract
       ≈˘⟨ lam'-pres-≈̇ (app'-pres-≈̇-left (evalTm-pres-∘' freshWk t) π₂'[ evalCtx Γ ]) ⟩
     evalTm (lam (app (wkTm freshWk t) (var zero)))
       ∎
-  evalTm-sound (red-circ {Γ} {a} {b} {c} t u u') = let open EqReasoning (Tm'-setoid Γ (◯ c)) in begin
+  evalTm-sound (red-circ {Γ} {a} {b} {c} t u u') = let open EqReasoning (Tm'-setoid Γ (◇ c)) in begin
     evalTm (letin (letin t u) u')
-      ≈⟨ ◯'-beta (evalTm t) (evalTm u) (evalTm u') ⟩
+      ≈⟨ ℱ'-beta (evalTm t) (evalTm u) (evalTm u') ⟩
     letin' (evalTm t) (evalTm u' [ ⟨ π₁'[ evalTy a ] , evalTm u ⟩' ]')
       ≈˘⟨ letin'-pres-≈̇-right (evalTm t) (∘-pres-≈̇-right (evalTm u') (⟨,⟩'-pres-≈̇-left (id'-unit-left (evalCtx Γ) π₁'[ evalTy a ]) (evalTm u))) ⟩
     letin' (evalTm t) (evalTm u' [ ⟨ id' ∘ π₁'[ evalTy a ] , evalTm u ⟩' ]' )
@@ -230,9 +230,9 @@ abstract
     letin' (evalTm t) (evalTm (substTm (wkSub freshWk (idₛ[ Γ ]) `, u) u'))
        ≡⟨⟩
     (evalTm (letin t (substTm (wkSub freshWk idₛ `, u) u'))) ∎
-  evalTm-sound (exp-circ {Γ} {a} t) = let open EqReasoning (Tm'-setoid Γ (◯ a)) in begin
+  evalTm-sound (exp-circ {Γ} {a} t) = let open EqReasoning (Tm'-setoid Γ (◇ a)) in begin
     evalTm t
-      ≈⟨ ◯'-eta (evalTm t) ⟩
+      ≈⟨ ℱ'-eta (evalTm t) ⟩
     letin' (evalTm t) π₂'[ evalCtx Γ ]
       ≡⟨⟩
     evalTm (letin t (var zero))
