@@ -21,7 +21,7 @@ open import Functor.Term.NormalForm.Properties
 open import Semantics.Kripke.Frame
 
 data _⊲_ : Ctx → Ctx → Set where
-  single : Ne Γ (◯ a) → Γ ⊲ (Γ `, a)
+  single : Ne Γ (◇ a) → Γ ⊲ (Γ `, a)
 
 factor : Γ ⊆ Γ' → Γ ⊲ Δ → ∃ (λ Δ' → (Γ' ⊲ Δ') ∧ Δ ⊆ Δ')
 factor w (single n) = _ , (single (wkNe w n) , keep w)
@@ -107,21 +107,21 @@ Sub' Γ Δ = Sub'- Δ ₀ Γ
 eval : Tm Γ a → (Sub'- Γ →̇ Tm'- a)
 eval = evalTm
 
-register : Ne'- (◯ a) →̇ ◇' (Ne'- a)
+register : Ne'- (◇ a) →̇ ◇' (Ne'- a)
 register = record
   { fun     = λ p    → elem (_ , (single p , var zero))
   ; pres-≋  = λ p≋p' → proof (refl , cong single p≋p' , refl)
   ; natural = λ w p  → proof (refl , (refl , refl))
   }
 
-collect : ◇' (Nf'- a) →̇ Nf'- (◯ a)
+collect : ◇' (Nf'- a) →̇ Nf'- (◇ a)
 collect = record
   { fun     = collect-fun
   ; pres-≋  = collect-fun-pres-≋
   ; natural = collect-natural
   }
   where
-  collect-fun : (◇' Nf'- a) ₀ Γ → Nf'- (◯ a) ₀ Γ
+  collect-fun : (◇' Nf'- a) ₀ Γ → Nf'- (◇ a) ₀ Γ
   collect-fun (elem (Δ , (single n) , m))= letin n m
 
   collect-fun-pres-≋ : {p p' : (◇' Nf'- a) ₀ Γ} (p≋p' : ≋[]-syntax (◇' Nf'- a) p p')
@@ -129,7 +129,7 @@ collect = record
   collect-fun-pres-≋ (proof (refl , refl , refl)) = refl
 
   collect-natural : (w : Γ ⊆ Δ) (p : (◇' Nf'- a) ₀ Γ)
-    → wk[ Nf'- (◯ a) ] w (collect-fun p) ≡ collect-fun (wk[ ◇' Nf'- a ] w p)
+    → wk[ Nf'- (◇ a) ] w (collect-fun p) ≡ collect-fun (wk[ ◇' Nf'- a ] w p)
   collect-natural w (elem (Δ , (single n) , m)) = refl
 
 module _ where
@@ -154,11 +154,11 @@ module _ where
       reflect-fun b (app (wkNe w' (wkNe w n)) (reify-fun a (wk[ evalTy a ] w' p)))  ≡⟨ cong (λ n → reflect-fun b (app n _)) (wkNe-pres-⊆-trans w w' n) ⟩
       reflect-fun b (app (wkNe (w ∙ w') n) (reify-fun a (wk[ evalTy a ] w' p)))     ∎
     }
-  reflect-fun {Γ = Γ} (◯ a)   n = (◇'-map (reflect a) ∘ register) .apply n
+  reflect-fun {Γ = Γ} (◇ a)   n = (◇'-map (reflect a) ∘ register) .apply n
   
   reify-fun ι         n  = up  n
   reify-fun (a ⇒ b)   f  = lam (reify-fun b (f .apply freshWk (reflect-fun a (var zero))))
-  reify-fun (◯ a)     x  = (collect ∘ ◇'-map (reify a)) .apply x
+  reify-fun (◇ a)     x  = (collect ∘ ◇'-map (reify a)) .apply x
   
   reflect-pres-≋  = λ a n≡n' → ≋[ evalTy a ]-reflexive (cong (reflect-fun a) n≡n')
 
@@ -173,11 +173,11 @@ module _ where
          ≡⟨⟩
        reflect-fun (a ⇒ b) (wkNe w n) .apply w' p ∎
     }
-  reflect-natural (◯ a) w n = (◇'-map (reflect a) ∘ register) .natural w n
+  reflect-natural (◇ a) w n = (◇'-map (reflect a) ∘ register) .natural w n
   
   reify-pres-≋ ι       x≋x' = cong up  x≋x'
   reify-pres-≋ (a ⇒ b) x≋x' = cong lam (reify-pres-≋ b (x≋x' .pw freshWk[ _ , a ] _))
-  reify-pres-≋ (◯ a)   x≋x' = (collect ∘ ◇'-map (reify a)) ._→̇_.pres-≋ x≋x'
+  reify-pres-≋ (◇ a)   x≋x' = (collect ∘ ◇'-map (reify a)) ._→̇_.pres-≋ x≋x'
 
   reify-natural ι       w x = refl
   reify-natural (a ⇒ b) w x = let open ≡-Reasoning in begin
@@ -194,7 +194,7 @@ module _ where
     lam (reify-fun b (x .apply (w ∙ freshWk[ _ , a ]) _))
       ≡⟨⟩
     reify-fun (a ⇒ b) (wk[ evalTy (a ⇒ b) ] w x) ∎
-  reify-natural (◯ a)   w x = (collect ∘ ◇'-map (reify a)) .natural w x 
+  reify-natural (◇ a)   w x = (collect ∘ ◇'-map (reify a)) .natural w x 
 
   --
   -- TODO: pull these record instances out of the grand mutual recursion
