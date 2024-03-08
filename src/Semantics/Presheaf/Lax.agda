@@ -124,7 +124,7 @@ syntax ◯'-≋[]-syn 𝒫 x y = x ◯'-≋[ 𝒫 ] y
         (◇'-map t) .apply (wk[ ◇' 𝒫 ] w' (p .apply-◯ w))
           ≈⟨ (◇'-map t) .apply-≋ (p .natural w w') ⟩
         (◇'-map t) .apply (p .apply-◯ (⊆-trans w w')) ∎ }
-    ; pres-≋  = λ p≋p' → proof λ w → ◇'-map-fun-pres-≋ t (p≋p' .pw w)
+    ; pres-≋  = λ p≋p' → proof λ w → (◇'-map t) .apply-≋ (p≋p' .pw w)
     ; natural = λ w p → proof λ w' → ≋[ ◇' 𝒬 ]-refl
     }
 

@@ -56,11 +56,10 @@ factor-pres-R-to-⊆ w (single m) = freshWk-natural w
 IMF : InclusiveMFrame MF
 IMF = record { R-to-⊆ = ⊲-to-⊆ ; factor-pres-R-to-⊆ = factor-pres-R-to-⊆ }
 
-open import Semantics.Presheaf.Base 𝒲
-open import Semantics.Presheaf.CartesianClosure 𝒲
-open import Semantics.Presheaf.Possibility MF
-open import Semantics.Presheaf.Strong MF IMF
-
+open import Semantics.Presheaf.Base 𝒲 public
+open import Semantics.Presheaf.CartesianClosure 𝒲 public
+open import Semantics.Presheaf.Possibility MF public
+open import Semantics.Presheaf.Strong MF IMF public
 
 Ne'- : Ty → Psh
 Ne'- a = record
@@ -107,41 +106,44 @@ Sub' Γ Δ = Sub'- Δ ₀ Γ
 eval : Tm Γ a → (Sub'- Γ →̇ Tm'- a)
 eval = evalTm
 
+register-fun : Ne Γ (◇ a) → ◇' (Ne'- a) ₀ Γ
+register-fun n = elem (_ , single n , var zero)
+
+register-natural : Natural (Ne'- (◇ a)) (◇' (Ne'- a)) register-fun 
+register-natural w p = proof (refl , (refl , refl))
+
 register : Ne'- (◇ a) →̇ ◇' (Ne'- a)
 register = record
-  { fun     = λ p    → elem (_ , (single p , var zero))
-  ; pres-≋  = λ p≋p' → proof (refl , cong single p≋p' , refl)
-  ; natural = λ w p  → proof (refl , (refl , refl))
+  { fun     = register-fun
+  ; pres-≋  = λ p≋p' → proof (refl , cong single p≋p' , refl) 
+  ; natural = register-natural
   }
+
+collect-fun : (◇' Nf'- a) ₀ Γ → Nf'- (◇ a) ₀ Γ
+collect-fun (elem (Δ , (single n) , m))= letin n m
+
+collect-pres-≋ : Pres-≋ (◇' (Nf'- a)) (Nf'- (◇ a)) collect-fun 
+collect-pres-≋ (proof (refl , refl , refl)) = refl
+
+collect-natural : Natural (◇' (Nf'- a)) (Nf'- (◇ a)) collect-fun
+collect-natural w (elem (Δ , (single n) , m)) = refl
 
 collect : ◇' (Nf'- a) →̇ Nf'- (◇ a)
 collect = record
   { fun     = collect-fun
-  ; pres-≋  = collect-fun-pres-≋
+  ; pres-≋  = collect-pres-≋
   ; natural = collect-natural
   }
-  where
-  collect-fun : (◇' Nf'- a) ₀ Γ → Nf'- (◇ a) ₀ Γ
-  collect-fun (elem (Δ , (single n) , m))= letin n m
-
-  collect-fun-pres-≋ : {p p' : (◇' Nf'- a) ₀ Γ} (p≋p' : ≋[]-syntax (◇' Nf'- a) p p')
-    → (collect-fun p) ≡ (collect-fun p')
-  collect-fun-pres-≋ (proof (refl , refl , refl)) = refl
-
-  collect-natural : (w : Γ ⊆ Δ) (p : (◇' Nf'- a) ₀ Γ)
-    → wk[ Nf'- (◇ a) ] w (collect-fun p) ≡ collect-fun (wk[ ◇' Nf'- a ] w p)
-  collect-natural w (elem (Δ , (single n) , m)) = refl
 
 module _ where
-  reflect         : (a : Ty) → Ne'- a →̇ Tm'- a
-  reflect-fun     : (a : Ty) → (n : Ne  Γ a) → Tm' Γ a
-  reflect-pres-≋  : (a : Ty) {n n' : Ne Γ a} (n≡n' : n ≡ n') → reflect-fun a n ≋[ evalTy a ] reflect-fun a n'
-  reflect-natural : (a : Ty) (w : Γ ⊆ Γ') (n : Ne Γ a) → wk[ evalTy a ] w (reflect-fun a n) ≋[ evalTy a ] reflect-fun a (wkNe w n)
 
-  reify         : (a : Ty) → Tm'- a →̇ Nf'- a
-  reify-fun     : (a : Ty) → (x : Tm' Γ a) → Nf Γ a
-  reify-pres-≋  : (a : Ty) {x x' : Tm' Γ a} (x≋x' : x ≋[ evalTy a ] x') → reify-fun a x ≡ reify-fun a x'
-  reify-natural : (a : Ty) (w : Γ ⊆ Γ') (x : Tm' Γ a) → wkNf w (reify-fun a x) ≡ reify-fun a (wk[ evalTy a ] w x)
+  reflect-fun     : (a : Ty) → Ne  Γ a → Tm' Γ a
+  reflect-pres-≋  : (a : Ty) → Pres-≋ (Ne'- a) (Tm'- a) (reflect-fun a)
+  reflect-natural : (a : Ty) → Natural (Ne'- a) (Tm'- a) (reflect-fun a)
+
+  reify-fun     : (a : Ty) → Tm' Γ a → Nf Γ a
+  reify-pres-≋  : (a : Ty) → Pres-≋ (Tm'- a) (Nf'- a) (reify-fun a)
+  reify-natural : (a : Ty) → Natural (Tm'- a) (Nf'- a) (reify-fun a)
 
   reflect-fun ι       n = n
   reflect-fun (a ⇒ b) n = record
@@ -154,11 +156,11 @@ module _ where
       reflect-fun b (app (wkNe w' (wkNe w n)) (reify-fun a (wk[ evalTy a ] w' p)))  ≡⟨ cong (λ n → reflect-fun b (app n _)) (wkNe-pres-⊆-trans w w' n) ⟩
       reflect-fun b (app (wkNe (w ∙ w') n) (reify-fun a (wk[ evalTy a ] w' p)))     ∎
     }
-  reflect-fun {Γ = Γ} (◇ a)   n = (◇'-map (reflect a) ∘ register) .apply n
+  reflect-fun (◇ a)   n = ◇'-map-fun (reflect-fun a) (register-fun n)
   
   reify-fun ι         n  = up  n
   reify-fun (a ⇒ b)   f  = lam (reify-fun b (f .apply freshWk (reflect-fun a (var zero))))
-  reify-fun (◇ a)     x  = (collect ∘ ◇'-map (reify a)) .apply x
+  reify-fun (◇ a)     x  = collect-fun (◇'-map-fun (reify-fun a) x)
   
   reflect-pres-≋  = λ a n≡n' → ≋[ evalTy a ]-reflexive (cong (reflect-fun a) n≡n')
 
@@ -173,11 +175,11 @@ module _ where
          ≡⟨⟩
        reflect-fun (a ⇒ b) (wkNe w n) .apply w' p ∎
     }
-  reflect-natural (◇ a) w n = (◇'-map (reflect a) ∘ register) .natural w n
+  reflect-natural (◇ a) w n = ◇'-map-natural (reflect-natural a) w (register-fun n) 
   
   reify-pres-≋ ι       x≋x' = cong up  x≋x'
   reify-pres-≋ (a ⇒ b) x≋x' = cong lam (reify-pres-≋ b (x≋x' .pw freshWk[ _ , a ] _))
-  reify-pres-≋ (◇ a)   x≋x' = (collect ∘ ◇'-map (reify a)) ._→̇_.pres-≋ x≋x'
+  reify-pres-≋ (◇ a)   x≋x' = collect-pres-≋ (◇'-map-fun-pres-≋ (reify-pres-≋ a) x≋x')
 
   reify-natural ι       w x = refl
   reify-natural (a ⇒ b) w x = let open ≡-Reasoning in begin
@@ -194,23 +196,30 @@ module _ where
     lam (reify-fun b (x .apply (w ∙ freshWk[ _ , a ]) _))
       ≡⟨⟩
     reify-fun (a ⇒ b) (wk[ evalTy (a ⇒ b) ] w x) ∎
-  reify-natural (◇ a)   w x = (collect ∘ ◇'-map (reify a)) .natural w x 
+  reify-natural (◇ a)   w x = let open ≡-Reasoning in begin
+    wk[ Nf'- (◇ a) ] w (reify-fun (◇ a) x)
+      ≡⟨⟩
+    wk[ Nf'- (◇ a) ] w (collect-fun (◇'-map-fun (reify-fun a) x))
+      ≡⟨ collect-natural w (◇'-map-fun (reify-fun a) x) ⟩
+    collect-fun (wk[ ◇' Nf'- a ] w (◇'-map-fun (reify-fun a) x))
+      ≡⟨ collect-pres-≋ (◇'-map-natural (reify-natural a) w x) ⟩
+    collect-fun (◇'-map-fun (reify-fun a) (wk[ Tm'- (◇ a) ] w x))
+      ≡⟨⟩
+    reify-fun (◇ a) (wk[ Tm'- (◇ a) ] w x) ∎ 
 
-  --
-  -- TODO: pull these record instances out of the grand mutual recursion
-  --
-  
-  reflect a = record
-    { fun     = reflect-fun a
-    ; pres-≋  = reflect-pres-≋ a
-    ; natural = reflect-natural a
-    }
+reflect : (a : Ty) → Ne'- a →̇ Tm'- a
+reflect a = record
+  { fun     = reflect-fun a
+  ; pres-≋  = reflect-pres-≋ a
+  ; natural = reflect-natural a
+  }
 
-  reify a = record
-    { fun     = reify-fun a
-    ; pres-≋  = reify-pres-≋ a
-    ; natural = reify-natural a
-    }
+reify : (a : Ty) → Tm'- a →̇ Nf'- a
+reify a = record
+  { fun     = reify-fun a
+  ; pres-≋  = reify-pres-≋ a
+  ; natural = reify-natural a
+  }
 
 -- monotonicity lemma
 wkTm' : (a : Ty) → (w : Γ ⊆ Γ') → (x : Tm' Γ a) → Tm' Γ' a

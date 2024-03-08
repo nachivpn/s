@@ -101,25 +101,24 @@ syntax ◇'-≋[]-syn 𝒫 x y = x ◇'-≋[ 𝒫 ] y
 -- ◇' is a presheaf functor
 ---------------------------
 
-◇'-map-fun : (t : 𝒫 →̇ 𝒬) → ({w : C} → ◇'-Fam 𝒫 w → ◇'-Fam 𝒬 w)
-◇'-map-fun t (elem (v , r , p)) = elem (v , r , t .apply p)
+◇'-map-fun : (f : {w : C} → 𝒫 ₀ w → 𝒬 ₀ w) → ({w : C} → ◇'-Fam 𝒫 w → ◇'-Fam 𝒬 w)
+◇'-map-fun f (elem (v , r , p)) = elem (v , r , f p)
 
 abstract
-    ◇'-map-fun-pres-≋ : (t : 𝒫 →̇ 𝒬) → {p p' : ◇'-Fam 𝒫 w} → p ◇'-≋ p' → (◇'-map-fun t p) ◇'-≋ (◇'-map-fun t p')
-    ◇'-map-fun-pres-≋ t (proof (≡-refl , ≡-refl , p≋p')) = proof (≡-refl , ≡-refl , t .apply-≋ p≋p')
+  ◇'-map-fun-pres-≋ : {f : {w : C} → 𝒫 ₀ w → 𝒬 ₀ w} (f-pres-≋ : Pres-≋ 𝒫 𝒬 f) → Pres-≋ (◇' 𝒫) (◇' 𝒬) (◇'-map-fun f)
+  ◇'-map-fun-pres-≋ f-pres-≋ (proof (≡-refl , ≡-refl , p≋p')) = proof (≡-refl , ≡-refl , f-pres-≋ p≋p')
 
-    ◇'-map-fun-pres-≈̇ : {t t' : 𝒫 →̇ 𝒬} → t ≈̇ t' → (p : ◇'-Fam 𝒫 w) → ◇'-map-fun t p ◇'-≋ ◇'-map-fun t' p
-    ◇'-map-fun-pres-≈̇ {𝒫} t≈̇t' (elem (v , r , p)) = proof (≡-refl , (≡-refl , apply-sq t≈̇t' ≋[ 𝒫 ]-refl))
+  ◇'-map-natural : {f : {w : C} → 𝒫 ₀ w → 𝒬 ₀ w} (f-natural : Natural 𝒫 𝒬 f) → Natural (◇' 𝒫) (◇' 𝒬) (◇'-map-fun f)
+  ◇'-map-natural f-natural w (elem (v , r , p)) = proof (≡-refl , (≡-refl , f-natural (factor⊆ w r) p))
 
-    ◇'-map-natural : (t : 𝒫 →̇ 𝒬) (i : w ⊆ v) (p : (◇' 𝒫) ₀ w)
-      → wk[ ◇' 𝒬 ] i (◇'-map-fun t p) ≋[ ◇' 𝒬 ] ◇'-map-fun t (wk[ ◇' 𝒫 ] i p)
-    ◇'-map-natural t w (elem (v , r , p)) = proof (≡-refl , (≡-refl , t .natural (factor⊆ w r) p))
-
+  ◇'-map-fun-pres-≈̇ : {t t' : 𝒫 →̇ 𝒬} → t ≈̇ t' → (p : ◇'-Fam 𝒫 w) → ◇'-map-fun (t .apply) p ◇'-≋[ 𝒬 ] ◇'-map-fun (t' .apply) p
+  ◇'-map-fun-pres-≈̇ {𝒫} t≈̇t' (elem (v , r , p)) = proof (≡-refl , (≡-refl , apply-sq t≈̇t' ≋[ 𝒫 ]-refl))
+    
 ◇'-map_ : {𝒫 𝒬 : Psh} → (t : 𝒫 →̇ 𝒬) → (◇' 𝒫 →̇ ◇' 𝒬)
 ◇'-map_ {𝒫} {𝒬} t = record
-  { fun     = ◇'-map-fun t
-  ; pres-≋  = ◇'-map-fun-pres-≋ t
-  ; natural = ◇'-map-natural t
+  { fun     = ◇'-map-fun (t .apply)
+  ; pres-≋  = ◇'-map-fun-pres-≋ (t .apply-≋) 
+  ; natural = ◇'-map-natural (t .natural) 
   }
 
 ◇'-is-PshFunctor : EndoFunctor PshCat
@@ -132,6 +131,7 @@ abstract
                     }
   where
   abstract
+
     ◇'-map-pres-≈̇ : {𝒫 𝒬 : Psh} {t t' : 𝒫 →̇ 𝒬} → t ≈̇ t' → ◇'-map t ≈̇ ◇'-map t'
     ◇'-map-pres-≈̇ t≈̇t' = record { proof = λ p → ◇'-map-fun-pres-≈̇ t≈̇t' p }
 

@@ -100,12 +100,18 @@ private
 
 syntax ≋[]-syntax 𝒫 x y = x ≋[ 𝒫 ] y
 
+Pres-≋ : (𝒫 𝒬 : Psh) → ({Γ : C} → 𝒫 ₀ Γ → 𝒬 ₀ Γ) → Set
+Pres-≋ 𝒫 𝒬 f = {Γ : C} {p p' : 𝒫 ₀ Γ} (p≋p' : p ≋[ 𝒫 ] p') → f p ≋[ 𝒬 ] f p'
+
+Natural : (𝒫 𝒬 : Psh) → ({Γ : C} → 𝒫 ₀ Γ → 𝒬 ₀ Γ) → Set
+Natural 𝒫 𝒬 f = {Γ Δ : C} (w : Γ ⊆ Δ) (p : 𝒫 ₀ Γ) → wk[ 𝒬 ] w (f p) ≋[ 𝒬 ] f (wk[ 𝒫 ] w p)
+
 record _→̇_ (𝒫 𝒬 : Psh) : Set where -- type \-> \^.
   no-eta-equality
   field
     fun     : (p : 𝒫 ₀ Γ) → 𝒬 ₀ Γ
-    pres-≋  : ∀ {p p' : 𝒫 ₀ Γ} (p≋p' : p ≋[ 𝒫 ] p') → fun p ≋[ 𝒬 ] fun p'
-    natural : ∀ (w : Γ ⊆ Δ) (p : 𝒫 ₀ Γ) → wk[ 𝒬 ] w (fun p) ≋[ 𝒬 ] fun (wk[ 𝒫 ] w p)
+    pres-≋  : Pres-≋ 𝒫 𝒬 fun
+    natural : Natural 𝒫 𝒬 fun
 
 open _→̇_ using (natural) renaming (fun to apply; pres-≋ to apply-≋) public
 
