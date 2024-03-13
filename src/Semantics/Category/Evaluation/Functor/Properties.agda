@@ -25,8 +25,9 @@ open IsCartesianClosed 𝒞-is-CCC
 open EndoFunctor ℱ'
 open StrongFunctor ℱ'-is-strong
 
-Ty'  = Obj
-Ctx' = Obj
+private
+  Ty'  = Obj
+  Ctx' = Obj
 
 open import Level using (0ℓ)
 

@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K #-}
+{-# OPTIONS --safe --without-K #-}
 
 module Functor.Norm where
 
@@ -69,7 +69,7 @@ Ne'- a = record
           ; wk            = wkNe
           ; wk-pres-≋     = λ w → cong (wkNe w)
           ; wk-pres-refl  = wkNe-pres-⊆-refl
-          ; wk-pres-trans = λ w w' n → ≡-sym (wkNe-pres-⊆-trans w w' n)
+          ; wk-pres-trans = wkNe-pres-⊆-trans
           }
 
 Nf'- : Ty → Psh
@@ -80,7 +80,7 @@ Nf'- a = record
           ; wk            = wkNf
           ; wk-pres-≋     = λ w → cong (wkNf w)
           ; wk-pres-refl  = wkNf-pres-⊆-refl
-          ; wk-pres-trans = λ w w' n → ≡-sym (wkNf-pres-⊆-trans w w' n)
+          ; wk-pres-trans = wkNf-pres-⊆-trans 
           }
 
 open import Semantics.Category.Evaluation.Functor.Base PshCat PshCat-is-CC PshCat-is-CCC ◇'-is-PshFunctor ◇'-is-strong
@@ -89,11 +89,11 @@ open import Semantics.Category.Evaluation.Functor.Properties PshCat PshCat-is-CC
 open Eval (Ne'- ι) hiding (Sub' ; Tm')
 
 -- interpretation of types
-Tm'- : (a : Ty) → Psh
-Tm'- = evalTy
+Ty'- : (a : Ty) → Psh
+Ty'- = evalTy
 
-Tm' : Ctx → Ty → Set
-Tm' Γ a = Tm'- a ₀ Γ
+Ty' : Ctx → Ty → Set
+Ty' Γ a = Ty'- a ₀ Γ
 
 -- interpretation of contexts
 Sub'- : (Γ : Ctx) → Psh
@@ -103,7 +103,7 @@ Sub' : Ctx → Ctx → Set
 Sub' Γ Δ = Sub'- Δ ₀ Γ
 
 -- interpretation of terms
-eval : Tm Γ a → (Sub'- Γ →̇ Tm'- a)
+eval : Tm Γ a → (Sub'- Γ →̇ Ty'- a)
 eval = evalTm
 
 register-fun : Ne Γ (◇ a) → ◇' (Ne'- a) ₀ Γ
@@ -119,31 +119,31 @@ register = record
   ; natural = register-natural
   }
 
-collect-fun : (◇' Nf'- a) ₀ Γ → Nf'- (◇ a) ₀ Γ
-collect-fun (elem (Δ , (single n) , m))= letin n m
+collectNf-fun : (◇' Nf'- a) ₀ Γ → Nf'- (◇ a) ₀ Γ
+collectNf-fun (elem (Δ , (single n) , m))= letin n m
 
-collect-pres-≋ : Pres-≋ (◇' (Nf'- a)) (Nf'- (◇ a)) collect-fun 
-collect-pres-≋ (proof (refl , refl , refl)) = refl
+collectNf-pres-≋ : Pres-≋ (◇' (Nf'- a)) (Nf'- (◇ a)) collectNf-fun 
+collectNf-pres-≋ (proof (refl , refl , refl)) = refl
 
-collect-natural : Natural (◇' (Nf'- a)) (Nf'- (◇ a)) collect-fun
-collect-natural w (elem (Δ , (single n) , m)) = refl
+collectNf-natural : Natural (◇' (Nf'- a)) (Nf'- (◇ a)) collectNf-fun
+collectNf-natural w (elem (Δ , (single n) , m)) = refl
 
-collect : ◇' (Nf'- a) →̇ Nf'- (◇ a)
-collect = record
-  { fun     = collect-fun
-  ; pres-≋  = collect-pres-≋
-  ; natural = collect-natural
+collectNf : ◇' (Nf'- a) →̇ Nf'- (◇ a)
+collectNf = record
+  { fun     = collectNf-fun
+  ; pres-≋  = collectNf-pres-≋
+  ; natural = collectNf-natural
   }
 
 module _ where
 
-  reflect-fun     : (a : Ty) → Ne  Γ a → Tm' Γ a
-  reflect-pres-≋  : (a : Ty) → Pres-≋ (Ne'- a) (Tm'- a) (reflect-fun a)
-  reflect-natural : (a : Ty) → Natural (Ne'- a) (Tm'- a) (reflect-fun a)
+  reflect-fun     : (a : Ty) → Ne  Γ a → Ty' Γ a
+  reflect-pres-≋  : (a : Ty) → Pres-≋ (Ne'- a) (Ty'- a) (reflect-fun a)
+  reflect-natural : (a : Ty) → Natural (Ne'- a) (Ty'- a) (reflect-fun a)
 
-  reify-fun     : (a : Ty) → Tm' Γ a → Nf Γ a
-  reify-pres-≋  : (a : Ty) → Pres-≋ (Tm'- a) (Nf'- a) (reify-fun a)
-  reify-natural : (a : Ty) → Natural (Tm'- a) (Nf'- a) (reify-fun a)
+  reify-fun     : (a : Ty) → Ty' Γ a → Nf Γ a
+  reify-pres-≋  : (a : Ty) → Pres-≋ (Ty'- a) (Nf'- a) (reify-fun a)
+  reify-natural : (a : Ty) → Natural (Ty'- a) (Nf'- a) (reify-fun a)
 
   reflect-fun ι       n = n
   reflect-fun (a ⇒ b) n = record
@@ -153,14 +153,14 @@ module _ where
       wk[ evalTy b ] w' (reflect-fun b (app (wkNe w n) (reify-fun a p)))            ≈⟨ reflect-natural b w' _ ⟩
       reflect-fun b (wkNe w' (app (wkNe w n) (reify-fun a p)))                      ≡⟨⟩
       reflect-fun b (app (wkNe w' (wkNe w n)) (wkNf w' (reify-fun a p)))            ≡⟨ cong (λ m → reflect-fun b (app _ m)) (reify-natural a w' p) ⟩
-      reflect-fun b (app (wkNe w' (wkNe w n)) (reify-fun a (wk[ evalTy a ] w' p)))  ≡⟨ cong (λ n → reflect-fun b (app n _)) (wkNe-pres-⊆-trans w w' n) ⟩
+      reflect-fun b (app (wkNe w' (wkNe w n)) (reify-fun a (wk[ evalTy a ] w' p)))  ≡⟨ cong (λ n → reflect-fun b (app n _)) (≡-sym (wkNe-pres-⊆-trans w w' n)) ⟩
       reflect-fun b (app (wkNe (w ∙ w') n) (reify-fun a (wk[ evalTy a ] w' p)))     ∎
     }
   reflect-fun (◇ a)   n = ◇'-map-fun (reflect-fun a) (register-fun n)
   
   reify-fun ι         n  = up  n
   reify-fun (a ⇒ b)   f  = lam (reify-fun b (f .apply freshWk (reflect-fun a (var zero))))
-  reify-fun (◇ a)     x  = collect-fun (◇'-map-fun (reify-fun a) x)
+  reify-fun (◇ a)     x  = collectNf-fun (◇'-map-fun (reify-fun a) x)
   
   reflect-pres-≋  = λ a n≡n' → ≋[ evalTy a ]-reflexive (cong (reflect-fun a) n≡n')
 
@@ -170,7 +170,7 @@ module _ where
        wk[ evalTy (a ⇒ b) ] w (reflect-fun (a ⇒ b) n) .apply w' p
           ≡⟨⟩
        reflect-fun b (app (wkNe (w ∙ w') n) (reify-fun a p))
-         ≡˘⟨ cong (λ n → reflect-fun b (app n (reify-fun a p))) (wkNe-pres-⊆-trans w w' n) ⟩
+         ≡˘⟨ cong (λ n → reflect-fun b (app n (reify-fun a p))) (≡-sym (wkNe-pres-⊆-trans w w' n)) ⟩
        reflect-fun b (app (wkNe w' (wkNe w n)) (reify-fun a p))
          ≡⟨⟩
        reflect-fun (a ⇒ b) (wkNe w n) .apply w' p ∎
@@ -179,7 +179,7 @@ module _ where
   
   reify-pres-≋ ι       x≋x' = cong up  x≋x'
   reify-pres-≋ (a ⇒ b) x≋x' = cong lam (reify-pres-≋ b (x≋x' .pw freshWk[ _ , a ] _))
-  reify-pres-≋ (◇ a)   x≋x' = collect-pres-≋ (◇'-map-fun-pres-≋ (reify-pres-≋ a) x≋x')
+  reify-pres-≋ (◇ a)   x≋x' = collectNf-pres-≋ (◇'-map-fun-pres-≋ (reify-pres-≋ a) x≋x')
 
   reify-natural ι       w x = refl
   reify-natural (a ⇒ b) w x = let open ≡-Reasoning in begin
@@ -199,22 +199,22 @@ module _ where
   reify-natural (◇ a)   w x = let open ≡-Reasoning in begin
     wk[ Nf'- (◇ a) ] w (reify-fun (◇ a) x)
       ≡⟨⟩
-    wk[ Nf'- (◇ a) ] w (collect-fun (◇'-map-fun (reify-fun a) x))
-      ≡⟨ collect-natural w (◇'-map-fun (reify-fun a) x) ⟩
-    collect-fun (wk[ ◇' Nf'- a ] w (◇'-map-fun (reify-fun a) x))
-      ≡⟨ collect-pres-≋ (◇'-map-natural (reify-natural a) w x) ⟩
-    collect-fun (◇'-map-fun (reify-fun a) (wk[ Tm'- (◇ a) ] w x))
+    wk[ Nf'- (◇ a) ] w (collectNf-fun (◇'-map-fun (reify-fun a) x))
+      ≡⟨ collectNf-natural w (◇'-map-fun (reify-fun a) x) ⟩
+    collectNf-fun (wk[ ◇' Nf'- a ] w (◇'-map-fun (reify-fun a) x))
+      ≡⟨ collectNf-pres-≋ (◇'-map-natural (reify-natural a) w x) ⟩
+    collectNf-fun (◇'-map-fun (reify-fun a) (wk[ Ty'- (◇ a) ] w x))
       ≡⟨⟩
-    reify-fun (◇ a) (wk[ Tm'- (◇ a) ] w x) ∎ 
+    reify-fun (◇ a) (wk[ Ty'- (◇ a) ] w x) ∎ 
 
-reflect : (a : Ty) → Ne'- a →̇ Tm'- a
+reflect : (a : Ty) → Ne'- a →̇ Ty'- a
 reflect a = record
   { fun     = reflect-fun a
   ; pres-≋  = reflect-pres-≋ a
   ; natural = reflect-natural a
   }
 
-reify : (a : Ty) → Tm'- a →̇ Nf'- a
+reify : (a : Ty) → Ty'- a →̇ Nf'- a
 reify a = record
   { fun     = reify-fun a
   ; pres-≋  = reify-pres-≋ a
@@ -222,8 +222,8 @@ reify a = record
   }
 
 -- monotonicity lemma
-wkTm' : (a : Ty) → (w : Γ ⊆ Γ') → (x : Tm' Γ a) → Tm' Γ' a
-wkTm' a = wk[ evalTy a ]
+wkTy' : (a : Ty) → (w : Γ ⊆ Γ') → (x : Ty' Γ a) → Ty' Γ' a
+wkTy' a = wk[ evalTy a ]
 
 -- monotonicity lemma
 wkSub' : (Δ : Ctx) → (w : Γ ⊆ Γ') → (ρ : Sub' Γ Δ) → Sub' Γ' Δ
@@ -235,7 +235,7 @@ idEnv []       = _
 idEnv (Γ `, a) = elem (wkSub' Γ freshWk (idEnv Γ) , reflect a .apply (var zero))
 
 -- retraction of interpretation
-quot : Sub'- Γ →̇ Tm'- a → Nf Γ a
+quot : Sub'- Γ →̇ Ty'- a → Nf Γ a
 quot {Γ} {a} f = reify a .apply (f .apply (idEnv Γ))
 
 -- normalization function

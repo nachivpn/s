@@ -2,7 +2,7 @@
 module Functor.Term.NormalForm.Properties where
 
 open import Functor.Term.Base
-open import Functor.Term.NormalForm
+open import Functor.Term.NormalForm.Base
 
 open import Relation.Binary.PropositionalEquality
   using (_≡_ ; refl ; trans ; subst₂ ; cong ; cong₂ ; module ≡-Reasoning)
@@ -16,17 +16,17 @@ open import Relation.Binary.PropositionalEquality
 
 -- the mutual brothers normal forms and neutrals who,
 -- as always, must be handled (mutually) together
-nat-embNe : (w : Γ ⊆ Γ') (n : Ne Γ a)
-  → wkTm w (embNe n) ≡ embNe (wkNe w n)
-nat-embNf : (w : Γ ⊆ Γ') (n : Nf Γ a)
-  → wkTm w (embNf n) ≡ embNf (wkNf w n)
+embNe-nat : (w : Γ ⊆ Γ') (n : Ne Γ a)
+  → wkTm w (embNe-fun n) ≡ embNe-fun (wkNe w n)
+embNf-nat : (w : Γ ⊆ Γ') (n : Nf Γ a)
+  → wkTm w (embNf-fun n) ≡ embNf-fun (wkNf w n)
 
-nat-embNf w (up  n)     = nat-embNe w n
-nat-embNf w (lam n)     = cong lam (nat-embNf (keep w) n)
-nat-embNf w (letin n m) = cong₂ letin (nat-embNe w n) (nat-embNf (keep w) m)
+embNf-nat w (up  n)     = embNe-nat w n
+embNf-nat w (lam n)     = cong lam (embNf-nat (keep w) n)
+embNf-nat w (letin n m) = cong₂ letin (embNe-nat w n) (embNf-nat (keep w) m)
 
-nat-embNe w (var   v)   = refl
-nat-embNe w (app   n m) = cong₂ app   (nat-embNe w n) (nat-embNf w m)
+embNe-nat w (var   v)   = refl
+embNe-nat w (app   n m) = cong₂ app   (embNe-nat w n) (embNf-nat w m)
 
 wkNe-pres-⊆-refl : (n : Ne Γ a) → wkNe ⊆-refl n ≡ n
 wkNf-pres-⊆-refl : (n : Nf Γ a) → wkNf ⊆-refl n ≡ n
@@ -39,9 +39,9 @@ wkNf-pres-⊆-refl (lam n)     = cong lam (wkNf-pres-⊆-refl n)
 wkNf-pres-⊆-refl (letin n m) = cong₂ letin (wkNe-pres-⊆-refl n) (wkNf-pres-⊆-refl m)
 
 wkNe-pres-⊆-trans : (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') (n : Ne Γ a)
-  → wkNe w' (wkNe w n) ≡ wkNe (w ∙ w') n
+  → wkNe (w ∙ w') n ≡ wkNe w' (wkNe w n)
 wkNf-pres-⊆-trans : (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') (n : Nf Γ a)
-  → wkNf w' (wkNf w n) ≡ wkNf (w ∙ w') n
+  → wkNf (w ∙ w') n ≡ wkNf w' (wkNf w n)
 
 wkNe-pres-⊆-trans w w' (var v)   = cong var (wkVar-pres-⊆-trans w w' v)
 wkNe-pres-⊆-trans w w' (app n m) = cong₂ app (wkNe-pres-⊆-trans  w w' n) (wkNf-pres-⊆-trans w w' m)

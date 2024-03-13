@@ -1,11 +1,10 @@
 {-# OPTIONS --safe --without-K #-}
-module Context.Properties where
+module Context.Properties (Ty : Set) where
 
 open import Relation.Binary.PropositionalEquality
   using    (_≡_ ; refl ; cong ; cong₂ ; module ≡-Reasoning)
   renaming (sym to ≡-sym ; trans to ≡-trans ; isEquivalence to ≡-equiv)
   
-open import Type using (Ty)
 open import Context.Base Ty
 
 open import Semantics.Kripke.Frame
@@ -48,7 +47,7 @@ wkVar-pres-⊆-refl v0       = refl
 wkVar-pres-⊆-refl (succ x) = cong succ (wkVar-pres-⊆-refl x)
 
 wkVar-pres-⊆-trans : (w : Γ ⊆ Γ') (w' : Γ' ⊆ Δ) (x : Var Γ a)
-  → wkVar w' (wkVar w x) ≡ wkVar (w ∙ w') x
+  → wkVar (w ∙ w') x ≡ wkVar w' (wkVar w x)
 wkVar-pres-⊆-trans (drop w) (drop w') zero     = cong succ (wkVar-pres-⊆-trans (drop w) w' zero)
 wkVar-pres-⊆-trans (drop w) (keep w') zero     = cong succ (wkVar-pres-⊆-trans w w' zero)
 wkVar-pres-⊆-trans (keep w) (drop w') zero     = cong succ (wkVar-pres-⊆-trans (keep w) w' zero)
@@ -60,3 +59,9 @@ wkVar-pres-⊆-trans (keep w) (keep w') (succ x) = cong succ (wkVar-pres-⊆-tra
 
 freshWk-natural : (w : Γ ⊆ Γ') → w ∙ freshWk[ Γ' , a ] ≡ freshWk[ Γ , a ] ∙ keep w
 freshWk-natural w = cong drop (≡-trans (⊆-refl-unit-right w) (≡-sym (⊆-refl-unit-left w)))
+
+-- weakening a variable index increments
+wkIncr : (x : Var Γ a) → wkVar freshWk[ Γ , b ] x ≡ succ x
+wkIncr zero     = refl
+wkIncr (succ x) = cong succ (cong succ (wkVar-pres-⊆-refl x))
+

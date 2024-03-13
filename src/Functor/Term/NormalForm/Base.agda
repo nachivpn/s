@@ -19,15 +19,15 @@ data Nf where
   lam   : Nf (Γ `, a) b → Nf Γ (a ⇒ b)
   letin : Ne Γ (◇ a) → Nf (Γ `, a) b → Nf Γ (◇ b)
 
-embNe : Ne Γ a → Tm Γ a
-embNf : Nf Γ a → Tm Γ a
+embNe-fun : Ne Γ a → Tm Γ a
+embNf-fun : Nf Γ a → Tm Γ a
 
-embNe (var  x)   = var x
-embNe (app  m n) = app (embNe m) (embNf n)
+embNe-fun (var  x)   = var x
+embNe-fun (app  m n) = app (embNe-fun m) (embNf-fun n)
 
-embNf (up  x)     = embNe x
-embNf (lam n)     = lam (embNf n)
-embNf (letin m n) = letin (embNe m) (embNf n)
+embNf-fun (up  x)     = embNe-fun x
+embNf-fun (lam n)     = lam (embNf-fun n)
+embNf-fun (letin m n) = letin (embNe-fun m) (embNf-fun n)
 
 wkNe : Γ ⊆ Γ' → Ne Γ a → Ne Γ' a
 wkNf : Γ ⊆ Γ' → Nf Γ a → Nf Γ' a
