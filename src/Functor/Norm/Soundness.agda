@@ -6,7 +6,6 @@ open import Data.Product using (Σ; _×_; _,_; -,_ ; proj₁ ; proj₂)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; sym ; trans ; cong ; cong₂)
 
 open import Functor.Term
-open import Functor.Term.Reduction hiding (single)
 open import Functor.Term.NormalForm
 open import Functor.Term.Conversion
 
@@ -43,16 +42,19 @@ reifyTm a = embNf ∘ reify a
 quotTm : Sub'- Γ →̇ Ty'- a → Tm Γ a
 quotTm {Γ} {a} f = reifyTm a .apply (f .apply (idEnv Γ))
 
+registerTm : {a : Ty} → Ne'- (◇ a) →̇ ◇' (Tm'- a)
+registerTm = (◇'-map embNe) ∘ register
+       
 import Semantics.Presheaf.Possibility as ◇m
 import Semantics.Presheaf.Base as PB
 import Relation.Binary.Construct.Closure.ReflexiveTransitive as RT
 
 module Core
-  (collectTm    : {a : Ty} → ◇' (Tm'- a) →̇ Tm'- (◇ a))
-  (collect-comm : {a : Ty} → collectTm ∘ ◇'-map embNf ≈̇ embNf ∘ collectNf {a})
-  (register-exp : {a : Ty} → embNe ≈̇ collectTm {a} ∘ ◇'-map embNe ∘ register) 
+  (collectTm     : {a : Ty} → ◇' (Tm'- a) →̇ Tm'- (◇ a))
+  (collect-comm  : {a : Ty} → collectTm ∘ ◇'-map embNf ≈̇ embNf ∘ collectNf {a})
+  (register-exp  : {a : Ty} → embNe ≈̇ collectTm {a} ∘ registerTm)
   where
-
+  
   ℒ : (a : Ty) → (t : Tm Γ a) → (x : Ty' Γ a) → Set
   ℒ {_} ι       t n =
     t ≈ reifyTm ι .apply n
@@ -113,9 +115,9 @@ module Core
     → (w : Γ ⊆ Γ')
     → (sLδ : ℒₛ Δ s δ)
     → ℒₛ Δ (wkSub w s) (wkSub' Δ w δ)
-  wkSub-pres-ℒₛ {Δ = []} {s = []}     w p
+  wkSub-pres-ℒₛ {s = []}       w p
     = tt 
-  wkSub-pres-ℒₛ {Δ = _Δ `, a} {s = _s `, t}  w (sLδ , tLx)
+  wkSub-pres-ℒₛ {s = _s `, t}  w (sLδ , tLx)
     = wkSub-pres-ℒₛ w sLδ , wkTm-pres-ℒ w tLx
 
   -- 
@@ -129,18 +131,73 @@ module Core
     → (sLδ : ℒₛ Δ s δ) → ℒ a (substTm s t) (eval t .apply δ)
 
   --  
-  fund : (t : Tm Δ a) → Fund t
-  fund t = {!!} 
+  module Sound (fund : {Δ : Ctx} {a : Ty} → (t : Tm Δ a) → Fund t) where
 
-  --
-  quotTm-retracts-eval : (t : Tm Γ a) → t ≈ quotTm (eval t)
-  quotTm-retracts-eval t = ℒ-build _ (ℒ-prepend _ (≡-to-≈ (sym (substTm-pres-idₛ t))) (fund t (idℒₛ _)))
+    --
+    quotTm-retracts-eval : (t : Tm Γ a) → t ≈ quotTm (eval t)
+    quotTm-retracts-eval t = ℒ-build _ (ℒ-prepend _ (≡-to-≈ (sym (substTm-pres-idₛ t))) (fund t (idℒₛ _)))
   
-  -- normalization is sound
-  norm-sound : {t u : Tm Γ a} → norm t ≡ norm u → t ≈ u
-  norm-sound {Γ} {a} {t} {u} nt≡nu = ≈-trans
-    (quotTm-retracts-eval t)
-    (≈-trans
-      (≡-to-≈ (cong (embNf .apply) nt≡nu))
-      (≈-sym (quotTm-retracts-eval u)))
+    -- normalization is sound
+    norm-sound : {t u : Tm Γ a} → norm t ≡ norm u → t ≈ u
+    norm-sound {Γ} {a} {t} {u} nt≡nu = ≈-trans
+      (quotTm-retracts-eval t)
+      (≈-trans
+        (≡-to-≈ (cong (embNf .apply) nt≡nu))
+        (≈-sym (quotTm-retracts-eval u)))
 
+collect-fun : (◇' Tm'- a) ₀ Γ → Tm'- (◇ a) ₀ Γ
+collect-fun (elem (Δ , (single n) , u)) = letin (embNe .apply n) u
+
+collect-pres-≋ : Pres-≋ (◇' Tm'- a) (Tm'- (◇ a)) collect-fun
+collect-pres-≋ {p = elem (Δ , (single n) , x)} {p' = elem (.Δ , .(single n) , x')} (◇m.proof (refl , refl , tr)) = cong-letin2 tr
+
+collect-nat : Natural (◇' Tm'- a) (Tm'- (◇ a)) collect-fun
+collect-nat w (elem (Δ , (single n) , u)) = cong-letin1 (embNe .natural w n)
+
+collectTm : {a : Ty} → ◇' (Tm'- a) →̇ Tm'- (◇ a)
+collectTm = record
+  { fun     = collect-fun
+  ; pres-≋  = collect-pres-≋
+  ; natural = collect-nat }
+
+collect-comm : collectTm ∘ ◇'-map embNf ≈̇ embNf ∘ collectNf {a}
+collect-comm = record { proof = λ { (elem (Δ , (single n) , u)) → ≈-refl } }
+
+register-exp : embNe ≈̇ collectTm {a} ∘ registerTm
+register-exp = record { proof = λ n → exp-dia (embNe .apply n) }
+
+open Core collectTm collect-comm register-exp
+
+private
+  substVarPresℒ : (v : Var Δ a) {s : Sub Γ Δ} {δ : Sub' Γ Δ}
+    → (sLδ : ℒₛ Δ s δ)
+    → ℒ a (substVar s v) (eval (var v) .PB.apply δ)
+  substVarPresℒ v0       {s = _ `, _}  (_ , sLδ) = sLδ
+  substVarPresℒ (succ v) {s = _ `, _} (sLδ  , _tLx) = substVarPresℒ v sLδ
+
+  red-fun-lemma : (w : Γ ⊆ Γ') (s : Sub Γ Δ) (t : Tm (Δ `, a) b) (u : Tm Γ' a)
+    → app (wkTm w (substTm s (lam t))) u ≈ substTm (wkSub w s `, u) t
+  red-fun-lemma w s t u = {!!}
+
+  red-dia-lemma : (s : Sub Γ Δ) (n : Tm Γ (◇ a)) (t' : Tm (Γ `, a) b) (u : Tm (Δ `, b) c) 
+    → letin (letin n t') (substTm (dropₛ s `, var zero) u) ≈ letin n (substTm (dropₛ s `, t') u)
+  red-dia-lemma s n t' u = ≈-trans (red-dia n t' _) {!!}
+  
+fund : (t : Tm Δ a) → Fund t
+fund (var v) {_Γ} {_s} {_δ}   sLδ
+  = substVarPresℒ v sLδ
+fund (lam t) {_Γ} {s} {_δ}    sLδ {_Γ'} {u}
+  = λ w uLx → ℒ-prepend _
+      (red-fun-lemma w s t u)
+      (fund t (wkSub-pres-ℒₛ w sLδ , uLx))
+fund (app t u) {_Γ} {_s} {_δ} sLδ
+  = ℒ-cast
+      (cong₂ app (sym (wkTm-pres-⊆-refl _)) refl)
+      (fund t sLδ ⊆-refl (fund u sLδ))
+fund {Δ} (letin t u) {Γ} {s} {δ} sLδ with eval t .apply δ | fund t sLδ
+... | elem (Γ `, a , (single n) , x) | (t' , tr , t'Lx)
+  = substTm (wkSub freshWk s `, t') u
+  , ≈-trans (cong-letin1 tr) (red-dia-lemma s (embNe .apply n) t' u)
+  , fund u (wkSub-pres-ℒₛ freshWk sLδ , t'Lx)
+
+open Sound fund

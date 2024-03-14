@@ -171,3 +171,49 @@ substTm-pres-idₛ (var x)     = substVar-pres-idₛ x
 substTm-pres-idₛ (lam t)     = cong lam (substTm-pres-idₛ t)
 substTm-pres-idₛ (app t u)   = cong₂ app (substTm-pres-idₛ t) (substTm-pres-idₛ u)
 substTm-pres-idₛ (letin t u) = cong₂ letin (substTm-pres-idₛ t) (substTm-pres-idₛ u)
+
+-- TBD: rename
+assoc-∙ₛ-wkSub  : {Δ'' : Ctx} (s : Sub Δ Γ) (s' : Sub Δ' Δ) (w : Δ' ⊆ Δ'')
+         → wkSub w (s ∙ₛ s') ≡ s ∙ₛ (wkSub w s')
+assoc-∙ₛ-wkSub []           s'             w
+  = refl
+assoc-∙ₛ-wkSub (s `, x)     s'             w
+  = cong₂ _`,_  (assoc-∙ₛ-wkSub s s' w) (sym (substTm-nat x s' w))
+
+-- TBD: rename
+assoc-wkSub-∙ₛ  : {Δ₁ : Ctx} (s : Sub Δ Γ) (s' : Sub Δ₁ Δ') (w : Δ ⊆ Δ')
+         → s ∙ₛ (trimSub w s') ≡ (wkSub w s) ∙ₛ s'
+assoc-wkSub-∙ₛ []               s'          w
+  = refl
+assoc-wkSub-∙ₛ (s `, x)         s'          w
+  = cong₂ _`,_ (assoc-wkSub-∙ₛ s s' w) (assoc-substTm-wkTm x s' w)
+  
+substVarPres∙ₛ : (s : Sub Γ' Γ) (s' : Sub Δ Γ') (x : Var Γ a)
+  → substVar (s ∙ₛ s') x ≡ substTm s' (substVar s x)
+substVarPres∙ₛ (s `, x) s' zero      = refl
+substVarPres∙ₛ (s `, x) s' (succ x₁) = substVarPres∙ₛ s s' x₁
+
+private
+  dropKeepLemma : (s' : Sub Δ' Δ) (s : Sub Γ Δ')
+           →  dropₛ (s' ∙ₛ s) ≡ dropₛ {a = a} s' ∙ₛ keepₛ s
+  dropKeepLemma s' s = trans (assoc-∙ₛ-wkSub s' s freshWk)
+    (trans
+      ((cong (s' ∙ₛ_) (sym (trimSub-unit-left (dropₛ s)))))
+      (assoc-wkSub-∙ₛ s' (keepₛ s) freshWk))
+      
+substTm-pres-∙ₛ : (s : Sub Γ' Γ) (s' : Sub Δ Γ') (t : Tm Γ a)
+  → substTm (s ∙ₛ s') t ≡ substTm s' (substTm s t)
+substTm-pres-∙ₛ s s'             (var x)
+  = substVarPres∙ₛ s s' x
+substTm-pres-∙ₛ s s'             (lam t)
+  = cong lam
+    (trans (cong ((λ s → substTm (s `, var zero) t)) ((dropKeepLemma s s')))
+    (substTm-pres-∙ₛ _ _ t))
+substTm-pres-∙ₛ s s'             (app t u)
+  = cong₂ app (substTm-pres-∙ₛ s s' t) (substTm-pres-∙ₛ s s' u)
+substTm-pres-∙ₛ s s'             (letin t u)
+  = cong₂ letin
+      (substTm-pres-∙ₛ s s' t)
+      (trans
+        (cong ((λ s → substTm (s `, var zero) u)) ((dropKeepLemma s s')))
+        (substTm-pres-∙ₛ _ _ u))
