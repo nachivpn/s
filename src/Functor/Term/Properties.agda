@@ -2,11 +2,9 @@
 module Functor.Term.Properties where
 
 open import Functor.Term.Base
-open import Functor.Term.Conversion
 
-open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; sym ; trans ; cong ; cong₂)
-
-open Relation.Binary.PropositionalEquality.≡-Reasoning
+open import Relation.Binary.PropositionalEquality
+  using    (_≡_ ; refl ; sym ; trans ; cong ; cong₂ ; module ≡-Reasoning)
 
 wkTm-pres-⊆-refl : (t : Tm Γ a) → wkTm ⊆-refl t ≡ t
 wkTm-pres-⊆-refl (var   v)   = cong  var (wkVar-pres-⊆-refl v)
@@ -96,70 +94,6 @@ wkSub-unit-right (keep w)  = cong (_`, var zero) (trans
     (cong₂ wkSub (cong drop (trans (⊆-refl-unit-left _) (sym (⊆-refl-unit-right _)))) refl)
     (auxLemma w)))
 
-private
-  --
-  keepFreshLemma : {w : Γ ⊆ Γ'} {t : Tm Γ a}
-    → wkTm freshWk[ Γ' , b ] (wkTm w t) ≡ wkTm (keep w) (wkTm freshWk t)
-  keepFreshLemma = trans
-    (trans
-      (sym (wkTm-pres-⊆-trans _ _ _))
-      (cong₂ wkTm (cong drop (trans (⊆-refl-unit-right _) (sym (⊆-refl-unit-left _)))) refl))
-    (wkTm-pres-⊆-trans _ _ _) 
-
-  --
-  red-fun-crunch-lemma : (w  : Γ ⊆ Δ) (u : Tm Γ a) (t : Tm (Γ `, a) b)
-    → substTm (idₛ `, wkTm w u) (wkTm (keep w) t) ≡ wkTm w (substTm (idₛ `, u) t)
-  red-fun-crunch-lemma w u t = trans
-    (sym (assoc-substTm-wkTm t _ (keep w)))
-    (sym (trans
-      (sym (substTm-nat t _ _))
-      (cong
-        (λ p → substTm (p `, wkTm w u) t)
-        (sym (trans (trimSub-unit-right w) (sym (wkSub-unit-right w)))))))
-
-  --
-  red-dia-crunch-lemma : (w : Γ ⊆ Γ') (t : Tm Γ (◇ a)) (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) c)
-    → substTm (wkSub freshWk idₛ `, wkTm (keep w) u) (wkTm (keep w) u') ≡ wkTm (keep w) (substTm (wkSub freshWk idₛ `, u) u')
-  red-dia-crunch-lemma w t u u' = begin
-    substTm (wkSub freshWk idₛ `, wkTm (keep w) u) (wkTm (keep w) u')
-      ≡⟨ sym (assoc-substTm-wkTm u' _ _) ⟩
-    substTm (trimSub (keep w) (wkSub freshWk idₛ `, wkTm (keep w) u)) u'
-      ≡⟨⟩
-    substTm (trimSub w (wkSub freshWk idₛ) `, wkTm (keep w) u) u'
-      ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (sym (trimSub-nat idₛ w freshWk))) (refl {x = u'}) ⟩
-    substTm (wkSub freshWk (trimSub w idₛ) `, wkTm (keep w) u) u'
-      ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (cong (wkSub _) (trimSub-unit-right w))) (refl {x = u'}) ⟩
-    substTm (wkSub freshWk (embWk w) `, wkTm (keep w) u) u'
-      ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (cong (wkSub _) (sym (wkSub-unit-right w)))) (refl {x = u'}) ⟩      
-    substTm (wkSub freshWk (wkSub w idₛ) `, wkTm (keep w) u) u'
-     ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (sym (wkSub-pres-⊆-trans w freshWk idₛ))) (refl {x = u'}) ⟩
-    substTm (wkSub (w ∙ freshWk) idₛ `, wkTm (keep w) u) u'  
-     ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (cong₂ wkSub (cong drop (trans (⊆-refl-unit-right w) (sym (⊆-refl-unit-left w)) )) refl)) (refl {x = u'}) ⟩     
-    substTm (wkSub (drop (⊆-refl ∙ w)) idₛ `, wkTm (keep w) u) u'
-     ≡⟨⟩
-    substTm (wkSub (freshWk ∙ keep w) idₛ `, wkTm (keep w) u) u'
-     ≡⟨ cong₂ substTm (cong₂ _`,_ (wkSub-pres-⊆-trans freshWk (keep w) idₛ) refl) (refl {x = u'}) ⟩
-    substTm (wkSub (keep w) (wkSub freshWk idₛ) `, wkTm (keep w) u) u'
-      ≡⟨⟩
-    substTm (wkSub (keep w) (wkSub freshWk idₛ `, u)) u'
-      ≡⟨ substTm-nat u' _ _ ⟩
-    wkTm (keep w) (substTm (wkSub freshWk idₛ `, u) u') ∎
-
-
-wkTm-pres-≈ : (w : Γ ⊆ Γ') {t t' : Tm Γ a} → t ≈ t' → wkTm w t ≈ wkTm w t'
-wkTm-pres-≈ w (red-fun t u)         = ≈-trans (red-fun _ _) (≡-to-≈ (red-fun-crunch-lemma w u t))
-wkTm-pres-≈ w (exp-fun _)           = ≈-trans (exp-fun _) (≡-to-≈ (cong lam (cong₂ app keepFreshLemma refl)))
-wkTm-pres-≈ w (red-dia t u u')      = ≈-trans (red-dia _ _ _) (cong-letin2 (≡-to-≈ (red-dia-crunch-lemma w t u u')))
-wkTm-pres-≈ w (exp-dia _)           = exp-dia (wkTm w _)
-wkTm-pres-≈ w (cong-lam t≈t')       = cong-lam (wkTm-pres-≈ (_⊆_.keep w) t≈t')
-wkTm-pres-≈ w (cong-app1 t≈t')      = cong-app1 (wkTm-pres-≈ w t≈t')
-wkTm-pres-≈ w (cong-app2 t≈t')      = cong-app2 (wkTm-pres-≈ w t≈t')
-wkTm-pres-≈ w (cong-letin1 t≈t')    = cong-letin1 (wkTm-pres-≈ w t≈t')
-wkTm-pres-≈ w (cong-letin2 t≈t')    = cong-letin2 (wkTm-pres-≈ (_⊆_.keep w) t≈t')
-wkTm-pres-≈ w ≈-refl                = ≈-refl
-wkTm-pres-≈ w (≈-sym t≈t')          = ≈-sym (wkTm-pres-≈ w t≈t')
-wkTm-pres-≈ w (≈-trans t≈t' t'≈t'') = ≈-trans (wkTm-pres-≈ w t≈t') (wkTm-pres-≈ w t'≈t'')
-
 substVar-pres-idₛ : (x : Var Γ a) → substVar idₛ x ≡ var x
 substVar-pres-idₛ zero     = refl
 substVar-pres-idₛ (succ x) = trans (substVar-nat x idₛ freshWk) (trans
@@ -217,3 +151,57 @@ substTm-pres-∙ₛ s s'             (letin t u)
       (trans
         (cong ((λ s → substTm (s `, var zero) u)) ((dropKeepLemma s s')))
         (substTm-pres-∙ₛ _ _ u))
+
+∙ₛ-unit-right : (s : Sub Γ Γ') → s ∙ₛ idₛ ≡ s
+∙ₛ-unit-right []           = refl
+∙ₛ-unit-right (s `, t)     = cong₂ _`,_ (∙ₛ-unit-right s) (substTm-pres-idₛ t)
+
+module AdhocLemmas where
+
+  --
+  keepFreshLemma : {w : Γ ⊆ Γ'} {t : Tm Γ a}
+    → wkTm freshWk[ Γ' , b ] (wkTm w t) ≡ wkTm (keep w) (wkTm freshWk t)
+  keepFreshLemma = trans
+    (trans
+      (sym (wkTm-pres-⊆-trans _ _ _))
+      (cong₂ wkTm (cong drop (trans (⊆-refl-unit-right _) (sym (⊆-refl-unit-left _)))) refl))
+    (wkTm-pres-⊆-trans _ _ _) 
+
+  --
+  red-fun-crunch-lemma : (w  : Γ ⊆ Δ) (u : Tm Γ a) (t : Tm (Γ `, a) b)
+    → substTm (idₛ `, wkTm w u) (wkTm (keep w) t) ≡ wkTm w (substTm (idₛ `, u) t)
+  red-fun-crunch-lemma w u t = trans
+    (sym (assoc-substTm-wkTm t _ (keep w)))
+    (sym (trans
+      (sym (substTm-nat t _ _))
+      (cong
+        (λ p → substTm (p `, wkTm w u) t)
+        (sym (trans (trimSub-unit-right w) (sym (wkSub-unit-right w)))))))
+
+  --
+  red-dia-crunch-lemma : (w : Γ ⊆ Γ') (t : Tm Γ (◇ a)) (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) c)
+    → substTm (wkSub freshWk idₛ `, wkTm (keep w) u) (wkTm (keep w) u') ≡ wkTm (keep w) (substTm (wkSub freshWk idₛ `, u) u')
+  red-dia-crunch-lemma w t u u' = let open ≡-Reasoning in begin
+    substTm (wkSub freshWk idₛ `, wkTm (keep w) u) (wkTm (keep w) u')
+      ≡⟨ sym (assoc-substTm-wkTm u' _ _) ⟩
+    substTm (trimSub (keep w) (wkSub freshWk idₛ `, wkTm (keep w) u)) u'
+      ≡⟨⟩
+    substTm (trimSub w (wkSub freshWk idₛ) `, wkTm (keep w) u) u'
+      ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (sym (trimSub-nat idₛ w freshWk))) (refl {x = u'}) ⟩
+    substTm (wkSub freshWk (trimSub w idₛ) `, wkTm (keep w) u) u'
+      ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (cong (wkSub _) (trimSub-unit-right w))) (refl {x = u'}) ⟩
+    substTm (wkSub freshWk (embWk w) `, wkTm (keep w) u) u'
+      ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (cong (wkSub _) (sym (wkSub-unit-right w)))) (refl {x = u'}) ⟩      
+    substTm (wkSub freshWk (wkSub w idₛ) `, wkTm (keep w) u) u'
+     ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (sym (wkSub-pres-⊆-trans w freshWk idₛ))) (refl {x = u'}) ⟩
+    substTm (wkSub (w ∙ freshWk) idₛ `, wkTm (keep w) u) u'  
+     ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (cong₂ wkSub (cong drop (trans (⊆-refl-unit-right w) (sym (⊆-refl-unit-left w)) )) refl)) (refl {x = u'}) ⟩     
+    substTm (wkSub (drop (⊆-refl ∙ w)) idₛ `, wkTm (keep w) u) u'
+     ≡⟨⟩
+    substTm (wkSub (freshWk ∙ keep w) idₛ `, wkTm (keep w) u) u'
+     ≡⟨ cong₂ substTm (cong₂ _`,_ (wkSub-pres-⊆-trans freshWk (keep w) idₛ) refl) (refl {x = u'}) ⟩
+    substTm (wkSub (keep w) (wkSub freshWk idₛ) `, wkTm (keep w) u) u'
+      ≡⟨⟩
+    substTm (wkSub (keep w) (wkSub freshWk idₛ `, u)) u'
+      ≡⟨ substTm-nat u' _ _ ⟩
+    wkTm (keep w) (substTm (wkSub freshWk idₛ `, u) u') ∎

@@ -40,3 +40,5 @@ import Semantics.Presheaf.Strong.Pointed
 import Semantics.Presheaf.Strong.Multiplicative
 import Semantics.Presheaf.Strong.Monad
 
+-- Normalization algorithms
+import Functor.Norm
