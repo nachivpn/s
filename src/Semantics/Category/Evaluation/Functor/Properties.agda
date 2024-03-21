@@ -36,7 +36,7 @@ open import Relation.Binary using (IsEquivalence; Setoid)
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Functor.Term
-open import Functor.Term.Reduction
+open import Functor.Term.Conversion
 
 open import Semantics.Category.Evaluation.Functor.Base
    𝒞 𝒞-is-CC 𝒞-is-CCC ℱ' ℱ'-is-strong
@@ -198,7 +198,7 @@ abstract
       ∎
 
 abstract
-  evalTm-sound : (s : t ⟶ t') → evalTm t ≈̇ evalTm t'
+  evalTm-sound : (s : t ≈ t') → evalTm t ≈̇ evalTm t'
   evalTm-sound (red-fun {Γ} {a} {b} t u) = let open EqReasoning (Tm'-setoid Γ b) in begin
     evalTm (app (lam t) u)
       ≈⟨ ⇒'-beta (evalTm t) (evalTm u) ⟩
@@ -243,7 +243,6 @@ abstract
   evalTm-sound (cong-app2 {t = t} s)   = app'-pres-≈̇-right  (evalTm t) (evalTm-sound s)
   evalTm-sound (cong-letin1 {u = u} s) = letin'-pres-≈̇-left   (evalTm-sound s) (evalTm u)
   evalTm-sound (cong-letin2 {t = t} s) = letin'-pres-≈̇-right  (evalTm t) (evalTm-sound s)
-
-  evalTm-sound* : ∀ {t t' : Tm Γ a} (t⟶*t' : t ⟶* t') → evalTm t ≈̇ evalTm t'
-  evalTm-sound* ε        = ≈̇-refl
-  evalTm-sound* (r ◅ rs) = ≈̇-trans (evalTm-sound r) (evalTm-sound* rs)
+  evalTm-sound ≈-refl                  = ≈̇-refl
+  evalTm-sound (≈-trans r s)           = ≈̇-trans (evalTm-sound r) (evalTm-sound s)
+  evalTm-sound (≈-sym s)               = ≈̇-sym (evalTm-sound s)

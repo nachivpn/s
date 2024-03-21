@@ -14,7 +14,7 @@ open import Data.Product using (∃; _×_; _,_; -,_) renaming (proj₁ to fst; p
 open import Data.Product using () renaming (∃ to Σ; _×_ to _∧_)
 
 open import Functor.Term
-open import Functor.Term.Reduction hiding (single)
+open import Functor.Term.Conversion
 open import Functor.Term.NormalForm
 open import Functor.Term.NormalForm.Properties
 
@@ -243,5 +243,5 @@ norm : Tm Γ a → Nf Γ a
 norm t = quot (eval t)
 
 -- normalization is complete
-norm-complete : (t⟶*u : t ⟶* u) → norm t ≡ norm u
-norm-complete {Γ} {a} t≈u = reify-pres-≋ a (apply-sq (evalTm-sound* t≈u) ≋[ evalCtx Γ ]-refl)
+norm-complete : (t≈u : t ≈ u) → norm t ≡ norm u
+norm-complete {Γ} {a} t≈u = reify-pres-≋ a (apply-sq (evalTm-sound t≈u) ≋[ evalCtx Γ ]-refl)

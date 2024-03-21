@@ -8,7 +8,6 @@ import Substitution
 
 -- Calculus for strong fucntors
 import Functor.Term
-import Functor.Term.Reduction
 import Functor.Term.NormalForm
 
 -- Definition of categorical structures which should be replaced by `agda-categories`
