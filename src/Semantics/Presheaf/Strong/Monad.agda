@@ -1,12 +1,13 @@
 {-# OPTIONS --safe --without-K #-}
 open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; cong₂) renaming (refl to ≡-refl; sym to ≡-sym; trans to ≡-trans)
-open import Semantics.Kripke.Frame using (MFrame ; InclusiveMFrame ; ReflexiveMFrame ; TransitiveMFrame)
+open import Semantics.Kripke.Frame using (IFrame ; MFrame ; InclusiveMFrame ; ReflexiveMFrame ; TransitiveMFrame)
 
 module Semantics.Presheaf.Strong.Monad
   {C      : Set}
   {_⊆_    : (Γ Δ : C) → Set}
+  {IF     : IFrame C _⊆_}
   {_R_    : (Γ Δ : C) → Set}
-  (MF     : MFrame C _⊆_ _R_)
+  (MF     : MFrame IF _R_)
   (IMF    : InclusiveMFrame MF)
   (RMF    : ReflexiveMFrame MF)
   (TMF    : TransitiveMFrame MF)

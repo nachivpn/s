@@ -42,10 +42,9 @@ factor-pres-⊆-trans w w' (single m) rewrite wkNe-pres-⊆-trans w w' m = refl
 ⊲-to-⊆ : Γ ⊲ Δ → Γ ⊆ Δ
 ⊲-to-⊆ (single {a = a} n) = freshWk[ _ , a ]
 
-MF : MFrame Ctx _⊆_  _⊲_
+MF : MFrame 𝒲  _⊲_
 MF = record
-      { IF                  = 𝒲
-      ; factor              = factor
+      { factor              = factor
       ; factor-pres-⊆-refl  = factor-pres-⊆-refl
       ; factor-pres-⊆-trans = factor-pres-⊆-trans
       }

@@ -1,11 +1,12 @@
 {-# OPTIONS --safe --without-K #-}
-open import Semantics.Kripke.Frame using (MFrame)
+open import Semantics.Kripke.Frame using (IFrame ; MFrame)
 
 module Semantics.Presheaf.Possibility
   {C    : Set}
   {_⊆_  : (Γ Δ : C) → Set}
+  {IF   : IFrame C _⊆_}
   {_R_  : (Γ Δ : C) → Set}
-  (MF  : MFrame C _⊆_ _R_)
+  (MF   : MFrame IF _R_)
   (let open MFrame MF)
   where
 

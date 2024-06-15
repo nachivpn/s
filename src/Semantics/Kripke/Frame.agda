@@ -13,12 +13,8 @@ record IFrame (W : Set) (_⊆_ : W → W → Set) : Set where
     ⊆-refl-unit-right  : ∀ {w w' : W} (i : w ⊆ w') → ⊆-trans ⊆-refl i ≡ i
     ⊆-refl-unit-left   : ∀ {w w' : W} (i : w ⊆ w') → ⊆-trans i ⊆-refl ≡ i
 
-record MFrame (W : Set) (_⊆_ : W → W → Set) (_R_ : W → W → Set) : Set where
+record MFrame {W : Set} {_⊆_ : W → W → Set} (IF : IFrame W _⊆_) (_R_ : W → W → Set) : Set where
 
-  -- every MFrame is an IFrame
-  field
-    IF : IFrame W _⊆_
-    
   open IFrame IF public
 
   --
@@ -39,7 +35,7 @@ record MFrame (W : Set) (_⊆_ : W → W → Set) (_R_ : W → W → Set) : Set 
       → factor (⊆-trans i i') m ≡ (-, (factorR i' (factorR i m) , (⊆-trans (factor⊆ i m) (factor⊆ i' (factorR i m)))))  
 
 -- Inclusive, reflexive and transitive factorising frames
-module _ {W : Set} {_⊆_ : W → W → Set} {_R_ : W → W → Set} (MF : MFrame W _⊆_ _R_) where
+module _ {W : Set} {_⊆_ : W → W → Set} {_R_ : W → W → Set} {IF : IFrame W _⊆_} (MF : MFrame IF _R_) where
 
   open MFrame MF
 
