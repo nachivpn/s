@@ -15,7 +15,7 @@ module Semantics.Category.Evaluation.SFC.Properties
   (𝒞-is-CC       : IsCartesian 𝒞)
   (𝒞-is-CCC      : IsCartesianClosed 𝒞 𝒞-is-CC)
   (ℱ'            : EndoFunctor 𝒞)
-  (ℱ'-is-strong  : StrongFunctor 𝒞-is-CC ℱ')
+  (ℱ'-is-strong  : IsStrong 𝒞-is-CC ℱ')
   (ι'            : Category.Obj 𝒞)
   where
 
@@ -23,7 +23,7 @@ open Category 𝒞
 open IsCartesian 𝒞-is-CC
 open IsCartesianClosed 𝒞-is-CCC
 open EndoFunctor ℱ'
-open StrongFunctor ℱ'-is-strong
+open IsStrong ℱ'-is-strong
 
 private
   Ty'  = Obj

@@ -9,10 +9,10 @@ open import Semantics.Category.EndoFunctor.Base
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-record StrongFunctor {C : Category} (isCartesian : IsCartesian C) (isEndo : EndoFunctor C) : Set₂ where
+record IsStrong {C : Category} (isCartesian : IsCartesian C) (F : EndoFunctor C) : Set₂ where
   open Category C
   open IsCartesian isCartesian
-  open EndoFunctor isEndo
+  open EndoFunctor F
 
   -- tensorial strength taking the tensor product as the cartesian product
   field

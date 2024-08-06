@@ -11,14 +11,14 @@ module Semantics.Category.Evaluation.SFC.Base
   (𝒞-is-CC       : IsCartesian 𝒞)
   (𝒞-is-CCC      : IsCartesianClosed 𝒞 𝒞-is-CC)
   (◇'            : EndoFunctor 𝒞)
-  (◇'-is-strong  : StrongFunctor 𝒞-is-CC ◇')
+  (◇'-is-strong  : IsStrong 𝒞-is-CC ◇')
   where
 
 open Category 𝒞
 open IsCartesian 𝒞-is-CC
 open IsCartesianClosed 𝒞-is-CCC
 open EndoFunctor ◇' renaming (ℱ'_ to ℱ'₀_)
-open StrongFunctor ◇'-is-strong
+open IsStrong ◇'-is-strong
 
 private
   Ty'  = Obj

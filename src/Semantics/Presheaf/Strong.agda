@@ -68,7 +68,7 @@ private
            ∎)
         , ≋[ 𝒬 ]-refl))))
         
-◇'-is-strong : StrongFunctor PshCat-is-CC ◇'-is-PshFunctor
+◇'-is-strong : IsStrong PshCat-is-CC ◇'-is-PshFunctor
 ◇'-is-strong = record
   { ℱ'-strength[_,_]     = ◇'-strength
   ; ℱ'-strength-natural₁ = ◇'-strength-natural₁
