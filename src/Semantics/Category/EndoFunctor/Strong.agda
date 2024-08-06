@@ -1,10 +1,10 @@
 {-# OPTIONS  --safe --without-K #-}
 
-module Semantics.Category.StrongFunctor where
+module Semantics.Category.EndoFunctor.Strong where
 
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
-open import Semantics.Category.EndoFunctor
+open import Semantics.Category.EndoFunctor.Base
 
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 import Relation.Binary.Reasoning.Setoid as EqReasoning

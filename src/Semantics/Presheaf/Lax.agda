@@ -23,7 +23,7 @@ open import Semantics.Presheaf.Possibility MF public
 
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
-open import Semantics.Category.EndoFunctor
+open import Semantics.Category.EndoFunctor.Base
 
 private
   variable

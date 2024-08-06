@@ -1,6 +1,6 @@
 {-# OPTIONS  --safe --without-K #-}
 
-module Semantics.Category.EndoFunctor where
+module Semantics.Category.EndoFunctor.Base where
 
 open import Semantics.Category.Base
 

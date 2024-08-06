@@ -3,8 +3,8 @@
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
 open import Semantics.Category.CartesianClosed
-open import Semantics.Category.EndoFunctor
-open import Semantics.Category.StrongFunctor
+open import Semantics.Category.EndoFunctor.Base
+open import Semantics.Category.EndoFunctor.Strong
 
 module Semantics.Category.Evaluation.SFC.Base
   (𝒞             : Category)

@@ -6,17 +6,22 @@ import Type
 import Context
 import Substitution
 
--- Calculus for strong fucntors
+-- Calculus for strong functors
 import SFC.Term
 import SFC.Term.Conversion
 import SFC.Term.NormalForm
+
+-- Calculus for monads
+import MLC.Term
+import MLC.Term.Conversion
+import MLC.Term.NormalForm
 
 -- Definition of categorical structures which could be replaced by `agda-categories`
 import Semantics.Category.Base
 import Semantics.Category.Cartesian
 import Semantics.Category.CartesianClosed
-import Semantics.Category.EndoFunctor
-import Semantics.Category.StrongFunctor
+import Semantics.Category.EndoFunctor.Base
+import Semantics.Category.EndoFunctor.Strong
 
 -- Categorical semantics for the calculi
 import Semantics.Category.Evaluation.SFC.Base

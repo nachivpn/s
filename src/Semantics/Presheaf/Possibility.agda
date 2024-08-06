@@ -19,7 +19,7 @@ open import Data.Product using () renaming (∃ to Σ; _×_ to _∧_)
 
 open import Semantics.Presheaf.Base IF
 
-open import Semantics.Category.EndoFunctor
+open import Semantics.Category.EndoFunctor.Base
 
 private
   variable
