@@ -10,7 +10,7 @@ open import Data.Product using (∃; _,_; -,_) renaming (_×_ to _∧_; proj₁ 
 
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; subst)
 
-module Semantics.Category.Evaluation.Functor.Properties
+module Semantics.Category.Evaluation.SFC.Properties
   (𝒞             : Category)
   (𝒞-is-CC       : IsCartesian 𝒞)
   (𝒞-is-CCC      : IsCartesianClosed 𝒞 𝒞-is-CC)
@@ -38,11 +38,11 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 open import SFC.Term
 open import SFC.Term.Conversion
 
-open import Semantics.Category.Evaluation.Functor.Base
+open import Semantics.Category.Evaluation.SFC.Base
    𝒞 𝒞-is-CC 𝒞-is-CCC ℱ' ℱ'-is-strong
-  renaming (module Eval to FunctorBaseEval)
+  renaming (module Eval to SFCBaseEval)
 
-open FunctorBaseEval ι'
+open SFCBaseEval ι'
 
 abstract
   evalWk-pres-id : ∀ (Γ : Ctx) → evalWk ⊆-refl[ Γ ] ≈̇ id'

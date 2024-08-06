@@ -6,7 +6,7 @@ open import Semantics.Category.CartesianClosed
 open import Semantics.Category.EndoFunctor
 open import Semantics.Category.StrongFunctor
 
-module Semantics.Category.Evaluation.Functor.Base
+module Semantics.Category.Evaluation.SFC.Base
   (𝒞             : Category)
   (𝒞-is-CC       : IsCartesian 𝒞)
   (𝒞-is-CCC      : IsCartesianClosed 𝒞 𝒞-is-CC)

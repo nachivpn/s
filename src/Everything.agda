@@ -19,8 +19,8 @@ import Semantics.Category.EndoFunctor
 import Semantics.Category.StrongFunctor
 
 -- Categorical semantics for the calculi
-import Semantics.Category.Evaluation.Functor.Base
-import Semantics.Category.Evaluation.Functor.Properties
+import Semantics.Category.Evaluation.SFC.Base
+import Semantics.Category.Evaluation.SFC.Properties
 
 -- Intuitionistic possible-world frames
 import Semantics.Kripke.Frame
