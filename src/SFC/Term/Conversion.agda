@@ -1,8 +1,8 @@
 {-# OPTIONS --safe --without-K #-}
-module Functor.Term.Conversion where
+module SFC.Term.Conversion where
 
-open import Functor.Term.Base
-open import Functor.Term.Properties
+open import SFC.Term.Base
+open import SFC.Term.Properties
 
 open import Relation.Binary
   using (Setoid ; IsEquivalence)

@@ -1,8 +1,8 @@
 {-# OPTIONS --safe --without-K #-}
-module Functor.Term.NormalForm.Properties where
+module SFC.Term.NormalForm.Properties where
 
-open import Functor.Term.Base
-open import Functor.Term.NormalForm.Base
+open import SFC.Term.Base
+open import SFC.Term.NormalForm.Base
 
 open import Relation.Binary.PropositionalEquality
   using (_≡_ ; refl ; trans ; subst₂ ; cong ; cong₂ ; module ≡-Reasoning)

@@ -1,16 +1,16 @@
 {-# OPTIONS --safe --without-K #-}
-module Functor.Norm.Soundness where
+module SFC.Norm.Soundness where
 
 open import Data.Unit using (⊤ ; tt)
 open import Data.Product using (Σ; _×_; _,_; -,_ ; proj₁ ; proj₂) 
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; sym ; trans ; cong ; cong₂)
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-open import Functor.Term
-open import Functor.Term.NormalForm
-open import Functor.Term.Conversion
+open import SFC.Term
+open import SFC.Term.NormalForm
+open import SFC.Term.Conversion
 
-open import Functor.Norm.Base
+open import SFC.Norm.Base
 
 Tm'- : Ty → Psh
 Tm'- a = record

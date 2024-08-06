@@ -1,6 +1,6 @@
 {-# OPTIONS --safe --without-K #-}
 
-module Functor.Norm.Base where
+module SFC.Norm.Base where
 
 open import Data.Product using (∃; _×_; _,_; -,_) renaming (proj₁ to fst; proj₂ to snd)
 open import Data.Product.Properties using ()
@@ -13,10 +13,10 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 open import Data.Product using (∃; _×_; _,_; -,_) renaming (proj₁ to fst; proj₂ to snd)
 open import Data.Product using () renaming (∃ to Σ; _×_ to _∧_)
 
-open import Functor.Term
-open import Functor.Term.Conversion
-open import Functor.Term.NormalForm
-open import Functor.Term.NormalForm.Properties
+open import SFC.Term
+open import SFC.Term.Conversion
+open import SFC.Term.NormalForm
+open import SFC.Term.NormalForm.Properties
 
 open import Semantics.Kripke.Frame
 

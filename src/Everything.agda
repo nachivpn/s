@@ -7,10 +7,11 @@ import Context
 import Substitution
 
 -- Calculus for strong fucntors
-import Functor.Term
-import Functor.Term.NormalForm
+import SFC.Term
+import SFC.Term.Conversion
+import SFC.Term.NormalForm
 
--- Definition of categorical structures which should be replaced by `agda-categories`
+-- Definition of categorical structures which could be replaced by `agda-categories`
 import Semantics.Category.Base
 import Semantics.Category.Cartesian
 import Semantics.Category.CartesianClosed
@@ -40,4 +41,4 @@ import Semantics.Presheaf.Strong.Multiplicative
 import Semantics.Presheaf.Strong.Monad
 
 -- Normalization algorithms
-import Functor.Norm
+import SFC.Norm

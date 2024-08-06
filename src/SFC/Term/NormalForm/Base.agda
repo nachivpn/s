@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --without-K #-}
-module Functor.Term.NormalForm.Base where
+module SFC.Term.NormalForm.Base where
 
-open import Functor.Term.Base
+open import SFC.Term.Base
 
 ---------------
 -- Normal forms

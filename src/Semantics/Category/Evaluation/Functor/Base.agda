@@ -30,7 +30,7 @@ open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalen
 
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-open import Functor.Term
+open import SFC.Term
 
 module Eval (ι' : Ty') where
   evalTy : (a : Ty) → Ty'

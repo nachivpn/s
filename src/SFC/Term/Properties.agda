@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --without-K #-}
-module Functor.Term.Properties where
+module SFC.Term.Properties where
 
-open import Functor.Term.Base
+open import SFC.Term.Base
 
 open import Relation.Binary.PropositionalEquality
   using    (_≡_ ; refl ; sym ; trans ; cong ; cong₂ ; module ≡-Reasoning)

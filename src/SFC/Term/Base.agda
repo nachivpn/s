@@ -1,5 +1,5 @@
 {-# OPTIONS --safe --without-K #-}
-module Functor.Term.Base where
+module SFC.Term.Base where
 
 open import Type public
 import Context Ty as Context

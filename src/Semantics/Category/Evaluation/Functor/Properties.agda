@@ -35,8 +35,8 @@ open import Relation.Binary using (IsEquivalence; Setoid)
 
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-open import Functor.Term
-open import Functor.Term.Conversion
+open import SFC.Term
+open import SFC.Term.Conversion
 
 open import Semantics.Category.Evaluation.Functor.Base
    𝒞 𝒞-is-CC 𝒞-is-CCC ℱ' ℱ'-is-strong
