@@ -21,7 +21,7 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
-open import Semantics.Category.EndoFunctor.Strong
+open import Semantics.Category.EndoFunctor.Strong.Base
 
 open import Semantics.Presheaf.Base IF
 open import Semantics.Presheaf.CartesianClosure IF

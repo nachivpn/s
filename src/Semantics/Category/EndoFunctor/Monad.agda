@@ -20,6 +20,12 @@ record IsMonad {C : Category} {F : EndoFunctor C} (isPointed : IsPointed F) (isM
   ℱ'-return[_] = ℱ'-point[_]
   ℱ'-join[_]   = ℱ'-mult[_]
 
+  ℱ'-return : {P : Obj} → P →̇ ℱ' P
+  ℱ'-return = ℱ'-return[ _ ]
+  
+  ℱ'-join : {P : Obj} → ℱ' (ℱ' P) →̇ ℱ' P
+  ℱ'-join = ℱ'-mult[ _ ]
+  
   field
     ℱ'-return-unit-right : {P : Obj} → ℱ'-join[ P ] ∘ ℱ'-return[ ℱ' P ] ≈̇ id'[ ℱ' P ]
     ℱ'-return-unit-left  : {P : Obj} → ℱ'-join[ P ] ∘ (ℱ'-map ℱ'-return[ P ]) ≈̇ id'[ ℱ' P ]

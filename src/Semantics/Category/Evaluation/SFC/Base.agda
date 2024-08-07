@@ -4,7 +4,7 @@ open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
 open import Semantics.Category.CartesianClosed
 open import Semantics.Category.EndoFunctor.Base
-open import Semantics.Category.EndoFunctor.Strong
+open import Semantics.Category.EndoFunctor.Strong.Base
 
 module Semantics.Category.Evaluation.SFC.Base
   (𝒞             : Category)

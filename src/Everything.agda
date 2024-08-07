@@ -21,10 +21,13 @@ import Semantics.Category.Base
 import Semantics.Category.Cartesian
 import Semantics.Category.CartesianClosed
 import Semantics.Category.EndoFunctor.Base
-import Semantics.Category.EndoFunctor.Strong
 import Semantics.Category.EndoFunctor.Pointed
 import Semantics.Category.EndoFunctor.Multiplicative
 import Semantics.Category.EndoFunctor.Monad
+import Semantics.Category.EndoFunctor.Strong.Base
+import Semantics.Category.EndoFunctor.Strong.Pointed
+import Semantics.Category.EndoFunctor.Strong.Multiplicative
+import Semantics.Category.EndoFunctor.Strong.Monad
 
 -- Categorical semantics for the calculi
 import Semantics.Category.Evaluation.SFC.Base

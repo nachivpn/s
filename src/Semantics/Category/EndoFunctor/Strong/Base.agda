@@ -1,6 +1,6 @@
 {-# OPTIONS  --safe --without-K #-}
 
-module Semantics.Category.EndoFunctor.Strong where
+module Semantics.Category.EndoFunctor.Strong.Base where
 
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
