@@ -40,8 +40,8 @@ record IsStrong {C : Category} (isCartesian : IsCartesian C) (F : EndoFunctor C)
     letin'-pres-≈̇-right : ∀ {P Q R : Obj} (φ : P →̇ ℱ' Q) {ψ ψ' : (P ×' Q) →̇ R} (ψ≈̇ψ' : ψ ≈̇ ψ')→ letin' φ ψ ≈̇ letin' φ ψ'
     letin'-pres-≈̇-right φ ψ≈̇ψ' = letin'-pres-≈̇ (≈̇-refl {φ = φ}) ψ≈̇ψ'
 
-    letin'-nat : ∀ {P P' Q R : Obj} (φ : P →̇ ℱ' Q) → (ψ : (P ×' Q) →̇ R) (ω : P' →̇ P) → letin' φ ψ ∘ ω ≈̇ letin' (φ ∘ ω) (ψ ∘ (ω ×'-map id'[ Q ]))
-    letin'-nat {P} {P'} {Q} {R} φ ψ ω =  let open EqReasoning (→̇-setoid P' (ℱ' R)) in begin
+    letin'-nat₁ : ∀ {P P' Q R : Obj} (φ : P →̇ ℱ' Q) (ψ : (P ×' Q) →̇ R) (ω : P' →̇ P) → letin' φ ψ ∘ ω ≈̇ letin' (φ ∘ ω) (ψ ∘ (ω ×'-map id'[ Q ]))
+    letin'-nat₁ {P} {P'} {Q} {R} φ ψ ω =  let open EqReasoning (→̇-setoid P' (ℱ' R)) in begin
       ((ℱ'-map ψ ∘ ℱ'-strength[ P , Q ]) ∘ pr' id' φ) ∘ ω
         ≈⟨ ≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right  _ (≈̇-trans (⟨,⟩'-nat id' φ ω) (⟨,⟩'-pres-≈̇-left (id'-unit-left P ω) _))) ⟩
       (ℱ'-map ψ ∘ ℱ'-strength[ P , Q ]) ∘ (pr' ω (φ ∘ ω))
@@ -59,6 +59,14 @@ record IsStrong {C : Category} (isCartesian : IsCartesian C) (F : EndoFunctor C)
       ((ℱ'-map ψ ∘ ℱ'-map (ω ×'-map id')) ∘ ℱ'-strength[ P' , Q ]) ∘ pr' id' (φ ∘ ω)
         ≈˘⟨ ∘-pres-≈̇-left (∘-pres-≈̇-left (ℱ'-map-pres-∘ _ _) _) _ ⟩
       (ℱ'-map (ψ ∘ (ω ×'-map id')) ∘ ℱ'-strength[ P' , Q ]) ∘ pr' id' (φ ∘ ω) ∎
+
+  letin'-nat₂ : ∀ {P Q R R' : Obj} (φ : P →̇ ℱ' Q) (ψ : (P ×' Q) →̇ R) (ω : R →̇ R') → ℱ'-map ω ∘ letin' φ ψ ≈̇ letin' φ (ω ∘ ψ)
+  letin'-nat₂ {P} {_} {_} {R'} φ ψ ω =  let open EqReasoning (→̇-setoid P (ℱ' R')) in begin
+    ℱ'-map ω ∘ (ℱ'-map ψ ∘ ℱ'-strength) ∘ ⟨ id' , φ ⟩'
+      ≈˘⟨ ≈̇-trans (∘-assoc _ _ _) (≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right _ (≈̇-sym (∘-assoc _ _ _ )))) ⟩
+    ((ℱ'-map ω ∘ ℱ'-map ψ) ∘ ℱ'-strength) ∘ ⟨ id' , φ ⟩'
+      ≈˘⟨ ∘-pres-≈̇-left (∘-pres-≈̇-left (ℱ'-map-pres-∘ _ _) _) _ ⟩
+    (ℱ'-map (ω ∘ ψ) ∘ ℱ'-strength) ∘ ⟨ id' , φ ⟩' ∎
 
   abstract
     ℱ'-strength-π₂ : {P Q : Obj} → ℱ'-map π₂' ∘ ℱ'-strength[ P , Q ] ≈̇ π₂'[ P ]

@@ -103,7 +103,7 @@ abstract
     evalTm (wkTm w (letin t u))
       ≈⟨ letin'-pres-≈̇ (evalTm-pres-∘' w t) (evalTm-pres-∘' (keep w) u) ⟩
     letin' (evalTm t ∘ evalWk w) (evalTm u ∘ evalWk (keep[ a' ] w))
-      ≈˘⟨ letin'-nat (evalTm t) (evalTm u) (evalWk w) ⟩
+      ≈˘⟨ letin'-nat₁ (evalTm t) (evalTm u) (evalWk w) ⟩
     evalTm (letin t u) [ evalWk w ]'
       ∎
 
@@ -193,7 +193,7 @@ abstract
     letin' (evalTm t [ evalSub σ ]') (evalTm u [ ⟨ evalSub σ ∘ π₁'[ evalTy a' ] , π₂'[ evalCtx Δ ] ⟩' ]')
       ≈˘⟨ letin'-pres-≈̇-right _ (∘-pres-≈̇-right (evalTm u) ((⟨,⟩'-pres-≈̇-right (evalSub σ ∘ π₁'[ evalTy a' ]) (id'-unit-left (evalTy a') π₂'[ evalCtx Δ ])))) ⟩
     letin' (evalTm t [ evalSub σ ]') (evalTm u [ (evalSub σ) ×'-map id'[ evalTy a' ]  ]')
-      ≈˘⟨ letin'-nat (evalTm t) (evalTm u) (evalSub σ) ⟩
+      ≈˘⟨ letin'-nat₁ (evalTm t) (evalTm u) (evalSub σ) ⟩
     (evalTm (letin t u) [ evalSub σ ]')
       ∎
 

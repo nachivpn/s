@@ -30,14 +30,10 @@ record IsStrongMonad {C : Category} {isCartesian : IsCartesian C} (F : EndoFunct
   open IsStrongPointed isStrongPointed
   open IsStrongMultiplicative isStrongMultiplicative
   open IsMonad isMonad
-  
-  letin' : {P Q R : Obj} (φ : P →̇ ℱ' Q) → (ψ : (P ×' Q) →̇ ℱ' R) → P →̇ ℱ' R
-  letin' φ ψ = ℱ'-join ∘ sletin' φ ψ 
 
   abstract
-    red-dia' : {P Q R : Obj} (φ : P →̇ Q) (ψ : (P ×' Q) →̇ ℱ' R)
-      → letin' (ℱ'-return[ Q ] ∘ φ) ψ ≈̇ (ψ ∘ ⟨ id'[ P ] , φ ⟩') 
-    red-dia' {P} {Q} {R} φ ψ = let open EqReasoning (→̇-setoid P (ℱ' R)) in begin
+    ℱ'-red : {P Q R : Obj} (φ : P →̇ Q) (ψ : (P ×' Q) →̇ ℱ' R) → letin' (ℱ'-return[ Q ] ∘ φ) ψ ≈̇ (ψ ∘ ⟨ id'[ P ] , φ ⟩')
+    ℱ'-red {P} {Q} {R} φ ψ = let open EqReasoning (→̇-setoid P (ℱ' R)) in begin
       ℱ'-join ∘ sletin' (ℱ'-return[ Q ] ∘ φ) ψ
         -- defn.
         ≡⟨⟩
@@ -70,9 +66,8 @@ record IsStrongMonad {C : Category} {isCartesian : IsCartesian C} (F : EndoFunct
         ≈⟨ id'-unit-left (ℱ' R) _ ⟩
       ψ ∘ ⟨ id'[ P ] , φ ⟩' ∎
 
-    exp-dia' : {P Q : Obj} (φ : P →̇ ℱ' Q) 
-      → letin' φ (ℱ'-return[ Q ] ∘ π₂') ≈̇ φ
-    exp-dia' {P} {Q} φ = let open EqReasoning (→̇-setoid P (ℱ' Q)) in begin
+    ℱ'-exp : {P Q : Obj} (φ : P →̇ ℱ' Q) → letin' φ (ℱ'-return[ Q ] ∘ π₂') ≈̇ φ
+    ℱ'-exp {P} {Q} φ = let open EqReasoning (→̇-setoid P (ℱ' Q)) in begin
       letin' φ (ℱ'-return ∘ π₂')
         -- defn.
         ≡⟨⟩
