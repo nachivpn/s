@@ -16,7 +16,7 @@ import MLC.Term
 import MLC.Term.Conversion
 import MLC.Term.NormalForm
 
--- Definition of categorical structures which could be replaced by `agda-categories`
+-- Definition of categorical structures
 import Semantics.Category.Base
 import Semantics.Category.Cartesian
 import Semantics.Category.CartesianClosed

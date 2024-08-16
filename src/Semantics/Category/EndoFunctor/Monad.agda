@@ -14,18 +14,9 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 record IsMonad {C : Category} {F : EndoFunctor C} (isPointed : IsPointed F) (isMultiplicative : IsMultiplicative F) : Set₂ where
   open Category C
   open EndoFunctor F
-  open IsPointed isPointed
-  open IsMultiplicative isMultiplicative
+  open IsPointed isPointed public
+  open IsMultiplicative isMultiplicative public
 
-  ℱ'-return[_] = ℱ'-point[_]
-  ℱ'-join[_]   = ℱ'-mult[_]
-
-  ℱ'-return : {P : Obj} → P →̇ ℱ' P
-  ℱ'-return = ℱ'-return[ _ ]
-  
-  ℱ'-join : {P : Obj} → ℱ' (ℱ' P) →̇ ℱ' P
-  ℱ'-join = ℱ'-mult[ _ ]
-  
   field
-    ℱ'-return-unit-right : {P : Obj} → ℱ'-join[ P ] ∘ ℱ'-return[ ℱ' P ] ≈̇ id'[ ℱ' P ]
-    ℱ'-return-unit-left  : {P : Obj} → ℱ'-join[ P ] ∘ (ℱ'-map ℱ'-return[ P ]) ≈̇ id'[ ℱ' P ]
+    point-unit-right : {P : Obj} → join[ P ] ∘ point[ ℱ' P ] ≈̇ id'[ ℱ' P ]
+    point-unit-left  : {P : Obj} → join[ P ] ∘ (map point[ P ]) ≈̇ id'[ ℱ' P ]

@@ -24,74 +24,72 @@ record IsStrongMonad {C : Category} {isCartesian : IsCartesian C} (F : EndoFunct
   open Category C
   open IsCartesian isCartesian
   open EndoFunctor F
-  open IsStrong isStrong renaming (letin' to sletin')
-  open IsPointed isPointed
-  open IsMultiplicative isMultiplicative
-  open IsStrongPointed isStrongPointed
-  open IsStrongMultiplicative isStrongMultiplicative
-  open IsMonad isMonad
+  open IsStrong isStrong renaming (letin' to sletin') hiding (exp-dia' ; red-dia')
+  open IsStrongPointed isStrongPointed public
+  open IsStrongMultiplicative isStrongMultiplicative public
+  open IsMonad isMonad public
 
   abstract
-    ℱ'-red : {P Q R : Obj} (φ : P →̇ Q) (ψ : (P ×' Q) →̇ ℱ' R) → letin' (ℱ'-return[ Q ] ∘ φ) ψ ≈̇ (ψ ∘ ⟨ id'[ P ] , φ ⟩')
-    ℱ'-red {P} {Q} {R} φ ψ = let open EqReasoning (→̇-setoid P (ℱ' R)) in begin
-      ℱ'-join ∘ sletin' (ℱ'-return[ Q ] ∘ φ) ψ
+    red-dia' : {P Q R : Obj} (φ : P →̇ Q) (ψ : (P ×' Q) →̇ ℱ' R) → letin' (return' φ) ψ ≈̇ (ψ ∘ ⟨ id'[ P ] , φ ⟩')
+    red-dia' {P} {Q} {R} φ ψ = let open EqReasoning (→̇-setoid P (ℱ' R)) in begin
+      join ∘ sletin' (return' φ) ψ
         -- defn.
         ≡⟨⟩
-      ℱ'-mult[ R ] ∘ (ℱ'-map ψ ∘ ℱ'-strength[ P , Q ]) ∘ ⟨ id'[ P ] , ℱ'-return[ Q ] ∘ φ ⟩'
+      join[ R ] ∘ (map ψ ∘ strength[ P , Q ]) ∘ ⟨ id'[ P ] , point[ Q ] ∘ φ ⟩'
         -- assoc
         ≈⟨ ∘-pres-≈̇-right _ (∘-assoc _ _ _) ⟩        
-      ℱ'-mult[ R ] ∘ ℱ'-map ψ ∘ ℱ'-strength[ P , Q ] ∘ ⟨ id'[ P ] , ℱ'-return[ Q ] ∘ φ ⟩'
+      join[ R ] ∘ map ψ ∘ strength[ P , Q ] ∘ ⟨ id'[ P ] , point[ Q ] ∘ φ ⟩'
         -- cartesian crunching prep.
         ≈˘⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (⟨,⟩'-pres-≈̇-left (id'-unit-left P _) _))) ⟩
-      (ℱ'-mult[ R ] ∘ ℱ'-map ψ ∘ ℱ'-strength[ P , Q ] ∘ ⟨ id'[ P ] ∘ id'[ P ] , ℱ'-return[ Q ] ∘ φ ⟩')
+      (join[ R ] ∘ map ψ ∘ strength[ P , Q ] ∘ ⟨ id'[ P ] ∘ id'[ P ] , point[ Q ] ∘ φ ⟩')
         -- cartesian crunching
         ≈˘⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (×'-map-∘-⟨,⟩' _ _ _ _))) ⟩
-      ℱ'-mult[ R ] ∘ ℱ'-map ψ ∘ ℱ'-strength[ P , Q ] ∘ (id'[ P ] ×'-map ℱ'-return[ Q ] ) ∘ ⟨ id'[ P ] , φ ⟩'
+      join[ R ] ∘ map ψ ∘ strength[ P , Q ] ∘ (id'[ P ] ×'-map point[ Q ] ) ∘ ⟨ id'[ P ] , φ ⟩'
         -- strong-pointedness
-        ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (≈̇-trans (≈̇-sym (∘-assoc _ _ _)) (∘-pres-≈̇-left ℱ'-strength-point _)))  ⟩        
-      ℱ'-mult[ R ] ∘ ℱ'-map ψ ∘ ℱ'-return[ P ×' Q ] ∘ ⟨ id'[ P ] , φ ⟩'
+        ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (≈̇-trans (≈̇-sym (∘-assoc _ _ _)) (∘-pres-≈̇-left strength-point _)))  ⟩        
+      join[ R ] ∘ map ψ ∘ point[ P ×' Q ] ∘ ⟨ id'[ P ] , φ ⟩'
         -- assoc
         ≈˘⟨ ∘-pres-≈̇-right _ (∘-assoc _ _ _) ⟩
-      ℱ'-mult[ R ] ∘ (ℱ'-map ψ ∘ ℱ'-return[ P ×' Q ]) ∘ ⟨ id'[ P ] , φ ⟩'
+      join[ R ] ∘ (map ψ ∘ point[ P ×' Q ]) ∘ ⟨ id'[ P ] , φ ⟩'
         -- return is natural
-        ≈˘⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-left (ℱ'-point-natural _) _) ⟩
-      ℱ'-mult[ R ] ∘ (ℱ'-return[ ℱ' R ] ∘ ψ) ∘ ⟨ id'[ P ] , φ ⟩'
+        ≈˘⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-left (point-natural _) _) ⟩
+      join[ R ] ∘ (point[ ℱ' R ] ∘ ψ) ∘ ⟨ id'[ P ] , φ ⟩'
         -- assoc
         ≈˘⟨ ≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right _ (≈̇-sym (∘-assoc _ _ _))) ⟩
-      (ℱ'-mult[ R ] ∘ ℱ'-return[ ℱ' R ]) ∘ ψ ∘ ⟨ id'[ P ] , φ ⟩'
+      (join[ R ] ∘ point[ ℱ' R ]) ∘ ψ ∘ ⟨ id'[ P ] , φ ⟩'
         -- right unit of monad
-        ≈⟨ ∘-pres-≈̇-left ℱ'-return-unit-right _ ⟩
+        ≈⟨ ∘-pres-≈̇-left point-unit-right _ ⟩
       id'[ ℱ' R ] ∘ ψ ∘ ⟨ id'[ P ] , φ ⟩'
         -- unit of ∘ 
         ≈⟨ id'-unit-left (ℱ' R) _ ⟩
       ψ ∘ ⟨ id'[ P ] , φ ⟩' ∎
 
-    ℱ'-exp : {P Q : Obj} (φ : P →̇ ℱ' Q) → letin' φ (ℱ'-return[ Q ] ∘ π₂') ≈̇ φ
-    ℱ'-exp {P} {Q} φ = let open EqReasoning (→̇-setoid P (ℱ' Q)) in begin
-      letin' φ (ℱ'-return ∘ π₂')
+    exp-dia' : {P Q : Obj} (φ : P →̇ ℱ' Q) → letin' φ (point[ Q ] ∘ π₂') ≈̇ φ
+    exp-dia' {P} {Q} φ = let open EqReasoning (→̇-setoid P (ℱ' Q)) in begin
+      letin' φ (return' π₂')
         -- defn.
         ≡⟨⟩
-      ℱ'-join ∘ (ℱ'-map (ℱ'-return ∘ π₂') ∘ ℱ'-strength) ∘ ⟨ id' , φ ⟩'
+      join ∘ (map (point ∘ π₂') ∘ strength) ∘ ⟨ id' , φ ⟩'
         -- functoriality
-        ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-left (∘-pres-≈̇-left (ℱ'-map-pres-∘ _ _) _) _) ⟩
-      ℱ'-join ∘ ((ℱ'-map ℱ'-return ∘ ℱ'-map π₂') ∘ ℱ'-strength) ∘ ⟨ id' , φ ⟩'
+        ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-left (∘-pres-≈̇-left (map-pres-∘ _ _) _) _) ⟩
+      join ∘ ((map point ∘ map π₂') ∘ strength) ∘ ⟨ id' , φ ⟩'
         -- assoc
         ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-left (∘-assoc _ _ _) _) ⟩
-      ℱ'-join ∘ (ℱ'-map ℱ'-return ∘ (ℱ'-map π₂' ∘ ℱ'-strength)) ∘ ⟨ id' , φ ⟩'
+      join ∘ (map point ∘ (map π₂' ∘ strength)) ∘ ⟨ id' , φ ⟩'
         -- strength coherence
-        ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-left (∘-pres-≈̇-right _ ℱ'-strength-π₂) _) ⟩
-      ℱ'-join ∘ (ℱ'-map ℱ'-return ∘ π₂') ∘ ⟨ id' , φ ⟩'
+        ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-left (∘-pres-≈̇-right _ strength-π₂) _) ⟩
+      join ∘ (map point ∘ π₂') ∘ ⟨ id' , φ ⟩'
         -- assoc
         ≈⟨ ∘-pres-≈̇-right _ (∘-assoc _ _ _) ⟩
-      ℱ'-join ∘ ℱ'-map ℱ'-return ∘ (π₂' ∘ ⟨ id' , φ ⟩')
+      join ∘ map point ∘ (π₂' ∘ ⟨ id' , φ ⟩')
         -- cartesian crunching
         ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (×'-beta-right _)) ⟩
-      ℱ'-join ∘ ℱ'-map ℱ'-return ∘ φ
+      join ∘ map point ∘ φ
         -- assoc
         ≈˘⟨ ∘-assoc _ _ _ ⟩
-      (ℱ'-join ∘ ℱ'-map ℱ'-return) ∘ φ
+      (join ∘ map point) ∘ φ
         -- left unit of monad
-        ≈⟨ ∘-pres-≈̇-left ℱ'-return-unit-left _ ⟩
+        ≈⟨ ∘-pres-≈̇-left point-unit-left _ ⟩
       id' ∘ φ
         -- unit of ∘
         ≈⟨ id'-unit-left _ _ ⟩

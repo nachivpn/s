@@ -15,7 +15,6 @@ module Semantics.Category.Evaluation.SFC.Base
   where
 
 open Category 𝒞
-open IsCartesian 𝒞-is-CC
 open IsCartesianClosed 𝒞-is-CCC
 open EndoFunctor ◇' renaming (ℱ'_ to ℱ'₀_)
 open IsStrong ◇'-is-strong

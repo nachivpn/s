@@ -6,7 +6,7 @@ open import Semantics.Category.Cartesian
 
 record IsCartesianClosed (C : Category) (isCartesian : IsCartesian C) : Set₂ where
   open Category C
-  open IsCartesian isCartesian
+  open IsCartesian isCartesian public
 
   field
     _⇒'_  : (P Q : Obj) → Obj

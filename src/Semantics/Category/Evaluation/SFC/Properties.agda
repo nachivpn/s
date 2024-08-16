@@ -20,7 +20,6 @@ module Semantics.Category.Evaluation.SFC.Properties
   where
 
 open Category 𝒞
-open IsCartesian 𝒞-is-CC
 open IsCartesianClosed 𝒞-is-CCC
 open EndoFunctor ℱ'
 open IsStrong ℱ'-is-strong
@@ -219,7 +218,7 @@ abstract
       ∎
   evalTm-sound (red-dia {Γ} {a} {b} {c} t u u') = let open EqReasoning (Tm'-setoid Γ (◇ c)) in begin
     evalTm (letin (letin t u) u')
-      ≈⟨ ℱ'-beta (evalTm t) (evalTm u) (evalTm u') ⟩
+      ≈⟨ red-dia' (evalTm t) (evalTm u) (evalTm u') ⟩
     letin' (evalTm t) (evalTm u' [ ⟨ π₁'[ evalTy a ] , evalTm u ⟩' ]')
       ≈˘⟨ letin'-pres-≈̇-right (evalTm t) (∘-pres-≈̇-right (evalTm u') (⟨,⟩'-pres-≈̇-left (id'-unit-left (evalCtx Γ) π₁'[ evalTy a ]) (evalTm u))) ⟩
     letin' (evalTm t) (evalTm u' [ ⟨ id' ∘ π₁'[ evalTy a ] , evalTm u ⟩' ]' )
@@ -233,7 +232,7 @@ abstract
     (evalTm (letin t (substTm (wkSub freshWk idₛ `, u) u'))) ∎
   evalTm-sound (exp-dia {Γ} {a} t) = let open EqReasoning (Tm'-setoid Γ (◇ a)) in begin
     evalTm t
-      ≈⟨ ℱ'-eta (evalTm t) ⟩
+      ≈⟨ exp-dia' (evalTm t) ⟩
     letin' (evalTm t) π₂'[ evalCtx Γ ]
       ≡⟨⟩
     evalTm (letin t (var zero))

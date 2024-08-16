@@ -14,9 +14,15 @@ record IsMultiplicative {C : Category} (F : EndoFunctor C) : Set₂ where
   open EndoFunctor F
 
   field
-    ℱ'-mult[_]      : (P : Obj) → (ℱ' (ℱ' P) →̇ ℱ' P)
-    ℱ'-mult-natural : {P Q : Obj} → (t :  P →̇  Q) → ℱ'-mult[ Q ] ∘ (ℱ'-map (ℱ'-map t)) ≈̇ (ℱ'-map t) ∘ ℱ'-mult[ P ]
-    ℱ'-mult-assoc   : {P : Obj} → ℱ'-mult[ P ] ∘ (ℱ'-map ℱ'-mult[ P ]) ≈̇ ℱ'-mult[ P ] ∘ ℱ'-mult[ ℱ' P ]
+    mult[_]      : (P : Obj) → (ℱ' (ℱ' P) →̇ ℱ' P)
+    mult-natural : {P Q : Obj} → (t :  P →̇  Q) → mult[ Q ] ∘ (map (map t)) ≈̇ (map t) ∘ mult[ P ]
+    mult-assoc   : {P : Obj} → mult[ P ] ∘ (map mult[ P ]) ≈̇ mult[ P ] ∘ mult[ ℱ' P ]
 
-  ℱ'-mult : {P : Obj} → (ℱ' (ℱ' P) →̇ ℱ' P)
-  ℱ'-mult = ℱ'-mult[ _ ]
+  mult : {P : Obj} → (ℱ' (ℱ' P) →̇ ℱ' P)
+  mult = mult[ _ ]
+
+  join[_]   = mult[_]
+  
+  join : {P : Obj} → ℱ' (ℱ' P) →̇ ℱ' P
+  join = mult[ _ ]
+  

@@ -20,5 +20,5 @@ record IsStrongPointed {C : Category} {isCartesian : IsCartesian C}
   open IsPointed isPointed
 
   field
-    ℱ'-strength-point : {P Q : Obj} → ℱ'-strength[ P , Q ] ∘ id'[ P ] ×'-map ℱ'-point[ Q ] ≈̇ ℱ'-point[ P ×' Q ]
+    strength-point : {P Q : Obj} → strength[ P , Q ] ∘ id'[ P ] ×'-map point[ Q ] ≈̇ point[ P ×' Q ]
 

@@ -14,7 +14,11 @@ record IsPointed {C : Category} (F : EndoFunctor C) : Set₂ where
   open EndoFunctor F
 
   field
-    ℱ'-point[_]      : (P : Obj) → (P →̇ ℱ' P)
-    ℱ'-point-natural : {P Q : Obj} → (t : P →̇ Q) → ℱ'-point[ Q ] ∘ t ≈̇ ℱ'-map t ∘ ℱ'-point[ P ]
+    point[_]      : (P : Obj) → (P →̇ ℱ' P)
+    point-natural : {P Q : Obj} → (t : P →̇ Q) → point[ Q ] ∘ t ≈̇ map t ∘ point[ P ]
     
+  point : {P : Obj} → P →̇ ℱ' P
+  point = point[ _ ]
 
+  return' : {P Q : Obj} → P →̇ Q → P →̇ ℱ' Q
+  return' = point ∘_

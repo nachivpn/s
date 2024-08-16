@@ -70,11 +70,11 @@ private
         
 ◇'-is-strong : IsStrong PshCat-is-CC ◇'-is-PshFunctor
 ◇'-is-strong = record
-  { ℱ'-strength[_,_]     = ◇'-strength
-  ; ℱ'-strength-natural₁ = ◇'-strength-natural₁
-  ; ℱ'-strength-natural₂ = ◇'-strength-natural₂
-  ; ℱ'-strength-assoc    = ◇'-strength-assoc
-  ; ℱ'-strength-unit     = ◇'-strength-unit
+  { strength[_,_]     = ◇'-strength
+  ; strength-natural₁ = ◇'-strength-natural₁
+  ; strength-natural₂ = ◇'-strength-natural₂
+  ; strength-assoc    = ◇'-strength-assoc
+  ; strength-unit     = ◇'-strength-unit
   }
   where
   abstract

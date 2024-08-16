@@ -125,10 +125,10 @@ abstract
 ◇'-is-PshFunctor : EndoFunctor PshCat
 ◇'-is-PshFunctor = record
                     { ℱ'_            = ◇'_
-                    ; ℱ'-map_        = ◇'-map_
-                    ; ℱ'-map-pres-≈̇  = ◇'-map-pres-≈̇
-                    ; ℱ'-map-pres-id = ◇'-map-pres-id
-                    ; ℱ'-map-pres-∘  = ◇'-map-pres-∘
+                    ; map_        = ◇'-map_
+                    ; map-pres-≈̇  = ◇'-map-pres-≈̇
+                    ; map-pres-id = ◇'-map-pres-id
+                    ; map-pres-∘  = ◇'-map-pres-∘
                     }
   where
   abstract
