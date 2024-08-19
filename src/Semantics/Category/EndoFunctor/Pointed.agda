@@ -22,3 +22,11 @@ record IsPointed {C : Category} (F : EndoFunctor C) : Set₂ where
 
   return' : {P Q : Obj} → P →̇ Q → P →̇ ℱ' Q
   return' = point ∘_
+
+  return'-pres-≈̇ : {P Q : Obj} → {f g : P →̇ Q}
+    → f ≈̇ g → return' f ≈̇ return' g
+  return'-pres-≈̇ = ∘-pres-≈̇-right _
+
+  return'-nat : {P Q R : Obj} (g : Q →̇ R) (f : P →̇ Q)
+    → return' (g ∘ f) ≈̇ return' g ∘ f
+  return'-nat g f = ≈̇-sym (∘-assoc _ g f)

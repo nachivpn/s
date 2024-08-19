@@ -64,8 +64,8 @@ record IsStrongMonad {C : Category} {isCartesian : IsCartesian C} (F : EndoFunct
         ≈⟨ id'-unit-left (ℱ' R) _ ⟩
       ψ ∘ ⟨ id'[ P ] , φ ⟩' ∎
 
-    exp-dia' : {P Q : Obj} (φ : P →̇ ℱ' Q) → letin' φ (point[ Q ] ∘ π₂') ≈̇ φ
-    exp-dia' {P} {Q} φ = let open EqReasoning (→̇-setoid P (ℱ' Q)) in begin
+    exp-dia' : {P Q : Obj} (φ : P →̇ ℱ' Q) → φ ≈̇ letin' φ (return' π₂')
+    exp-dia' {P} {Q} φ = ≈̇-sym let open EqReasoning (→̇-setoid P (ℱ' Q)) in begin
       letin' φ (return' π₂')
         -- defn.
         ≡⟨⟩

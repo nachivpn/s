@@ -16,7 +16,11 @@ record IsStrongMultiplicative {C : Category} {isCartesian : IsCartesian C}
   open Category C
   open IsCartesian isCartesian
   open EndoFunctor F
-  open IsStrong isStrong renaming (letin' to sletin' ; letin'-nat₂ to sletin'-nat₂)
+  open IsStrong isStrong renaming (letin' to sletin'
+      ; letin'-nat₂ to sletin'-nat₂
+      ; letin'-pres-≈̇ to sletin'-pres-≈̇
+      ; letin'-nat₁ to sletin'-nat₁)
+    using (strength[_,_] ; strength ; strength-natural₁ ; red-dia')
   open IsMultiplicative isMultiplicative
 
   field
@@ -25,6 +29,24 @@ record IsStrongMultiplicative {C : Category} {isCartesian : IsCartesian C}
 
   letin' : {P Q R : Obj} (φ : P →̇ ℱ' Q) → (ψ : (P ×' Q) →̇ ℱ' R) → P →̇ ℱ' R
   letin' {_} {_} {R} φ ψ = mult[ R ] ∘ sletin' φ ψ
+
+  abstract
+    letin'-pres-≈̇ : {P Q R : Obj} {φ φ' : P →̇ ℱ' Q} {ψ ψ' : (P ×' Q) →̇ ℱ' R}
+      → φ ≈̇ φ' → ψ ≈̇ ψ' → letin' φ ψ ≈̇ letin' φ' ψ'
+    letin'-pres-≈̇ p q = ∘-pres-≈̇-right mult (sletin'-pres-≈̇ p q)
+
+    letin'-pres-≈̇-left : ∀ {P Q R : Obj} {φ φ' : P →̇ ℱ' Q} (φ≈̇φ' : φ ≈̇ φ') (ψ : (P ×' Q) →̇ ℱ' R) → letin' φ ψ ≈̇ letin' φ' ψ
+    letin'-pres-≈̇-left φ≈̇φ' ψ = letin'-pres-≈̇ φ≈̇φ' (≈̇-refl {φ = ψ})
+
+    letin'-pres-≈̇-right : ∀ {P Q R : Obj} (φ : P →̇ ℱ' Q) {ψ ψ' : (P ×' Q) →̇ ℱ' R} (ψ≈̇ψ' : ψ ≈̇ ψ')→ letin' φ ψ ≈̇ letin' φ ψ'
+    letin'-pres-≈̇-right φ ψ≈̇ψ' = letin'-pres-≈̇ (≈̇-refl {φ = φ}) ψ≈̇ψ'
+
+    letin'-nat₁ : {P P' Q R : Obj} (φ : P →̇ ℱ' Q) (ψ : (P ×' Q) →̇ ℱ' R) (ω : P' →̇ P) → letin' φ ψ ∘ ω ≈̇ letin' (φ ∘ ω) (ψ ∘ (ω ×'-map id'[ Q ]))
+    letin'-nat₁ φ ψ ω =  ≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right mult (sletin'-nat₁ φ ψ ω))
+
+    -- TBD
+    --letin'-nat₂ : {P Q R R' : Obj} (φ : P →̇ ℱ' Q) (ψ : (P ×' Q) →̇ ℱ' R) (ω : R →̇ R') → map ω ∘ letin' φ ψ ≈̇ letin' φ (map ω ∘ ψ)
+    --letin'-nat₂ φ ψ ω = {!!}
 
   abstract
     comm-dia' : {P Q R S : Obj} (φ : P →̇ ℱ' Q) (ψ : (P ×' Q) →̇ ℱ' R) (ϕ : (P ×' R) →̇ ℱ' S)
