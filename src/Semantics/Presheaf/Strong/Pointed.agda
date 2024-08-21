@@ -1,6 +1,6 @@
 {-# OPTIONS --safe --without-K #-}
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; subst; cong ; cong₂)
-open import Semantics.Kripke.Frame using (IFrame ; MFrame ; InclusiveMFrame ; ReflexiveMFrame)
+open import Semantics.Kripke.Frame using (IFrame ; MFrame ; InclusiveMFrame ; ReflexiveMFrame ; InclusiveReflexiveMFrame)
 
 module Semantics.Presheaf.Strong.Pointed
   {C      : Set}
@@ -8,12 +8,13 @@ module Semantics.Presheaf.Strong.Pointed
   {IF     : IFrame C _⊆_}
   {_R_    : (Γ Δ : C) → Set}
   (MF     : MFrame IF _R_)
-  (IMF    : InclusiveMFrame MF)
-  (RMF    : ReflexiveMFrame MF)
+  {IMF    : InclusiveMFrame MF}
+  {RMF    : ReflexiveMFrame MF}
+  (IRMF   : InclusiveReflexiveMFrame MF IMF RMF)
   (let open MFrame MF)
   (let open InclusiveMFrame IMF)
   (let open ReflexiveMFrame RMF)
-  (R-to-⊆-pres-refl  : {Γ : C} → R-to-⊆ R-refl[ Γ ] ≡ ⊆-refl)
+  (let open InclusiveReflexiveMFrame IRMF)
   where
 
 open import Data.Product using (∃; _×_; _,_; -,_) renaming (proj₁ to fst; proj₂ to snd)

@@ -55,6 +55,19 @@ module _ {W : Set} {_⊆_ : W → W → Set} {_R_ : W → W → Set} {IF : IFram
     field
       R-trans             : {w w' w'' : W} → w R w' → w' R w'' → w R w''
       factor-pres-R-trans : {w w' u v : W} (i : w ⊆ w') (m : w R v) (m' : v R u)
-        → factor i (R-trans m m') ≡ ((-, ((R-trans (factorR i m) (factorR (factor⊆ i m) m')) , factor⊆ (factor⊆ i m) m'))) 
+        → factor i (R-trans m m') ≡ ((-, ((R-trans (factorR i m) (factorR (factor⊆ i m) m')) , factor⊆ (factor⊆ i m) m')))
+      R-trans-assoc : {v0 v1 v2 v3 : W} → (r : v0 R v1) (r' : v1 R v2) (r'' : v2 R v3) → R-trans (R-trans r r') r'' ≡ R-trans r (R-trans r' r'')
 
+  record InclusiveReflexiveMFrame (IMF : InclusiveMFrame) (RMF : ReflexiveMFrame) : Set where
+    open InclusiveMFrame IMF
+    open ReflexiveMFrame RMF
+    
+    field
+      R-to-⊆-pres-refl  : {w : W} → R-to-⊆ R-refl[ w ] ≡ ⊆-refl
 
+  record InclusiveTransitiveMFrame (IMF : InclusiveMFrame) (TMF : TransitiveMFrame) : Set where
+    open InclusiveMFrame IMF
+    open TransitiveMFrame TMF
+    
+    field
+      R-to-⊆-pres-trans : ∀ {w v u} → (r : w R v) →  (r' : v R u) → R-to-⊆ (R-trans r r') ≡ ⊆-trans (R-to-⊆ r) (R-to-⊆ r')
