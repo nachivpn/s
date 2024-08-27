@@ -2,7 +2,7 @@
 open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; cong₂) renaming (refl to ≡-refl; sym to ≡-sym; trans to ≡-trans)
 open import Semantics.Kripke.Frame using (IFrame ; MFrame ; TransitiveMFrame)
 
-module Semantics.Presheaf.Multiplicative.Semigroup
+module Semantics.Presheaf.Possibility.Multiplicative.Semigroup
   {C      : Set}
   {_⊆_    : (Γ Δ : C) → Set}
   {IF     : IFrame C _⊆_}
@@ -11,14 +11,13 @@ module Semantics.Presheaf.Multiplicative.Semigroup
   (TMF    : TransitiveMFrame MF)
   (let open MFrame MF)
   (let open TransitiveMFrame TMF)
-  (R-trans-assoc : {Γ Δ Δ' Θ : C} (r : Γ R Δ) (r' : Δ R Δ') (r'' : Δ' R Θ) → R-trans (R-trans r r') r'' ≡ R-trans r (R-trans r' r''))
   where
 
 open import Data.Product using (_×_; _,_) renaming (proj₁ to fst; proj₂ to snd)
 
 open import Semantics.Presheaf.Base IF
-open import Semantics.Presheaf.Possibility MF
-open import Semantics.Presheaf.Multiplicative.Magma MF TMF
+open import Semantics.Presheaf.Possibility.Base MF
+open import Semantics.Presheaf.Possibility.Multiplicative.Magma MF TMF
 
 private
   variable

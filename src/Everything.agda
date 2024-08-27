@@ -41,17 +41,18 @@ import Semantics.Kripke.Frame
 -- Presheaf category determined by possible-world frames
 import Semantics.Presheaf.Base
 import Semantics.Presheaf.CartesianClosure
-import Semantics.Presheaf.Possibility
 import Semantics.Presheaf.Lax
-import Semantics.Presheaf.Pointed
-import Semantics.Presheaf.Multiplicative.Magma
-import Semantics.Presheaf.Multiplicative.Semigroup
-import Semantics.Presheaf.Multiplicative
-import Semantics.Presheaf.Monad
-import Semantics.Presheaf.Strong
-import Semantics.Presheaf.Strong.Pointed
-import Semantics.Presheaf.Strong.Multiplicative
-import Semantics.Presheaf.Strong.Monad
+import Semantics.Presheaf.Possibility.Base
+import Semantics.Presheaf.Possibility.Pointed
+import Semantics.Presheaf.Possibility.Multiplicative.Magma
+import Semantics.Presheaf.Possibility.Multiplicative.Semigroup
+import Semantics.Presheaf.Possibility.Multiplicative
+import Semantics.Presheaf.Possibility.Monad
+import Semantics.Presheaf.Possibility.Strong.Base
+import Semantics.Presheaf.Possibility.Strong.Pointed
+import Semantics.Presheaf.Possibility.Strong.Multiplicative
+import Semantics.Presheaf.Possibility.Strong.Monad
 
 -- Normalization algorithms
 import SFC.Norm
+import MLC.Norm.Base

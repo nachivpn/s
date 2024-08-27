@@ -1,8 +1,8 @@
 {-# OPTIONS --safe --without-K #-}
 open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; cong₂) renaming (refl to ≡-refl; sym to ≡-sym; trans to ≡-trans)
-open import Semantics.Kripke.Frame using (IFrame ; MFrame ; ReflexiveMFrame ; TransitiveMFrame)
+open import Semantics.Kripke.Frame using (IFrame ; MFrame ; ReflexiveMFrame ; TransitiveMFrame ; ReflexiveTransitiveMFrame)
 
-module Semantics.Presheaf.Monad
+module Semantics.Presheaf.Possibility.Monad
   {C      : Set}
   {_⊆_    : (Γ Δ : C) → Set}
   {IF     : IFrame C _⊆_}
@@ -10,22 +10,23 @@ module Semantics.Presheaf.Monad
   (MF     : MFrame IF _R_)
   (RMF    : ReflexiveMFrame MF)
   (TMF    : TransitiveMFrame MF)
+  (RTMF   : ReflexiveTransitiveMFrame MF RMF TMF)
   (let open MFrame MF)
   (let open ReflexiveMFrame RMF)
   (let open TransitiveMFrame TMF)
-  (R-trans-assoc     : {Γ Δ Δ' Θ : C} (r : Γ R Δ) (r' : Δ R Δ') (r'' : Δ' R Θ) → R-trans (R-trans r r') r'' ≡ R-trans r (R-trans r' r''))
-  (R-refl-unit-left  : {Γ Δ : C} (r : Γ R Δ) → R-trans r R-refl ≡ r)
-  (R-refl-unit-right : {Γ Δ : C} (r : Γ R Δ) → R-trans R-refl r ≡ r) 
+  (let open ReflexiveTransitiveMFrame RTMF)
   where
 
 open import Data.Product using (_×_; _,_) renaming (proj₁ to fst; proj₂ to snd)
 
 open import Semantics.Presheaf.Base IF
-open import Semantics.Presheaf.Possibility MF
-open import Semantics.Presheaf.Pointed MF RMF 
-  renaming (point'[_] to return'[_] ; point' to return')
-open import Semantics.Presheaf.Multiplicative MF TMF R-trans-assoc
-  renaming (mult'[_] to join'[_]; mult' to join'; mult'-assoc to join'-assoc)
+open import Semantics.Presheaf.Possibility.Base MF
+open import Semantics.Presheaf.Possibility.Pointed MF RMF 
+  renaming (point'[_] to return'[_] ; point' to return') public
+open import Semantics.Presheaf.Possibility.Multiplicative MF TMF
+  renaming (mult'[_] to join'[_]; mult' to join'; mult'-assoc to join'-assoc) public
+
+open import Semantics.Category.EndoFunctor.Monad
 
 private
   variable
@@ -42,3 +43,6 @@ return'-unit-left {𝒫} = record { proof = λ p → proof
   (≡-refl
   , R-refl-unit-left _
   , ≋[ 𝒫 ]-refl) }
+
+◇'-is-monad : IsMonad ◇'-is-pointed ◇'-is-multiplicative
+◇'-is-monad = record { point-unit-right = return'-unit-right ; point-unit-left = return'-unit-left }

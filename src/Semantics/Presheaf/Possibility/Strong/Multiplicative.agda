@@ -2,7 +2,7 @@
 open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; cong₂) renaming (refl to ≡-refl; sym to ≡-sym; trans to ≡-trans)
 open import Semantics.Kripke.Frame using (IFrame ; MFrame ; InclusiveMFrame ; TransitiveMFrame ; InclusiveTransitiveMFrame)
 
-module Semantics.Presheaf.Strong.Multiplicative
+module Semantics.Presheaf.Possibility.Strong.Multiplicative
   {C      : Set}
   {_⊆_    : (Γ Δ : C) → Set}
   {IF     : IFrame C _⊆_}
@@ -25,9 +25,11 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Semantics.Presheaf.Base IF
 open import Semantics.Presheaf.CartesianClosure IF
-open import Semantics.Presheaf.Possibility MF
-open import Semantics.Presheaf.Strong MF IMF
-open import Semantics.Presheaf.Multiplicative MF TMF R-trans-assoc 
+open import Semantics.Presheaf.Possibility.Base MF
+open import Semantics.Presheaf.Possibility.Strong.Base MF IMF
+open import Semantics.Presheaf.Possibility.Multiplicative MF TMF
+
+open import Semantics.Category.EndoFunctor.Strong.Multiplicative
 
 private
   variable
@@ -39,7 +41,7 @@ private
 
 import Semantics.Presheaf.CartesianClosure as CC
 import Semantics.Presheaf.Base as B
-import Semantics.Presheaf.Possibility as P
+import Semantics.Presheaf.Possibility.Base as P
 
 -- c.f. https://en.wikipedia.org/wiki/Strong_monad#/media/File:Strong_monad_multiplication.svg
 ◇'-strong-mult' : (mult'[ 𝒫 ×' 𝒬 ]) ∘ (◇'-map (◇'-strength 𝒫 𝒬)) ∘ ◇'-strength 𝒫 (◇' 𝒬) ≈̇ ◇'-strength 𝒫 𝒬 ∘ (id'[ 𝒫 ] ×'-map mult'[ 𝒬 ])
@@ -54,3 +56,6 @@ import Semantics.Presheaf.Possibility as P
         ≡˘⟨ cong (λ z → wk[ 𝒫 ] z (π₁' .apply r)) (R-to-⊆-pres-trans _ _) ⟩
       wk[ 𝒫 ] (R-to-⊆ (R-trans _ _)) (π₁' .apply r) ∎)
     , ≋[ 𝒬 ]-refl))) }
+
+◇'-is-strong-multiplicative : IsStrongMultiplicative ◇'-is-PshFunctor ◇'-is-strong ◇'-is-multiplicative
+◇'-is-strong-multiplicative = record { strength-mult = ◇'-strong-mult' }

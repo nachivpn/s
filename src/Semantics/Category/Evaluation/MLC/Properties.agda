@@ -225,6 +225,24 @@ abstract
 
 abstract
   evalTm-sound : (s : t ≈ t') → evalTm t ≈̇ evalTm t'
+  evalTm-sound (red-fun {Γ} {a} {b} t u) = let open EqReasoning (Tm'-setoid Γ b) in begin
+    evalTm (app (lam t) u)
+      ≈⟨ ⇒'-beta (evalTm t) (evalTm u) ⟩
+    evalTm t [ ⟨ id'[ evalCtx Γ ] , evalTm u ⟩' ]'
+      ≈˘⟨ ∘-pres-≈̇-right (evalTm t) (⟨,⟩'-pres-≈̇-left (evalSub-pres-id Γ) (evalTm u)) ⟩
+    evalTm t [ ⟨ evalSub idₛ[ Γ ] , evalTm u ⟩' ]'
+      ≈˘⟨ evalTm-pres-∘ t (idₛ `, u) ⟩
+    evalTm (substTm (idₛ[ Γ ] `, u) t)
+      ∎
+  evalTm-sound (exp-fun {Γ} {a} {b} t) = let open EqReasoning (Tm'-setoid Γ (a ⇒ b)) in begin
+    evalTm t
+      ≈⟨ ⇒'-eta (evalTm t) ⟩
+    lam' (app' (evalTm t [ π₁'[ evalTy a ] ]') π₂'[ evalCtx Γ ])
+      ≈˘⟨ lam'-pres-≈̇ (app'-pres-≈̇-left (∘-pres-≈̇-right (evalTm t) (evalWk-pres-π₁ Γ a)) π₂'[ evalCtx Γ ]) ⟩
+    lam' (app' (evalTm t [ evalWk (freshWk {Γ} {a}) ]') π₂'[ evalCtx Γ ])
+      ≈˘⟨ lam'-pres-≈̇ (app'-pres-≈̇-left (evalTm-pres-∘' freshWk t) π₂'[ evalCtx Γ ]) ⟩
+    evalTm (lam (app (wkTm freshWk t) (var zero)))
+      ∎
   evalTm-sound (exp-dia {Γ} {a} t) = let open EqReasoning (Tm'-setoid Γ (◇ a)) in begin
     evalTm t
       ≈⟨ exp-dia' (evalTm t) ⟩
@@ -256,6 +274,7 @@ abstract
   evalTm-sound (cong-lam s)            = lam'-pres-≈̇        (evalTm-sound s)
   evalTm-sound (cong-app1 {u = u} s)   = app'-pres-≈̇-left   (evalTm-sound s) (evalTm u)
   evalTm-sound (cong-app2 {t = t} s)   = app'-pres-≈̇-right  (evalTm t) (evalTm-sound s)
+  evalTm-sound (cong-return {t = t} s) = return'-pres-≈̇ (evalTm-sound s)
   evalTm-sound (cong-letin1 {u = u} s) = letin'-pres-≈̇-left   (evalTm-sound s) (evalTm u)
   evalTm-sound (cong-letin2 {t = t} s) = letin'-pres-≈̇-right  (evalTm t) (evalTm-sound s)
   evalTm-sound ≈-refl                  = ≈̇-refl

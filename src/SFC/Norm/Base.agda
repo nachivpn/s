@@ -57,8 +57,8 @@ IMF = record { R-to-⊆ = ⊲-to-⊆ ; factor-pres-R-to-⊆ = factor-pres-R-to-�
 
 open import Semantics.Presheaf.Base 𝒲 public
 open import Semantics.Presheaf.CartesianClosure 𝒲 public
-open import Semantics.Presheaf.Possibility MF public
-open import Semantics.Presheaf.Strong MF IMF public
+open import Semantics.Presheaf.Possibility.Base MF public
+open import Semantics.Presheaf.Possibility.Strong.Base MF IMF public
 
 Ne'- : Ty → Psh
 Ne'- a = record

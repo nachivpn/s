@@ -71,3 +71,11 @@ module _ {W : Set} {_⊆_ : W → W → Set} {_R_ : W → W → Set} {IF : IFram
     
     field
       R-to-⊆-pres-trans : ∀ {w v u} → (r : w R v) →  (r' : v R u) → R-to-⊆ (R-trans r r') ≡ ⊆-trans (R-to-⊆ r) (R-to-⊆ r')
+
+  record ReflexiveTransitiveMFrame (RMF : ReflexiveMFrame) (TMF : TransitiveMFrame) : Set where
+    open ReflexiveMFrame RMF
+    open TransitiveMFrame TMF
+    
+    field
+      R-refl-unit-left  : {w v : W} (r : w R v) → R-trans r R-refl ≡ r
+      R-refl-unit-right : {w v : W} (r : w R v) → R-trans R-refl r ≡ r

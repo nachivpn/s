@@ -2,7 +2,7 @@
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; subst; cong ; cong₂)
 open import Semantics.Kripke.Frame using (IFrame ; MFrame ; InclusiveMFrame ; ReflexiveMFrame ; InclusiveReflexiveMFrame)
 
-module Semantics.Presheaf.Strong.Pointed
+module Semantics.Presheaf.Possibility.Strong.Pointed
   {C      : Set}
   {_⊆_    : (Γ Δ : C) → Set}
   {IF     : IFrame C _⊆_}
@@ -24,9 +24,11 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Semantics.Presheaf.Base IF
 open import Semantics.Presheaf.CartesianClosure IF
-open import Semantics.Presheaf.Possibility MF
-open import Semantics.Presheaf.Strong MF IMF
-open import Semantics.Presheaf.Pointed MF RMF
+open import Semantics.Presheaf.Possibility.Base MF
+open import Semantics.Presheaf.Possibility.Strong.Base MF IMF
+open import Semantics.Presheaf.Possibility.Pointed MF RMF
+
+open import Semantics.Category.EndoFunctor.Strong.Pointed
 
 private
   variable
@@ -44,3 +46,7 @@ abstract
         wk[ 𝒫 ] (⊆-refl) p          ≈⟨ wk[ 𝒫 ]-pres-refl p ⟩
         p                           ∎)
       , ≋[ 𝒬 ]-refl)) }
+
+
+◇'-is-strong-pointed : IsStrongPointed ◇'-is-PshFunctor ◇'-is-strong ◇'-is-pointed
+◇'-is-strong-pointed = record { strength-point = ◇'-strength-point }

@@ -2,7 +2,7 @@
 open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; cong₂) renaming (refl to ≡-refl; sym to ≡-sym; trans to ≡-trans)
 open import Semantics.Kripke.Frame using (IFrame ; MFrame ; ReflexiveMFrame)
 
-module Semantics.Presheaf.Pointed
+module Semantics.Presheaf.Possibility.Pointed
   {C      : Set}
   {_⊆_    : (Γ Δ : C) → Set}
   {IF     : IFrame C _⊆_}
@@ -20,7 +20,9 @@ open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Semantics.Presheaf.Base IF
-open import Semantics.Presheaf.Possibility MF
+open import Semantics.Presheaf.Possibility.Base MF
+
+open import Semantics.Category.EndoFunctor.Pointed
 
 private
   variable
@@ -60,3 +62,6 @@ abstract
   -- https://ncatlab.org/nlab/show/pointed+endofunctor]
 
 point' = λ {𝒫} → point'[ 𝒫 ]
+
+◇'-is-pointed : IsPointed ◇'-is-PshFunctor
+◇'-is-pointed = record { point[_] = point'[_] ; point-natural = point'-natural }

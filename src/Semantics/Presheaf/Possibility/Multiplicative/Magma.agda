@@ -2,7 +2,7 @@
 open import Relation.Binary.PropositionalEquality using (_≡_; subst; cong; cong₂) renaming (refl to ≡-refl; sym to ≡-sym; trans to ≡-trans)
 open import Semantics.Kripke.Frame using (IFrame ; MFrame ; TransitiveMFrame)
 
-module Semantics.Presheaf.Multiplicative.Magma
+module Semantics.Presheaf.Possibility.Multiplicative.Magma
   {C      : Set}
   {_⊆_    : (Γ Δ : C) → Set}
   {IF     : IFrame C _⊆_}
@@ -20,7 +20,7 @@ open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Semantics.Presheaf.Base IF
-open import Semantics.Presheaf.Possibility MF
+open import Semantics.Presheaf.Possibility.Base MF
 
 private
   variable

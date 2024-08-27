@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --without-K #-}
 open import Semantics.Kripke.Frame using (IFrame ; MFrame)
 
-module Semantics.Presheaf.Possibility
+module Semantics.Presheaf.Possibility.Base
   {C    : Set}
   {_⊆_  : (Γ Δ : C) → Set}
   {IF   : IFrame C _⊆_}

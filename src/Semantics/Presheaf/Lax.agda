@@ -19,7 +19,7 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Semantics.Presheaf.Base IF
 open import Semantics.Presheaf.CartesianClosure IF
-open import Semantics.Presheaf.Possibility MF public
+open import Semantics.Presheaf.Possibility.Base MF public
 
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
