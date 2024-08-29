@@ -30,10 +30,10 @@ import Semantics.Category.EndoFunctor.Strong.Multiplicative
 import Semantics.Category.EndoFunctor.Strong.Monad
 
 -- Categorical semantics for the calculi
-import Semantics.Category.Evaluation.SFC.Base
-import Semantics.Category.Evaluation.SFC.Properties
-import Semantics.Category.Evaluation.MLC.Base
-import Semantics.Category.Evaluation.MLC.Properties
+import SFC.Evaluation.Base
+import SFC.Evaluation.Properties
+import MLC.Evaluation.Base
+import MLC.Evaluation.Properties
 
 -- Intuitionistic possible-world frames
 import Semantics.Kripke.Frame

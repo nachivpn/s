@@ -29,5 +29,5 @@ module Semantics.Category.Evaluation.MLC
   (ι'            : Category.Obj 𝒞)
   where
 
-open import Semantics.Category.Evaluation.MLC.Base 𝒞 𝒞-is-CCC ◇' ◇'-is-strong-monad public
-open import Semantics.Category.Evaluation.MLC.Properties 𝒞 𝒞-is-CCC ◇' ◇'-is-strong-monad ι' public
+open import MLC.Evaluation.Base 𝒞 𝒞-is-CCC ◇' ◇'-is-strong-monad public
+open import MLC.Evaluation.Properties 𝒞 𝒞-is-CCC ◇' ◇'-is-strong-monad ι' public

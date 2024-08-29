@@ -18,7 +18,7 @@ open import Data.Product using (∃; _,_; -,_) renaming (_×_ to _∧_; proj₁ 
 
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; subst)
 
-module Semantics.Category.Evaluation.MLC.Properties
+module MLC.Evaluation.Properties
   (𝒞                   : Category)
   {𝒞-is-CC             : IsCartesian 𝒞}
   (𝒞-is-CCC            : IsCartesianClosed 𝒞 𝒞-is-CC)
@@ -51,7 +51,7 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 open import MLC.Term
 open import MLC.Term.Conversion
 
-open import Semantics.Category.Evaluation.MLC.Base
+open import MLC.Evaluation.Base
    𝒞 𝒞-is-CCC ◇' ◇'-is-strong-monad
   renaming (module Eval to MLCBaseEval)
 

@@ -3,35 +3,21 @@
 open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
 open import Semantics.Category.CartesianClosed
-open import Semantics.Category.Base
-open import Semantics.Category.Cartesian
 open import Semantics.Category.EndoFunctor.Base
-open import Semantics.Category.EndoFunctor.Pointed
-open import Semantics.Category.EndoFunctor.Multiplicative
-open import Semantics.Category.EndoFunctor.Monad
 open import Semantics.Category.EndoFunctor.Strong.Base
-open import Semantics.Category.EndoFunctor.Strong.Pointed
-open import Semantics.Category.EndoFunctor.Strong.Multiplicative
-open import Semantics.Category.EndoFunctor.Strong.Monad
 
-module Semantics.Category.Evaluation.MLC.Base
-  (𝒞                   : Category)
-  {𝒞-is-CC             : IsCartesian 𝒞}
-  (𝒞-is-CCC            : IsCartesianClosed 𝒞 𝒞-is-CC)
-  (◇'                  : EndoFunctor 𝒞)
-  {◇'-is-strong        : IsStrong 𝒞-is-CC ◇'}
-  {◇'-is-pointed       : IsPointed ◇'}
-  {◇'-is-mult          : IsMultiplicative ◇'}
-  {◇'-is-monad         : IsMonad ◇'-is-pointed ◇'-is-mult}
-  {◇'-is-strong-point  : IsStrongPointed ◇' ◇'-is-strong ◇'-is-pointed}
-  {◇'-is-strong-mult   : IsStrongMultiplicative ◇' ◇'-is-strong ◇'-is-mult}
-  (◇'-is-strong-monad  : IsStrongMonad ◇' ◇'-is-strong-point ◇'-is-strong-mult ◇'-is-monad)
+module SFC.Evaluation.Base
+  (𝒞             : Category)
+  (𝒞-is-CC       : IsCartesian 𝒞)
+  (𝒞-is-CCC      : IsCartesianClosed 𝒞 𝒞-is-CC)
+  (◇'            : EndoFunctor 𝒞)
+  (◇'-is-strong  : IsStrong 𝒞-is-CC ◇')
   where
 
 open Category 𝒞
 open IsCartesianClosed 𝒞-is-CCC
 open EndoFunctor ◇' renaming (ℱ'_ to ℱ'₀_)
-open IsStrongMonad ◇'-is-strong-monad
+open IsStrong ◇'-is-strong
 
 private
   Ty'  = Obj
@@ -43,7 +29,7 @@ open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalen
 
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-open import MLC.Term
+open import SFC.Term
 
 module Eval (ι' : Ty') where
   evalTy : (a : Ty) → Ty'
@@ -68,7 +54,6 @@ module Eval (ι' : Ty') where
   evalTm (var v)     = evalVar v
   evalTm (lam t)     = lam' (evalTm t)
   evalTm (app t u)   = app' (evalTm t) (evalTm u)
-  evalTm (return t)  = return' (evalTm t)
   evalTm (letin t u) = letin' (evalTm t) (evalTm u)
 
   evalSub : (σ : Sub Δ Γ) → evalCtx Δ →̇ evalCtx Γ
