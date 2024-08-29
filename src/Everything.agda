@@ -55,4 +55,4 @@ import Semantics.Presheaf.Possibility.Strong.Monad
 
 -- Normalization algorithms
 import SFC.Norm
-import MLC.Norm.Base
+import MLC.Norm

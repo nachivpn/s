@@ -239,23 +239,23 @@ register = record
   ; natural = register-natural
   }
 
-collectNfAcc : Γ ⊲ Δ → Nf Δ a → Nf Γ (◇ a)
-collectNfAcc nil        n0 = return n0
+collectNfAcc : Γ ⊲ Δ → Nf Δ (◇ a) → Nf Γ (◇ a)
+collectNfAcc nil        n0 = n0
 collectNfAcc (cons n m) n0 = letin n (collectNfAcc m n0)
 
 collectNf-fun : (◇' Nf'- a) ₀ Γ → Nf'- (◇ a) ₀ Γ
-collectNf-fun (elem (Δ , m , n)) = collectNfAcc m n
+collectNf-fun (elem (Δ , m , n)) = collectNfAcc m (return n)
 
 collectNf-pres-≋ : Pres-≋ (◇' (Nf'- a)) (Nf'- (◇ a)) collectNf-fun 
 collectNf-pres-≋ (proof (≡-refl , ≡-refl , ≡-refl)) = ≡-refl
 
-collectNfAcc-nat : (w : Γ ⊆ Γ') (m : Γ ⊲ Δ) (n : Nf Δ a)
+collectNfAcc-nat : (w : Γ ⊆ Γ') (m : Γ ⊲ Δ) (n : Nf Δ (◇ a))
   → wkNf w (collectNfAcc m n) ≡ collectNfAcc (factor⊲ w m) (wkNf (factor⊆ w m) n)
 collectNfAcc-nat w nil        n0 = ≡-refl
 collectNfAcc-nat w (cons n m) n0 = cong (letin (wkNe w n)) (collectNfAcc-nat (keep w) m n0)
 
 collectNf-natural : Natural (◇' (Nf'- a)) (Nf'- (◇ a)) collectNf-fun
-collectNf-natural w (elem (Δ , m , n)) = collectNfAcc-nat w m n
+collectNf-natural w (elem (Δ , m , n)) = collectNfAcc-nat w m (return n)
 
 collectNf : ◇' (Nf'- a) →̇ Nf'- (◇ a)
 collectNf = record

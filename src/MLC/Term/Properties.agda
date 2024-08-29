@@ -197,3 +197,39 @@ module AdhocLemmas where
       (sym (trans
         (sym (wkTm-pres-⊆-trans _ _ _))
         (cong₂ wkTm (cong (λ z → keep (drop z)) (⊆-refl-unit-left _)) refl))))
+
+  --
+  letin-collecAcc-crunch-lemma : (w : (Γ `, c) ⊆ Δ) (t : Tm Δ a) (u : Tm (Γ `, a) b)
+    → substTm (embWk w `, t) (wkTm (keep freshWk) u) ≡ substTm (embWk (freshWk ∙ w) `, t) u
+  letin-collecAcc-crunch-lemma w t u = let open ≡-Reasoning in begin
+      substTm (embWk w `, t) (wkTm (keep freshWk) u)
+        ≡˘⟨ assoc-substTm-wkTm u (embWk w `, t) (keep freshWk) ⟩
+      substTm (trimSub (keep freshWk) (embWk w `, t)) u
+        ≡˘⟨ cong (λ z → substTm (trimSub (keep freshWk) (z `, t)) u) (wkSub-unit-right w) ⟩
+      substTm (trimSub (keep freshWk) (wkSub w idₛ `, t)) u
+        ≡⟨⟩
+      substTm (trimSub ⊆-refl (wkSub w (wkSub freshWk idₛ) `, t)) u
+        ≡⟨ cong (λ z → substTm (z `, t) u) (trimSub-unit-left _) ⟩
+      substTm ((wkSub w (wkSub freshWk idₛ) `, t)) u
+        ≡˘⟨ cong (λ z → substTm (z `, t) u) (wkSub-pres-⊆-trans freshWk w idₛ)  ⟩
+      substTm (wkSub (freshWk ∙ w) idₛ `, t) u
+        ≡⟨ cong (λ z → substTm (z `, t) u) (wkSub-unit-right (freshWk ∙ w)) ⟩
+      substTm (embWk (freshWk ∙ w) `, t) u ∎
+
+  --
+  red-ass-dia-crunch-lemma : (w : Γ ⊆ Θ) (s : Sub Γ Δ) (t : Tm Θ a)
+    → wkSub freshWk s ∙ₛ (embWk w `, t) ≡ wkSub w s
+  red-ass-dia-crunch-lemma w s t = let open ≡-Reasoning in begin
+    wkSub freshWk s ∙ₛ (embWk w `, t)
+      ≡˘⟨ assoc-wkSub-∙ₛ s (embWk w `, t) freshWk ⟩
+    s ∙ₛ trimSub freshWk (embWk w `, t)
+      ≡⟨⟩
+    s ∙ₛ trimSub ⊆-refl (embWk w)
+      ≡⟨ cong (s ∙ₛ_) (trimSub-unit-left (embWk w)) ⟩
+    s ∙ₛ embWk w
+      ≡˘⟨ cong (s ∙ₛ_) (wkSub-unit-right w) ⟩
+    s ∙ₛ wkSub w idₛ
+      ≡˘⟨ assoc-∙ₛ-wkSub s idₛ w ⟩
+    wkSub w (s ∙ₛ idₛ)
+      ≡⟨ cong (wkSub w) (∙ₛ-unit-right s) ⟩
+    wkSub w s ∎
