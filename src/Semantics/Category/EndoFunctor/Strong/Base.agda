@@ -43,13 +43,13 @@ record IsStrong {C : Category} (isCartesian : IsCartesian C) (F : EndoFunctor C)
     letin'-nat₁ : ∀ {P P' Q R : Obj} (φ : P →̇ ℱ' Q) (ψ : (P ×' Q) →̇ R) (ω : P' →̇ P) → letin' φ ψ ∘ ω ≈̇ letin' (φ ∘ ω) (ψ ∘ (ω ×'-map id'[ Q ]))
     letin'-nat₁ {P} {P'} {Q} {R} φ ψ ω =  let open EqReasoning (→̇-setoid P' (ℱ' R)) in begin
       ((map ψ ∘ strength[ P , Q ]) ∘ pr' id' φ) ∘ ω
-        ≈⟨ ≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right  _ (≈̇-trans (⟨,⟩'-nat id' φ ω) (⟨,⟩'-pres-≈̇-left (id'-unit-left P ω) _))) ⟩
+        ≈⟨ ≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right  _ (≈̇-trans (⟨,⟩'-nat id' φ ω) (⟨,⟩'-pres-≈̇-left (∘-unit-left P ω) _))) ⟩
       (map ψ ∘ strength[ P , Q ]) ∘ (pr' ω (φ ∘ ω))
         ≈⟨ ∘-assoc _ _ _ ⟩
       map ψ ∘ strength[ P , Q ] ∘ (pr' ω (φ ∘ ω))
        ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (≈̇-sym (≈̇-trans
             (×'-map-∘-⟨,⟩' _ _ _ _)
-            (⟨,⟩'-pres-≈̇ (id'-unit-right _ _) (id'-unit-left _ _))))) ⟩
+            (⟨,⟩'-pres-≈̇ (∘-unit-right _ _) (∘-unit-left _ _))))) ⟩
       map ψ ∘ (strength[ P , Q ] ∘ ((ω ×'-map id') ∘ pr' id' (φ ∘ ω)))
         ≈˘⟨ ∘-pres-≈̇-right _ (∘-assoc _ _ _) ⟩
       map ψ ∘ (strength[ P , Q ] ∘ (ω ×'-map id')) ∘ pr' id' (φ ∘ ω)
@@ -72,7 +72,7 @@ record IsStrong {C : Category} (isCartesian : IsCartesian C) (F : EndoFunctor C)
     strength-π₂ : {P Q : Obj} → map π₂' ∘ strength[ P , Q ] ≈̇ π₂'[ P ]
     strength-π₂ {P} {Q} = let open EqReasoning (→̇-setoid (P ×' (ℱ' Q)) (ℱ' Q)) in begin
       map π₂' ∘ strength[ P , Q ]
-        ≈˘⟨ ∘-pres-≈̇-left (map-pres-≈̇ (≈̇-trans (×'-beta-right _) (id'-unit-left _ _))) _ ⟩
+        ≈˘⟨ ∘-pres-≈̇-left (map-pres-≈̇ (≈̇-trans (×'-beta-right _) (∘-unit-left _ _))) _ ⟩
       map (π₂' ∘ (unit' ×'-map id')) ∘ strength[ P , Q ]
         ≈⟨ ∘-pres-≈̇-left (map-pres-∘ _ _) _ ⟩
       (map π₂' ∘ map (unit' ×'-map id')) ∘ strength[ P , Q ]
@@ -84,7 +84,7 @@ record IsStrong {C : Category} (isCartesian : IsCartesian C) (F : EndoFunctor C)
       (map π₂' ∘ strength[ []' , Q ]) ∘ unit' ×'-map id'
         ≈⟨ ∘-pres-≈̇-left strength-unit _ ⟩
       π₂' ∘ (unit' ×'-map id')
-        ≈⟨ ≈̇-trans (×'-beta-right _) (id'-unit-left _ _) ⟩
+        ≈⟨ ≈̇-trans (×'-beta-right _) (∘-unit-left _ _) ⟩
       π₂' ∎
 
     exp-dia' : {P Q : Obj} (φ : P →̇ ℱ' Q) → φ ≈̇ letin' φ π₂'
@@ -114,7 +114,7 @@ record IsStrong {C : Category} (isCartesian : IsCartesian C) (F : EndoFunctor C)
         strength[ P , R ] ∘ ⟨ id' , (map ψ ∘ strength[ P , Q ]) ∘ ⟨ id' , φ ⟩' ⟩'
           ≈⟨ ∘-pres-≈̇-right _ (⟨,⟩'-pres-≈̇-right _ (∘-assoc _ _ _)) ⟩
         strength[ P , R ] ∘ ⟨ id' , (map ψ) ∘ strength[ P , Q ] ∘ ⟨ id' , φ ⟩' ⟩'
-          ≈˘⟨ ∘-pres-≈̇-right _ (≈̇-trans (×'-map-∘-⟨,⟩' _ _ _ _) (⟨,⟩'-pres-≈̇-left (id'-unit-left _ _) _)) ⟩
+          ≈˘⟨ ∘-pres-≈̇-right _ (≈̇-trans (×'-map-∘-⟨,⟩' _ _ _ _) (⟨,⟩'-pres-≈̇-left (∘-unit-left _ _) _)) ⟩
         strength[ P , R ] ∘ (id' ×'-map (map ψ)) ∘ ⟨ id' , strength[ P , Q ] ∘ ⟨ id' , φ ⟩' ⟩'
           ≈⟨ ≈̇-trans (≈̇-sym (∘-assoc _ _ _)) (≈̇-trans (∘-pres-≈̇-left (strength-natural₂ ψ) _) (∘-assoc _ _ _)) ⟩
         _ ∎
@@ -123,7 +123,7 @@ record IsStrong {C : Category} (isCartesian : IsCartesian C) (F : EndoFunctor C)
             ≈̇ map ×'-assoc ∘ strength[ P ×' P , Q ] ∘ ⟨ ⟨ id' , id' ⟩' , φ ⟩'
       step2-with-strength-assoc = let open EqReasoning (→̇-setoid _ _) in begin
         strength[ P , P ×' Q ] ∘ ⟨ id' , strength[ P , Q ] ∘ ⟨ id' , φ ⟩' ⟩'
-          ≈˘⟨ ∘-pres-≈̇-right _ (⟨,⟩'-pres-≈̇-left (id'-unit-left P id') _) ⟩
+          ≈˘⟨ ∘-pres-≈̇-right _ (⟨,⟩'-pres-≈̇-left (∘-unit-left P id') _) ⟩
         strength[ P , P ×' Q ] ∘ ⟨ id' ∘ id' , strength[ P , Q ] ∘ ⟨ id' , φ ⟩' ⟩'
           ≈˘⟨ ∘-pres-≈̇-right _ (×'-map-∘-⟨,⟩' _ _ _ _) ⟩
         strength[ P , P ×' Q ] ∘ (id' ×'-map strength[ P , Q ] ∘ ⟨ id' , ⟨ id' , φ ⟩' ⟩')
@@ -140,7 +140,7 @@ record IsStrong {C : Category} (isCartesian : IsCartesian C) (F : EndoFunctor C)
             ≈̇ map (⟨ id' , id' ⟩' ×'-map id') ∘ strength[ P , Q ] ∘ ⟨ id' , φ ⟩'
       step3-with-strength-natural₁ = let open EqReasoning (→̇-setoid _ _) in begin
         strength[ P ×' P , Q ] ∘ ⟨ ⟨ id' , id' ⟩' , φ ⟩'
-          ≈˘⟨ ∘-pres-≈̇-right _ (≈̇-trans (×'-map-∘-⟨,⟩' _ _ _ _) (⟨,⟩'-pres-≈̇ (id'-unit-right _ _) (id'-unit-left _ _))) ⟩
+          ≈˘⟨ ∘-pres-≈̇-right _ (≈̇-trans (×'-map-∘-⟨,⟩' _ _ _ _) (⟨,⟩'-pres-≈̇ (∘-unit-right _ _) (∘-unit-left _ _))) ⟩
         strength[ P ×' P , Q ] ∘ (⟨ id' , id' ⟩' ×'-map id'[ ℱ' Q ]) ∘ ⟨ id' , φ ⟩'
           ≈˘⟨ ∘-assoc _ _ _ ⟩
         (strength[ P ×' P , Q ] ∘ (⟨ id' , id' ⟩' ×'-map id'[ ℱ' Q ])) ∘ ⟨ id' , φ ⟩'
@@ -159,7 +159,7 @@ record IsStrong {C : Category} (isCartesian : IsCartesian C) (F : EndoFunctor C)
         map ψ' ∘ map (id' ×'-map ψ ∘ ⟨ π₁' , id' ⟩'  )
             ≈⟨ ∘-pres-≈̇-right _ (map-pres-≈̇ (×'-map-∘-⟨,⟩' _ _ _ _)) ⟩
         map ψ' ∘ map ⟨ id' ∘ π₁' , ψ ∘ id' ⟩'
-            ≈⟨ ∘-pres-≈̇-right _ (map-pres-≈̇ (⟨,⟩'-pres-≈̇ (id'-unit-left _ _) (id'-unit-right _ _))) ⟩
+            ≈⟨ ∘-pres-≈̇-right _ (map-pres-≈̇ (⟨,⟩'-pres-≈̇ (∘-unit-left _ _) (∘-unit-right _ _))) ⟩
         map ψ' ∘ map ⟨ π₁' , ψ ⟩'
             ≈˘⟨ map-pres-∘ _ _ ⟩
         _ ∎
@@ -167,11 +167,11 @@ record IsStrong {C : Category} (isCartesian : IsCartesian C) (F : EndoFunctor C)
         step4a : ×'-assoc[ P , P , Q ] ∘ ⟨ id' , id' ⟩' ×'-map id' ≈̇ ⟨ π₁' , id' ⟩'
         step4a = let open EqReasoning (→̇-setoid _ _) in begin
           ×'-assoc ∘ ⟨ id' , id' ⟩' ×'-map id'
-            ≈⟨ ∘-pres-≈̇-right _ (⟨,⟩'-pres-≈̇-right _ (id'-unit-left _ _)) ⟩
+            ≈⟨ ∘-pres-≈̇-right _ (⟨,⟩'-pres-≈̇-right _ (∘-unit-left _ _)) ⟩
           ×'-assoc ∘ ⟨ ⟨ id' , id' ⟩' ∘ π₁' , π₂' ⟩'
-            ≈⟨ ∘-pres-≈̇-right _ (⟨,⟩'-pres-≈̇-left (≈̇-trans (⟨,⟩'-nat _ _ _) (⟨,⟩'-pres-≈̇ (id'-unit-left _ _) (id'-unit-left _ _))) _) ⟩
+            ≈⟨ ∘-pres-≈̇-right _ (⟨,⟩'-pres-≈̇-left (≈̇-trans (⟨,⟩'-nat _ _ _) (⟨,⟩'-pres-≈̇ (∘-unit-left _ _) (∘-unit-left _ _))) _) ⟩
           ×'-assoc ∘ ⟨ ⟨ π₁' , π₁' ⟩' , π₂' ⟩'
             ≈⟨ ×'-assoc-∘-⟨⟨,⟩',⟩' _ _ _ ⟩
           ⟨ π₁' , ⟨ π₁' , π₂' ⟩' ⟩'
-            ≈˘⟨ ⟨,⟩'-pres-≈̇-right _ (≈̇-trans ×'-eta (⟨,⟩'-pres-≈̇ (id'-unit-right _ _) (id'-unit-right _ _))) ⟩
+            ≈˘⟨ ⟨,⟩'-pres-≈̇-right _ (≈̇-trans ×'-eta (⟨,⟩'-pres-≈̇ (∘-unit-right _ _) (∘-unit-right _ _))) ⟩
           _ ∎

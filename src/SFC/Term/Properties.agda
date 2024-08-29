@@ -36,7 +36,7 @@ private
   wkSubFreshLemma {s = s} {w} = trans
     (trans
       (sym (wkSub-pres-⊆-trans _ _ _))
-      (cong₂ wkSub (cong drop (trans (⊆-refl-unit-right _) (sym (⊆-refl-unit-left _)))) refl))
+      (cong₂ wkSub (cong drop (trans (⊆-trans-unit-right _) (sym (⊆-trans-unit-left _)))) refl))
     (wkSub-pres-⊆-trans _ _ _)
 
 substTm-nat : (t : Tm Γ a) (s : Sub Δ Γ) (w : Δ ⊆ Δ')
@@ -86,12 +86,12 @@ auxLemma w = (trans
 
 wkSub-unit-right base      = refl
 wkSub-unit-right (drop w)  = trans
-  (cong (λ w' → wkSub (drop w') idₛ) (sym (⊆-refl-unit-right w)))
+  (cong (λ w' → wkSub (drop w') idₛ) (sym (⊆-trans-unit-right w)))
   (auxLemma w)
 wkSub-unit-right (keep w)  = cong (_`, var zero) (trans
   (sym (wkSub-pres-⊆-trans freshWk (keep w) idₛ))
   (trans
-    (cong₂ wkSub (cong drop (trans (⊆-refl-unit-left _) (sym (⊆-refl-unit-right _)))) refl)
+    (cong₂ wkSub (cong drop (trans (⊆-trans-unit-left _) (sym (⊆-trans-unit-right _)))) refl)
     (auxLemma w)))
 
 substVar-pres-idₛ : (x : Var Γ a) → substVar idₛ x ≡ var x
@@ -164,7 +164,7 @@ module AdhocLemmas where
   keepFreshLemma = trans
     (trans
       (sym (wkTm-pres-⊆-trans _ _ _))
-      (cong₂ wkTm (cong drop (trans (⊆-refl-unit-right _) (sym (⊆-refl-unit-left _)))) refl))
+      (cong₂ wkTm (cong drop (trans (⊆-trans-unit-right _) (sym (⊆-trans-unit-left _)))) refl))
     (wkTm-pres-⊆-trans _ _ _) 
 
   --
@@ -195,7 +195,7 @@ module AdhocLemmas where
     substTm (wkSub freshWk (wkSub w idₛ) `, wkTm (keep w) u) u'
      ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (sym (wkSub-pres-⊆-trans w freshWk idₛ))) (refl {x = u'}) ⟩
     substTm (wkSub (w ∙ freshWk) idₛ `, wkTm (keep w) u) u'  
-     ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (cong₂ wkSub (cong drop (trans (⊆-refl-unit-right w) (sym (⊆-refl-unit-left w)) )) refl)) (refl {x = u'}) ⟩     
+     ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (cong₂ wkSub (cong drop (trans (⊆-trans-unit-right w) (sym (⊆-trans-unit-left w)) )) refl)) (refl {x = u'}) ⟩     
     substTm (wkSub (drop (⊆-refl ∙ w)) idₛ `, wkTm (keep w) u) u'
      ≡⟨⟩
     substTm (wkSub (freshWk ∙ keep w) idₛ `, wkTm (keep w) u) u'

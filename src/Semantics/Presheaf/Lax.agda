@@ -106,7 +106,7 @@ syntax ◯'-≋[]-syn 𝒫 x y = x ◯'-≋[ 𝒫 ] y
       wk-pres-≋ w f≋f' = proof λ w' → f≋f' .pw (⊆-trans w w')
 
       wk-pres-refl : (f : ◯'-Fam 𝒫 Γ) → wk ⊆-refl f ◯'-≋ f
-      wk-pres-refl f = proof (λ w → ≡-to-◇'-≋ (cong (f .apply-◯) (⊆-refl-unit-right w)))
+      wk-pres-refl f = proof (λ w → ≡-to-◇'-≋ (cong (f .apply-◯) (⊆-trans-unit-left w)))
 
       wk-pres-trans : (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') (f : ◯'-Fam 𝒫 Γ) → wk (⊆-trans w w') f ◯'-≋ wk w' (wk w f)
       wk-pres-trans w w' f = proof (λ w'' → ≡-to-◇'-≋ (cong (f .apply-◯) (⊆-trans-assoc w w' w'')))
@@ -163,7 +163,7 @@ module ◯'≅◇' {𝒫 : Psh} where
       wk[ ◇' 𝒫 ] w (p .apply-◯ ⊆-refl)
         ≈⟨ p .natural ⊆-refl w ⟩
       p .apply-◯ (⊆-trans ⊆-refl w)
-        ≡⟨ cong (p .apply-◯) (≡-trans (⊆-refl-unit-right _) (≡-sym (⊆-refl-unit-left _))) ⟩
+        ≡⟨ cong (p .apply-◯) (≡-trans (⊆-trans-unit-left _) (≡-sym (⊆-trans-unit-right _))) ⟩
       p .apply-◯ (⊆-trans w ⊆-refl)
         ≡⟨⟩
       wk[ ◯' 𝒫 ] w p .apply-◯ ⊆-refl ∎ }
@@ -182,7 +182,7 @@ module ◯'≅◇' {𝒫 : Psh} where
         wk[ ◇' 𝒫 ] w (p .apply-◯ ⊆-refl)
           ≈⟨ ◯'≅◇'-forth .natural w p ⟩
         p .apply-◯ (⊆-trans w ⊆-refl)
-          ≡⟨ cong (p .apply-◯) (⊆-refl-unit-left w) ⟩
+          ≡⟨ cong (p .apply-◯) (⊆-trans-unit-right w) ⟩
         p .apply-◯ w ∎
     }
 

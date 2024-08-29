@@ -133,7 +133,7 @@ red-fun-tr-lemma w s t u = let open EqReasoning (Tm-setoid _ _) in begin
   substTm (wkSub (keep w) (keepₛ s) ∙ₛ (idₛ `, u)) t
     ≡˘⟨ cong (λ s' → substTm ((s' ∙ₛ _) `, u) t) (wkSub-pres-⊆-trans _ _ _) ⟩
   substTm ((wkSub (freshWk ∙ keep w) s ∙ₛ (idₛ `, u)) `, u) t
-    ≡⟨ cong (λ s' → substTm (s' `, u) t) (cong (_∙ₛ _) (cong₂ wkSub (cong drop (⊆-refl-unit-left w)) ≡-refl)) ⟩
+    ≡⟨ cong (λ s' → substTm (s' `, u) t) (cong (_∙ₛ _) (cong₂ wkSub (cong drop (⊆-trans-unit-left w)) ≡-refl)) ⟩
   substTm ((wkSub (drop w) s ∙ₛ (idₛ `, u)) `, u) t
     ≡˘⟨ cong (λ s' → substTm (s' `, u) t) (assoc-wkSub-∙ₛ _ _ _) ⟩
     -- normalize

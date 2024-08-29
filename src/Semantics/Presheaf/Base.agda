@@ -195,11 +195,11 @@ id'[_] 𝒫 = record
 id' = λ {𝒫} → id'[ 𝒫 ]
 
 abstract
-  id'-unit-left : ∀ {𝒫 : Psh} (𝒬 : Psh) (φ : 𝒫 →̇ 𝒬) → id'[ 𝒬 ] ∘ φ ≈̇ φ
-  id'-unit-left 𝒬 _ = record { proof = λ p → ≋[ 𝒬 ]-refl }
+  ∘-unit-left : ∀ {𝒫 : Psh} (𝒬 : Psh) (φ : 𝒫 →̇ 𝒬) → id'[ 𝒬 ] ∘ φ ≈̇ φ
+  ∘-unit-left 𝒬 _ = record { proof = λ p → ≋[ 𝒬 ]-refl }
 
-  id'-unit-right : ∀ (𝒫 : Psh) {𝒬 : Psh} (φ : 𝒫 →̇ 𝒬) → φ ∘ id'[ 𝒫 ] ≈̇ φ
-  id'-unit-right _ {𝒬} _ = record { proof = λ p → ≋[ 𝒬 ]-refl }
+  ∘-unit-right : ∀ (𝒫 : Psh) {𝒬 : Psh} (φ : 𝒫 →̇ 𝒬) → φ ∘ id'[ 𝒫 ] ≈̇ φ
+  ∘-unit-right _ {𝒬} _ = record { proof = λ p → ≋[ 𝒬 ]-refl }
 
 PshCat : Category
 PshCat = record
@@ -212,7 +212,7 @@ PshCat = record
   ; ≈̇-sym = ≈̇-sym
   ; ≈̇-trans = ≈̇-trans
   ; ∘-pres-≈̇ = ∘-pres-≈̇
-  ; id'-unit-left  = id'-unit-left
-  ; id'-unit-right = id'-unit-right
+  ; ∘-unit-left  = ∘-unit-left
+  ; ∘-unit-right = ∘-unit-right
   ; ∘-assoc = ∘-assoc
   }

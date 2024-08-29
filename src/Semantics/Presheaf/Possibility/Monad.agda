@@ -32,17 +32,17 @@ private
   variable
     𝒫 : Psh
 
-return'-unit-right : join'[ 𝒫 ] ∘ return'[ ◇' 𝒫 ] ≈̇ id'[ ◇' 𝒫 ]
-return'-unit-right {𝒫} = record { proof = λ p → proof
+join'-unit-left : join'[ 𝒫 ] ∘ return'[ ◇' 𝒫 ] ≈̇ id'[ ◇' 𝒫 ]
+join'-unit-left {𝒫} = record { proof = λ p → proof
   (≡-refl
   , R-refl-unit-right _
   , ≋[ 𝒫 ]-refl) }
 
-return'-unit-left : join'[ 𝒫 ] ∘ (◇'-map return'[ 𝒫 ]) ≈̇ id'[ ◇' 𝒫 ]
-return'-unit-left {𝒫} = record { proof = λ p → proof
+join'-unit-right : join'[ 𝒫 ] ∘ (◇'-map return'[ 𝒫 ]) ≈̇ id'[ ◇' 𝒫 ]
+join'-unit-right {𝒫} = record { proof = λ p → proof
   (≡-refl
   , R-refl-unit-left _
   , ≋[ 𝒫 ]-refl) }
 
 ◇'-is-monad : IsMonad ◇'-is-pointed ◇'-is-multiplicative
-◇'-is-monad = record { point-unit-right = return'-unit-right ; point-unit-left = return'-unit-left }
+◇'-is-monad = record { join-unit-left = join'-unit-left ; join-unit-right = join'-unit-right }

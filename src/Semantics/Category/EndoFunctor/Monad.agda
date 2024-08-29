@@ -18,5 +18,5 @@ record IsMonad {C : Category} {F : EndoFunctor C} (isPointed : IsPointed F) (isM
   open IsMultiplicative isMultiplicative public
 
   field
-    point-unit-right : {P : Obj} → join[ P ] ∘ point[ ℱ' P ] ≈̇ id'[ ℱ' P ]
-    point-unit-left  : {P : Obj} → join[ P ] ∘ (map point[ P ]) ≈̇ id'[ ℱ' P ]
+    join-unit-left : {P : Obj} → join[ P ] ∘ point[ ℱ' P ] ≈̇ id'[ ℱ' P ]
+    join-unit-right  : {P : Obj} → join[ P ] ∘ (map point[ P ]) ≈̇ id'[ ℱ' P ]

@@ -12,17 +12,17 @@ open import Semantics.Kripke.Frame
 private
   variable
     a b c d : Ty
-  
-⊆-refl-unit-left : (w : Γ' ⊆ Γ) → ⊆-refl ∙ w ≡ w
-⊆-refl-unit-left base      = refl
-⊆-refl-unit-left (drop w)  = cong drop (⊆-refl-unit-left w)
-⊆-refl-unit-left (keep w)  = cong keep (⊆-refl-unit-left w)
+
+⊆-trans-unit-left : (w : Γ' ⊆ Γ) → ⊆-refl ∙ w ≡ w
+⊆-trans-unit-left base      = refl
+⊆-trans-unit-left (drop w)  = cong drop (⊆-trans-unit-left w)
+⊆-trans-unit-left (keep w)  = cong keep (⊆-trans-unit-left w)
 
 -- weakening composition obeys the right identity law
-⊆-refl-unit-right : (w : Γ' ⊆ Γ) → w ∙ ⊆-refl ≡ w
-⊆-refl-unit-right base      = refl
-⊆-refl-unit-right (drop w)  = cong drop (⊆-refl-unit-right w)
-⊆-refl-unit-right (keep w)  = cong keep (⊆-refl-unit-right w)
+⊆-trans-unit-right : (w : Γ' ⊆ Γ) → w ∙ ⊆-refl ≡ w
+⊆-trans-unit-right base      = refl
+⊆-trans-unit-right (drop w)  = cong drop (⊆-trans-unit-right w)
+⊆-trans-unit-right (keep w)  = cong keep (⊆-trans-unit-right w)
 
 -- weakening composition is associative
 ∙-assoc : {Γ1 Γ2 Γ3 Γ4 : Ctx} → (w3 : Γ4 ⊆ Γ3) (w2 : Γ3 ⊆ Γ2) → (w1 : Γ2 ⊆ Γ1)
@@ -38,8 +38,8 @@ private
       { ⊆-trans           = _∙_
       ; ⊆-trans-assoc     = ∙-assoc
       ; ⊆-refl            = ⊆-refl
-      ; ⊆-refl-unit-right = ⊆-refl-unit-left
-      ; ⊆-refl-unit-left  = ⊆-refl-unit-right
+      ; ⊆-trans-unit-left = ⊆-trans-unit-left
+      ; ⊆-trans-unit-right  = ⊆-trans-unit-right
       }
 
 wkVar-pres-⊆-refl : (x : Var Γ a) → wkVar ⊆-refl x ≡ x
@@ -58,7 +58,7 @@ wkVar-pres-⊆-trans (keep w) (drop w') (succ x) = cong succ (wkVar-pres-⊆-tra
 wkVar-pres-⊆-trans (keep w) (keep w') (succ x) = cong succ (wkVar-pres-⊆-trans w w' x)
 
 freshWk-natural : (w : Γ ⊆ Γ') → w ∙ freshWk[ Γ' , a ] ≡ freshWk[ Γ , a ] ∙ keep w
-freshWk-natural w = cong drop (≡-trans (⊆-refl-unit-right w) (≡-sym (⊆-refl-unit-left w)))
+freshWk-natural w = cong drop (≡-trans (⊆-trans-unit-right w) (≡-sym (⊆-trans-unit-left w)))
 
 -- weakening a variable index increments
 wkIncr : (x : Var Γ a) → wkVar freshWk[ Γ , b ] x ≡ succ x

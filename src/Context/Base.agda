@@ -65,6 +65,8 @@ w       ∙ drop  w' = drop  (w ∙ w')
 drop  w ∙ keep  w' = drop  (w ∙ w')
 keep  w ∙ keep  w' = keep  (w ∙ w')
 
+⊆-trans = _∙_
+
 ------------
 -- Variables
 ------------

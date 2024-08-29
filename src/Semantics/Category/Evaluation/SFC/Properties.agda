@@ -60,7 +60,7 @@ abstract
   evalWk-pres-π₁ : ∀ (Γ : Ctx) (a : Ty) → evalWk (freshWk {Γ} {a}) ≈̇ π₁'[ evalTy a ]
   evalWk-pres-π₁ Γ a = let open EqReasoning (Sub'-setoid (Γ `, a) Γ) in begin
     evalWk (freshWk {Γ} {a})              ≈⟨ ∘-pres-≈̇-left (evalWk-pres-id Γ) π₁'[ evalTy a ] ⟩
-    id'[ evalCtx Γ ] ∘ π₁'[ evalTy a ]  ≈⟨ id'-unit-left (evalCtx Γ) π₁'[ evalTy a ] ⟩
+    id'[ evalCtx Γ ] ∘ π₁'[ evalTy a ]  ≈⟨ ∘-unit-left (evalCtx Γ) π₁'[ evalTy a ] ⟩
     π₁'[ evalTy a ]                     ∎
 
 module _ {a : Ty} where
@@ -71,7 +71,7 @@ module _ {a : Ty} where
       (evalVar v ∘ evalWk w) ∘ π₁'[ evalTy b ]            ≈⟨ ∘-assoc (evalVar v) (evalWk w) π₁'[ evalTy b ] ⟩
       evalVar v ∘ evalWk (drop[ b ] w)                    ∎
     evalVar-pres-∘ (keep {Δ = Δ} {a} w) (zero {Γ}) = let open EqReasoning (Tm'-setoid (Δ `, a) a) in begin
-      evalVar (wkVar (keep[ a ] w) (zero {Γ}))            ≈˘⟨ id'-unit-left (evalTy a) π₂'[ evalCtx Δ ] ⟩
+      evalVar (wkVar (keep[ a ] w) (zero {Γ}))            ≈˘⟨ ∘-unit-left (evalTy a) π₂'[ evalCtx Δ ] ⟩
       id'[ evalTy a ] ∘ π₂'[ evalCtx Δ ]                  ≈˘⟨ ×'-beta-right (evalWk w ∘ π₁'[ evalTy a ]) ⟩
       evalVar (zero {Γ} {a}) ∘ evalWk (keep[ a ] w)       ∎
     evalVar-pres-∘ (keep {Δ = Δ} {b} w) (succ {Γ} {a} {b} n) = let open EqReasoning (Tm'-setoid (Δ `, b) a) in begin
@@ -126,7 +126,7 @@ abstract
 abstract
   evalSub-pres-×-map-id : ∀ (σ : Sub Δ Γ) (a : Ty) → evalSub (keepₛ {Δ} {Γ} {a} σ) ≈̇ evalSub σ ×'-map id'[ evalTy a ]
   evalSub-pres-×-map-id {Δ} {Γ} σ a = let open EqReasoning (Sub'-setoid (Δ `, a) (Γ `, a)) in begin
-    evalSub (keepₛ {Δ} {Γ} {a} σ)    ≈⟨ ⟨,⟩'-pres-≈̇ (evalSub-pres-∘-π₁ σ a) (≈̇-sym (id'-unit-left (evalTy a) π₂'[ evalCtx Δ ])) ⟩
+    evalSub (keepₛ {Δ} {Γ} {a} σ)    ≈⟨ ⟨,⟩'-pres-≈̇ (evalSub-pres-∘-π₁ σ a) (≈̇-sym (∘-unit-left (evalTy a) π₂'[ evalCtx Δ ])) ⟩
     evalSub σ ×'-map id'[ evalTy a ]  ∎
 
 abstract
@@ -170,7 +170,7 @@ abstract
     lam' (evalTm t [ ⟨ evalSub σ ∘ evalWk (freshWk {Δ} {a'}) , π₂'[ evalCtx Δ ] ⟩' ]' )
       ≈⟨ lam'-pres-≈̇ (∘-pres-≈̇-right (evalTm t) (⟨,⟩'-pres-≈̇-left (∘-pres-≈̇-right (evalSub σ) (evalWk-pres-π₁ Δ a')) π₂'[ evalCtx Δ ])) ⟩
     lam' (evalTm t [ ⟨ evalSub σ ∘ π₁'[ evalTy a' ] , π₂'[ evalCtx Δ ] ⟩' ]')
-      ≈˘⟨ lam'-pres-≈̇ (∘-pres-≈̇-right (evalTm t) (⟨,⟩'-pres-≈̇-right (evalSub σ ∘ π₁'[ evalTy a' ]) (id'-unit-left (evalTy a') π₂'[ evalCtx Δ ]))) ⟩
+      ≈˘⟨ lam'-pres-≈̇ (∘-pres-≈̇-right (evalTm t) (⟨,⟩'-pres-≈̇-right (evalSub σ ∘ π₁'[ evalTy a' ]) (∘-unit-left (evalTy a') π₂'[ evalCtx Δ ]))) ⟩
     lam' (evalTm t ∘ evalSub σ ×'-map id'[ evalTy a' ])
       ≈˘⟨ lam'-nat (evalTm t) (evalSub σ) ⟩
     evalTm (lam t) [ evalSub σ ]'
@@ -190,7 +190,7 @@ abstract
     letin' (evalTm t [ evalSub σ ]') (evalTm u [ ⟨ evalSub σ ∘ evalWk (freshWk {Δ} {a'}) , π₂'[ evalCtx Δ ] ⟩' ]')
       ≈⟨ letin'-pres-≈̇-right _ ((∘-pres-≈̇-right (evalTm u) (⟨,⟩'-pres-≈̇-left (∘-pres-≈̇-right (evalSub σ) (evalWk-pres-π₁ Δ a')) π₂'[ evalCtx Δ ]))) ⟩
     letin' (evalTm t [ evalSub σ ]') (evalTm u [ ⟨ evalSub σ ∘ π₁'[ evalTy a' ] , π₂'[ evalCtx Δ ] ⟩' ]')
-      ≈˘⟨ letin'-pres-≈̇-right _ (∘-pres-≈̇-right (evalTm u) ((⟨,⟩'-pres-≈̇-right (evalSub σ ∘ π₁'[ evalTy a' ]) (id'-unit-left (evalTy a') π₂'[ evalCtx Δ ])))) ⟩
+      ≈˘⟨ letin'-pres-≈̇-right _ (∘-pres-≈̇-right (evalTm u) ((⟨,⟩'-pres-≈̇-right (evalSub σ ∘ π₁'[ evalTy a' ]) (∘-unit-left (evalTy a') π₂'[ evalCtx Δ ])))) ⟩
     letin' (evalTm t [ evalSub σ ]') (evalTm u [ (evalSub σ) ×'-map id'[ evalTy a' ]  ]')
       ≈˘⟨ letin'-nat₁ (evalTm t) (evalTm u) (evalSub σ) ⟩
     (evalTm (letin t u) [ evalSub σ ]')
@@ -220,9 +220,9 @@ abstract
     evalTm (letin (letin t u) u')
       ≈⟨ red-dia' (evalTm t) (evalTm u) (evalTm u') ⟩
     letin' (evalTm t) (evalTm u' [ ⟨ π₁'[ evalTy a ] , evalTm u ⟩' ]')
-      ≈˘⟨ letin'-pres-≈̇-right (evalTm t) (∘-pres-≈̇-right (evalTm u') (⟨,⟩'-pres-≈̇-left (id'-unit-left (evalCtx Γ) π₁'[ evalTy a ]) (evalTm u))) ⟩
+      ≈˘⟨ letin'-pres-≈̇-right (evalTm t) (∘-pres-≈̇-right (evalTm u') (⟨,⟩'-pres-≈̇-left (∘-unit-left (evalCtx Γ) π₁'[ evalTy a ]) (evalTm u))) ⟩
     letin' (evalTm t) (evalTm u' [ ⟨ id' ∘ π₁'[ evalTy a ] , evalTm u ⟩' ]' )
-      ≈˘⟨ letin'-pres-≈̇-right (evalTm t) (∘-pres-≈̇-right (evalTm u') (⟨,⟩'-pres-≈̇-left (∘-pres-≈̇ (evalSub-pres-id Γ) (≈̇-trans (∘-pres-≈̇-left (evalWk-pres-id Γ) π₁') (id'-unit-left (evalCtx Γ) π₁'))) (evalTm u))) ⟩
+      ≈˘⟨ letin'-pres-≈̇-right (evalTm t) (∘-pres-≈̇-right (evalTm u') (⟨,⟩'-pres-≈̇-left (∘-pres-≈̇ (evalSub-pres-id Γ) (≈̇-trans (∘-pres-≈̇-left (evalWk-pres-id Γ) π₁') (∘-unit-left (evalCtx Γ) π₁'))) (evalTm u))) ⟩
     letin' (evalTm t) (evalTm u' [ ⟨ evalSub idₛ[ Γ ] ∘ evalWk (freshWk {Γ = Γ} {a = a}) , evalTm u ⟩' ]' )
       ≈˘⟨ letin'-pres-≈̇-right (evalTm t) (∘-pres-≈̇-right (evalTm u') (⟨,⟩'-pres-≈̇-left (evalSub-pres-∘' idₛ[ Γ ] freshWk) (evalTm u))) ⟩
     letin' (evalTm t) (evalTm u' [ evalSub (wkSub freshWk (idₛ[ Γ ]) `, u) ]' )

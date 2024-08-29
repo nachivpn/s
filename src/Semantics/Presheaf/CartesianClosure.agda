@@ -220,7 +220,7 @@ module _ (𝒫 𝒬 : Psh) where
                                    (λ w' w'' p → subst (λ hole → wk[ 𝒬 ] w'' (f .apply (⊆-trans w w') p) ≋[ 𝒬 ] f .apply hole (wk[ 𝒫 ] w'' p)) (⊆-trans-assoc w w' w'') (f .natural (⊆-trans w w') w'' p))
     ; ≋-equiv       = ⇒'-≋-equiv
     ; wk-pres-≋     = λ w f≋g → proof (λ w' → f≋g .pw (⊆-trans w w'))
-    ; wk-pres-refl  = λ f → proof (λ w p → ≋[ 𝒬 ]-reflexive (cong (λ hole → f .apply hole p) (⊆-refl-unit-right w)))
+    ; wk-pres-refl  = λ f → proof (λ w p → ≋[ 𝒬 ]-reflexive (cong (λ hole → f .apply hole p) (⊆-trans-unit-left w)))
     ; wk-pres-trans = λ w w' f → proof (λ w'' p → ≋[ 𝒬 ]-reflexive˘ (cong (λ hole → f .apply hole p) (≡-sym (⊆-trans-assoc w w' w''))))
     }
 
@@ -239,8 +239,8 @@ module _ {𝒫 𝒬 : Psh} where
     ; natural = λ w r → let open EqReasoning ≋[ 𝒬 ]-setoid in begin
         wk[ 𝒬 ] w (t .apply r .apply ⊆-refl (u .apply r))                   ≈⟨ t .apply r .natural ⊆-refl w (u .apply r) ⟩
         t .apply r .apply (⊆-trans ⊆-refl w) (wk[ 𝒫 ] w (u .apply r))       ≈⟨ t .apply r .apply-≋ (⊆-trans ⊆-refl w) (u .natural w r) ⟩
-        t .apply r .apply (⊆-trans ⊆-refl w) (u .apply (wk[ ℛ ] w r))       ≡⟨ cong (λ hole → t .apply r .apply hole (u .apply (wk[ ℛ ] w r))) (⊆-refl-unit-right w) ⟩
-        t .apply r .apply w                  (u .apply (wk[ ℛ ] w r))       ≡˘⟨ cong (λ hole → t .apply r .apply hole (u .apply (wk[ ℛ ] w r))) (⊆-refl-unit-left w) ⟩
+        t .apply r .apply (⊆-trans ⊆-refl w) (u .apply (wk[ ℛ ] w r))       ≡⟨ cong (λ hole → t .apply r .apply hole (u .apply (wk[ ℛ ] w r))) (⊆-trans-unit-left w) ⟩
+        t .apply r .apply w                  (u .apply (wk[ ℛ ] w r))       ≡˘⟨ cong (λ hole → t .apply r .apply hole (u .apply (wk[ ℛ ] w r))) (⊆-trans-unit-right w) ⟩
         t .apply r .apply (⊆-trans w ⊆-refl) (u .apply (wk[ ℛ ] w r))       ≡⟨⟩
         wk[ 𝒫 ⇒' 𝒬 ] w (t .apply r) .apply ⊆-refl (u .apply (wk[ ℛ ] w r))  ≈⟨ t .natural w r .pw ⊆-refl (u .apply (wk[ ℛ ] w r)) ⟩
         t .apply (wk[ ℛ ] w r) .apply ⊆-refl (u .apply (wk[ ℛ ] w r))       ∎
@@ -286,7 +286,7 @@ abstract
     ⇒'-eta : ∀ (t : ℛ →̇ 𝒫 ⇒' 𝒬) → t ≈̇ lam' {𝒬 = 𝒬} (app' (t [ π₁'[ 𝒫 ] ]') π₂'[ ℛ ])
     ⇒'-eta {ℛ} {𝒫} {𝒬} t = record
       { proof = λ r → proof (λ w p → let open EqReasoning ≋[ 𝒬 ]-setoid in begin
-                               t .apply r .apply w p                        ≡˘⟨ cong (λ hole → t .apply r .apply hole p) (⊆-refl-unit-left w) ⟩
+                               t .apply r .apply w p                        ≡˘⟨ cong (λ hole → t .apply r .apply hole p) (⊆-trans-unit-right w) ⟩
                                t .apply r .apply (⊆-trans w ⊆-refl) p       ≡⟨⟩
                                wk[ 𝒫 ⇒' 𝒬 ] w (t .apply r) .apply ⊆-refl p  ≈⟨ t .natural w r .pw ⊆-refl p ⟩
                                t .apply (wk[ ℛ ] w r) .apply ⊆-refl p       ∎

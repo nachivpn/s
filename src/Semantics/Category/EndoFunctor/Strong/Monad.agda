@@ -40,7 +40,7 @@ record IsStrongMonad {C : Category} {isCartesian : IsCartesian C} (F : EndoFunct
         ≈⟨ ∘-pres-≈̇-right _ (∘-assoc _ _ _) ⟩        
       join[ R ] ∘ map ψ ∘ strength[ P , Q ] ∘ ⟨ id'[ P ] , point[ Q ] ∘ φ ⟩'
         -- cartesian crunching prep.
-        ≈˘⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (⟨,⟩'-pres-≈̇-left (id'-unit-left P _) _))) ⟩
+        ≈˘⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (⟨,⟩'-pres-≈̇-left (∘-unit-left P _) _))) ⟩
       (join[ R ] ∘ map ψ ∘ strength[ P , Q ] ∘ ⟨ id'[ P ] ∘ id'[ P ] , point[ Q ] ∘ φ ⟩')
         -- cartesian crunching
         ≈˘⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (×'-map-∘-⟨,⟩' _ _ _ _))) ⟩
@@ -58,10 +58,10 @@ record IsStrongMonad {C : Category} {isCartesian : IsCartesian C} (F : EndoFunct
         ≈˘⟨ ≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right _ (≈̇-sym (∘-assoc _ _ _))) ⟩
       (join[ R ] ∘ point[ ℱ' R ]) ∘ ψ ∘ ⟨ id'[ P ] , φ ⟩'
         -- right unit of monad
-        ≈⟨ ∘-pres-≈̇-left point-unit-right _ ⟩
+        ≈⟨ ∘-pres-≈̇-left join-unit-left _ ⟩
       id'[ ℱ' R ] ∘ ψ ∘ ⟨ id'[ P ] , φ ⟩'
         -- unit of ∘ 
-        ≈⟨ id'-unit-left (ℱ' R) _ ⟩
+        ≈⟨ ∘-unit-left (ℱ' R) _ ⟩
       ψ ∘ ⟨ id'[ P ] , φ ⟩' ∎
 
     exp-dia' : {P Q : Obj} (φ : P →̇ ℱ' Q) → φ ≈̇ letin' φ (return' π₂')
@@ -89,8 +89,8 @@ record IsStrongMonad {C : Category} {isCartesian : IsCartesian C} (F : EndoFunct
         ≈˘⟨ ∘-assoc _ _ _ ⟩
       (join ∘ map point) ∘ φ
         -- left unit of monad
-        ≈⟨ ∘-pres-≈̇-left point-unit-left _ ⟩
+        ≈⟨ ∘-pres-≈̇-left join-unit-right _ ⟩
       id' ∘ φ
         -- unit of ∘
-        ≈⟨ id'-unit-left _ _ ⟩
+        ≈⟨ ∘-unit-left _ _ ⟩
       φ ∎

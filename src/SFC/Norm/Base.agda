@@ -190,8 +190,7 @@ module _ where
       ≡⟨ cong lam (reify-pres-≋ b (x .natural freshWk (keep[ a ] w) _)) ⟩
     lam (reify-fun b (x .apply (freshWk[ _ , a ] ∙ keep[ a ] w) (wk[ evalTy a ] (keep[ a ] w) _)))
       ≡⟨ cong lam (reify-pres-≋ b (x .apply-≋ _ (reflect-natural a (keep[ a ] w) _)))  ⟩
-    lam (reify-fun b (x .apply (freshWk[ _ , a ] ∙ keep[ a ] w) (reflect-fun a (wkNe (keep[ a ] w) _))))
-      ≡⟨  cong₂ (λ w n → lam (reify-fun b (x .apply w (reflect-fun a n)))) (cong drop (≡-trans (⊆-refl-unit-left _) (≡-sym (⊆-refl-unit-right _)))) refl ⟩
+    lam (reify-fun b (x .apply (freshWk[ _ , a ] ∙ keep[ a ] w) (reflect-fun a (wkNe (keep[ a ] w) _)))) ≡⟨  cong₂ (λ w n → lam (reify-fun b (x .apply w (reflect-fun a n)))) (cong drop (≡-trans (⊆-trans-unit-left _) (≡-sym (⊆-trans-unit-right _)))) refl ⟩
     lam (reify-fun b (x .apply (w ∙ freshWk[ _ , a ]) _))
       ≡⟨⟩
     reify-fun (a ⇒ b) (wk[ evalTy (a ⇒ b) ] w x) ∎

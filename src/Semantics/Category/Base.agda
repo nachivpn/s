@@ -26,8 +26,8 @@ record Category : Set₂ where
     ∘-pres-≈̇ : ∀ {P Q R : Obj} {ψ ψ' : Q →̇ R} {φ φ' : P →̇ Q} (ψ≈̇ψ' : ψ ≈̇ ψ') (φ≈̇φ' : φ ≈̇ φ') → ψ ∘ φ ≈̇ ψ' ∘ φ'
 
   field
-    id'-unit-left  : ∀ {P : Obj} (Q : Obj) (φ : P →̇ Q) → id'[ Q ] ∘ φ ≈̇ φ
-    id'-unit-right : ∀ (P : Obj) {Q : Obj} (φ : P →̇ Q) → φ ∘ id'[ P ] ≈̇ φ
+    ∘-unit-left  : ∀ {P : Obj} (Q : Obj) (φ : P →̇ Q) → id'[ Q ] ∘ φ ≈̇ φ
+    ∘-unit-right : ∀ (P : Obj) {Q : Obj} (φ : P →̇ Q) → φ ∘ id'[ P ] ≈̇ φ
     ∘-assoc        : {P Q R S : Obj} → (ω : R →̇ S) → (ψ : Q →̇ R) → (φ : P →̇ Q) → (ω ∘ ψ) ∘ φ ≈̇ ω ∘ ψ ∘ φ
 
   _[_]' = _∘_

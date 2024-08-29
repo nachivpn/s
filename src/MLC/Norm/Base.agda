@@ -95,7 +95,7 @@ MF = record
       }
 
 factor-pres-R-to-⊆ : (w : Γ ⊆ Γ') (m : Γ ⊲ Δ) → w ∙ (⊲-to-⊆ (factor⊲ w m)) ≡ (⊲-to-⊆ m) ∙ (factor⊆ w m)
-factor-pres-R-to-⊆ w nil        = ≡-trans (⊆-refl-unit-right w) (≡-sym (⊆-refl-unit-left w))
+factor-pres-R-to-⊆ w nil        = ≡-trans (⊆-trans-unit-right w) (≡-sym (⊆-trans-unit-left w))
 factor-pres-R-to-⊆ w (cons x m) = let open ≡-Reasoning in begin
   w ∙ (freshWk ∙ ⊲-to-⊆ (factor⊲ (keep w) m))
     ≡˘⟨ ∙-assoc w freshWk (⊲-to-⊆ (factor⊲ (keep w) m)) ⟩
@@ -169,7 +169,7 @@ IRMF = record { R-to-⊆-pres-refl = ≡-refl }
 
 ⊲-to-⊆-pres-trans : (m : Γ ⊲ Δ) (m' : Δ ⊲ Δ')
   → ⊲-to-⊆ (⊲-trans m m') ≡ ⊲-to-⊆ m ∙ ⊲-to-⊆ m'
-⊲-to-⊆-pres-trans nil        m' = ≡-sym (⊆-refl-unit-left (⊲-to-⊆ m'))
+⊲-to-⊆-pres-trans nil        m' = ≡-sym (⊆-trans-unit-left (⊲-to-⊆ m'))
 ⊲-to-⊆-pres-trans (cons x m) m' = ≡-trans
   (cong (freshWk ∙_) (⊲-to-⊆-pres-trans m m'))
   (≡-sym (∙-assoc freshWk (⊲-to-⊆ m) (⊲-to-⊆ m')))
@@ -321,7 +321,7 @@ module _ where
     lam (reify-fun b (x .apply (freshWk[ _ , a ] ∙ keep[ a ] w) (wk[ evalTy a ] (keep[ a ] w) _)))
       ≡⟨ cong lam (reify-pres-≋ b (x .apply-≋ _ (reflect-natural a (keep[ a ] w) _)))  ⟩
     lam (reify-fun b (x .apply (freshWk[ _ , a ] ∙ keep[ a ] w) (reflect-fun a (wkNe (keep[ a ] w) _))))
-      ≡⟨  cong₂ (λ w n → lam (reify-fun b (x .apply w (reflect-fun a n)))) (cong drop (≡-trans (⊆-refl-unit-left _) (≡-sym (⊆-refl-unit-right _)))) ≡-refl ⟩
+      ≡⟨  cong₂ (λ w n → lam (reify-fun b (x .apply w (reflect-fun a n)))) (cong drop (≡-trans (⊆-trans-unit-left _) (≡-sym (⊆-trans-unit-right _)))) ≡-refl ⟩
     lam (reify-fun b (x .apply (w ∙ freshWk[ _ , a ]) _))
       ≡⟨⟩
     reify-fun (a ⇒ b) (wk[ evalTy (a ⇒ b) ] w x) ∎

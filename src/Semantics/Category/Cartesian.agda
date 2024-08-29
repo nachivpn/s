@@ -97,8 +97,8 @@ record IsCartesian (C : Category) : Set₂ where
     ×'-map-pres-id' : {P Q : Obj} → id'[ P ] ×'-map id'[ Q ] ≈̇ id'[ P ×' Q ]
     ×'-map-pres-id' {P} {Q} = let open EqReasoning (→̇-setoid _ _) in begin
       id' ×'-map id'              ≡⟨⟩
-      ⟨ id' ∘ π₁' , id' ∘ π₂' ⟩'  ≈⟨ ⟨,⟩'-pres-≈̇ (id'-unit-left P π₁') (id'-unit-left Q π₂') ⟩
-      ⟨ π₁'       , π₂'       ⟩'  ≈˘⟨ ⟨,⟩'-pres-≈̇ (id'-unit-right (P ×' Q) π₁') (id'-unit-right (P ×' Q) π₂') ⟩
+      ⟨ id' ∘ π₁' , id' ∘ π₂' ⟩'  ≈⟨ ⟨,⟩'-pres-≈̇ (∘-unit-left P π₁') (∘-unit-left Q π₂') ⟩
+      ⟨ π₁'       , π₂'       ⟩'  ≈˘⟨ ⟨,⟩'-pres-≈̇ (∘-unit-right (P ×' Q) π₁') (∘-unit-right (P ×' Q) π₂') ⟩
       ⟨ π₁' ∘ id' , π₂' ∘ id' ⟩'  ≈˘⟨ ×'-eta ⟩
       id'                         ∎
 

@@ -60,7 +60,7 @@ record IsStrongMultiplicative {C : Category} {isCartesian : IsCartesian C}
         ≡⟨⟩
       (map ϕ ∘ strength) ∘ ⟨ id' , mult ∘ sletin' φ ψ ⟩'
         -- cartesian crunching
-        ≈˘⟨ ∘-pres-≈̇-right _ (≈̇-trans (×'-map-∘-⟨,⟩' _ _ _ _) (⟨,⟩'-pres-≈̇-left (id'-unit-left _ _) _)) ⟩
+        ≈˘⟨ ∘-pres-≈̇-right _ (≈̇-trans (×'-map-∘-⟨,⟩' _ _ _ _) (⟨,⟩'-pres-≈̇-left (∘-unit-left _ _) _)) ⟩
       (map ϕ ∘ strength) ∘ id' ×'-map mult ∘ ⟨ id' , sletin' φ ψ ⟩'
         -- assoc
         ≈⟨ ≈̇-trans (∘-assoc _ _ _) (∘-pres-≈̇-right _ (≈̇-sym (∘-assoc _ _ _ ))) ⟩
@@ -91,7 +91,7 @@ record IsStrongMultiplicative {C : Category} {isCartesian : IsCartesian C}
       map ϕ ∘ (mult ∘ map (strength ∘ ⟨ π₁' , ψ ⟩')) ∘ f
         -- cartesian crunching
         ≈˘⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-left (∘-pres-≈̇-right _ (map-pres-≈̇ (∘-pres-≈̇-right _
-             (≈̇-trans (×'-map-∘-⟨,⟩' _ _ _ _) (⟨,⟩'-pres-≈̇ (id'-unit-right _ _) (id'-unit-left _ _)))))) _) ⟩
+             (≈̇-trans (×'-map-∘-⟨,⟩' _ _ _ _) (⟨,⟩'-pres-≈̇ (∘-unit-right _ _) (∘-unit-left _ _)))))) _) ⟩
       map ϕ ∘ (mult ∘ map (strength ∘ ((π₁' ×'-map id') ∘ ⟨ id' , ψ ⟩'))) ∘ f
         -- functoriality
         ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-left (∘-pres-≈̇-right _ (≈̇-trans
