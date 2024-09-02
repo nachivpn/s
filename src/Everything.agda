@@ -11,6 +11,11 @@ import SFC.Term
 import SFC.Term.Conversion
 import SFC.Term.NormalForm
 
+-- Calculus for pointed functors
+import PFC.Term
+import PFC.Term.Conversion
+import PFC.Term.NormalForm
+
 -- Calculus for monads
 import MLC.Term
 import MLC.Term.Conversion
@@ -30,10 +35,9 @@ import Semantics.Category.EndoFunctor.Strong.Multiplicative
 import Semantics.Category.EndoFunctor.Strong.Monad
 
 -- Categorical semantics for the calculi
-import SFC.Evaluation.Base
-import SFC.Evaluation.Properties
-import MLC.Evaluation.Base
-import MLC.Evaluation.Properties
+import SFC.Evaluation
+import PFC.Evaluation
+import MLC.Evaluation
 
 -- Intuitionistic possible-world frames
 import Semantics.Kripke.Frame
@@ -55,4 +59,5 @@ import Semantics.Presheaf.Possibility.Strong.Monad
 
 -- Normalization algorithms
 import SFC.Norm
+import PFC.Norm
 import MLC.Norm
