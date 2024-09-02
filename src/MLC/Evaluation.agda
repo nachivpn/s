@@ -14,7 +14,7 @@ open import Semantics.Category.EndoFunctor.Strong.Pointed
 open import Semantics.Category.EndoFunctor.Strong.Multiplicative
 open import Semantics.Category.EndoFunctor.Strong.Monad
 
-module Semantics.Category.Evaluation.MLC
+module MLC.Evaluation
   (𝒞                   : Category)
   {𝒞-is-CC             : IsCartesian 𝒞}
   (𝒞-is-CCC            : IsCartesianClosed 𝒞 𝒞-is-CC)

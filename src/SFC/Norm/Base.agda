@@ -82,8 +82,7 @@ Nf'- a = record
           ; wk-pres-trans = wkNf-pres-⊆-trans 
           }
 
-open import SFC.Evaluation.Base PshCat PshCat-is-CC PshCat-is-CCC ◇'-is-PshFunctor ◇'-is-strong
-open import SFC.Evaluation.Properties PshCat PshCat-is-CC PshCat-is-CCC ◇'-is-PshFunctor ◇'-is-strong (Ne'- ι)
+open import SFC.Evaluation PshCat PshCat-is-CC PshCat-is-CCC ◇'-is-PshFunctor ◇'-is-strong (Ne'- ι)
 
 open Eval (Ne'- ι) hiding (Sub' ; Tm')
 

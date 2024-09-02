@@ -204,7 +204,7 @@ Nf'- a = record
           ; wk-pres-trans = wkNf-pres-⊆-trans 
           }
 
-open import Semantics.Category.Evaluation.MLC PshCat PshCat-is-CCC ◇'-is-PshFunctor ◇'-is-strong-monad (Ne'- ι)
+open import MLC.Evaluation PshCat PshCat-is-CCC ◇'-is-PshFunctor ◇'-is-strong-monad (Ne'- ι)
 
 open Eval (Ne'- ι) hiding (Sub' ; Tm')
 
