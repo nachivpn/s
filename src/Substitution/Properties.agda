@@ -11,6 +11,7 @@ module Substitution.Properties
   where
 
 open import Relation.Binary.PropositionalEquality
+open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence)
 
 open Context Ty hiding (Ctx ; _⊆_ ; Var)
 open import Substitution.Base Ty Tm var wkTm
@@ -60,3 +61,37 @@ assoc-substVar-wkVar (succ x) (s `, x₁) (keep w)
   = assoc-substVar-wkVar x s w
 
 assoc-substVar-trimSub = assoc-substVar-wkVar
+
+module Conversion
+  (_≈_        : {Γ : Ctx} {a : Ty} (t t' : Tm Γ a) → Set)
+  (≈-is-equiv : {Γ : Ctx} {a : Ty} → IsEquivalence (_≈_ {Γ} {a}))
+  where
+
+  open IsEquivalence renaming
+    ( refl to ≈-refl
+    ; sym to ≈-sym
+    ; trans to ≈-trans
+    )
+
+  data _≈ₛ_ : Sub Γ Δ → Sub Γ Δ → Set where
+    []   : [] ≈ₛ [] {Γ}
+    _`,_ : {s s' : Sub Γ Δ} {t t' : Tm Γ a} → s ≈ₛ s' → t ≈ t' → (s `, t) ≈ₛ (s' `, t')
+
+  ≈ₛ-refl : Reflexive {A = Sub Γ Δ} _≈ₛ_
+  ≈ₛ-refl {x = []}     = []
+  ≈ₛ-refl {x = δ `, t} = ≈ₛ-refl `, ≈-is-equiv .≈-refl
+
+  ≈ₛ-sym : Symmetric {A = Sub Γ Δ} _≈ₛ_
+  ≈ₛ-sym []             = []
+  ≈ₛ-sym (φ≋φ' `, t≈t') = (≈ₛ-sym φ≋φ') `, (≈-is-equiv .≈-sym t≈t') -- (≈ₛ-sym φ≋φ') `, ? -- ≈-sym t≈t'
+
+  ≈ₛ-trans : Transitive {A = Sub Γ Δ} _≈ₛ_
+  ≈ₛ-trans []            ψ≋ω              = ψ≋ω
+  ≈ₛ-trans (φ≋ψ `, t≈t') (ψ≋ω `, t'≈t'')  = (≈ₛ-trans φ≋ψ ψ≋ω) `, ≈-is-equiv. ≈-trans t≈t' t'≈t''
+
+  ≈ₛ-equiv : IsEquivalence {A = Sub Γ Δ} _≈ₛ_
+  ≈ₛ-equiv = record
+    { refl  = ≈ₛ-refl
+    ; sym   = ≈ₛ-sym
+    ; trans = ≈ₛ-trans
+    }
