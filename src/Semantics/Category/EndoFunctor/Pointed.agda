@@ -9,9 +9,11 @@ open import Semantics.Category.EndoFunctor.Base
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-record IsPointed {C : Category} (F : EndoFunctor C) : Set₂ where
-  open Category C
-  open EndoFunctor F
+open import Level using (0ℓ ; suc)
+
+record IsLPointed ℓ {C : LCategory ℓ} (F : LEndoFunctor ℓ C) : Set (suc ℓ) where
+  open LCategory C
+  open LEndoFunctor F
 
   field
     point[_]      : (P : Obj) → (P →̇ ℱ' P)
@@ -30,3 +32,6 @@ record IsPointed {C : Category} (F : EndoFunctor C) : Set₂ where
   return'-nat : {P Q R : Obj} (g : Q →̇ R) (f : P →̇ Q)
     → return' (g ∘ f) ≈̇ return' g ∘ f
   return'-nat g f = ≈̇-sym (∘-assoc _ g f)
+
+IsPointed = IsLPointed (suc 0ℓ)
+module IsPointed = IsLPointed

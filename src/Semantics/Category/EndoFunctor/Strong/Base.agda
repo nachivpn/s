@@ -9,10 +9,12 @@ open import Semantics.Category.EndoFunctor.Base
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-record IsStrong {C : Category} (isCartesian : IsCartesian C) (F : EndoFunctor C) : Set₂ where
-  open Category C
-  open IsCartesian isCartesian
-  open EndoFunctor F
+open import Level using (0ℓ ; suc)
+
+record IsLStrong ℓ {C : LCategory ℓ} (isCartesian : IsLCartesian ℓ C) (F : LEndoFunctor ℓ C) : Set (suc ℓ) where
+  open LCategory C
+  open IsLCartesian isCartesian
+  open LEndoFunctor F
 
   -- tensorial strength taking the tensor product as the cartesian product
   field
@@ -175,3 +177,6 @@ record IsStrong {C : Category} (isCartesian : IsCartesian C) (F : EndoFunctor C)
           ⟨ π₁' , ⟨ π₁' , π₂' ⟩' ⟩'
             ≈˘⟨ ⟨,⟩'-pres-≈̇-right _ (≈̇-trans ×'-eta (⟨,⟩'-pres-≈̇ (∘-unit-right _ _) (∘-unit-right _ _))) ⟩
           _ ∎
+
+IsStrong = IsLStrong (suc 0ℓ)
+module IsStrong = IsLStrong

@@ -9,9 +9,11 @@ open import Semantics.Category.EndoFunctor.Base
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-record IsMultiplicative {C : Category} (F : EndoFunctor C) : Set₂ where
-  open Category C
-  open EndoFunctor F
+open import Level using (0ℓ ; suc)
+
+record IsLMultiplicative ℓ {C : LCategory ℓ} (F : LEndoFunctor ℓ C) : Set (suc ℓ) where
+  open LCategory C
+  open LEndoFunctor F
 
   field
     mult[_]      : (P : Obj) → (ℱ' (ℱ' P) →̇ ℱ' P)
@@ -26,3 +28,5 @@ record IsMultiplicative {C : Category} (F : EndoFunctor C) : Set₂ where
   join : {P : Obj} → ℱ' (ℱ' P) →̇ ℱ' P
   join = mult[ _ ]
   
+IsMultiplicative = IsLMultiplicative (suc 0ℓ)
+module IsMultiplicative = IsLMultiplicative

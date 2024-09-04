@@ -11,17 +11,19 @@ open import Semantics.Category.EndoFunctor.Strong.Base
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-record IsStrongMultiplicative {C : Category} {isCartesian : IsCartesian C}
-  (F : EndoFunctor C) (isStrong : IsStrong isCartesian F) (isMultiplicative : IsMultiplicative F) : Set₂ where
-  open Category C
-  open IsCartesian isCartesian
-  open EndoFunctor F
-  open IsStrong isStrong renaming (letin' to sletin'
+open import Level using (0ℓ ; suc)
+
+record IsLStrongMultiplicative ℓ {C : LCategory ℓ} {isCartesian : IsLCartesian ℓ C}
+  (F : LEndoFunctor ℓ C) (isStrong : IsLStrong ℓ isCartesian F) (isMultiplicative : IsLMultiplicative ℓ F) : Set (suc ℓ) where
+  open LCategory C
+  open IsLCartesian isCartesian
+  open LEndoFunctor F
+  open IsLStrong isStrong renaming (letin' to sletin'
       ; letin'-nat₂ to sletin'-nat₂
       ; letin'-pres-≈̇ to sletin'-pres-≈̇
       ; letin'-nat₁ to sletin'-nat₁)
     using (strength[_,_] ; strength ; strength-natural₁ ; red-dia')
-  open IsMultiplicative isMultiplicative
+  open IsLMultiplicative isMultiplicative
 
   field
     strength-mult :{P Q : Obj} → mult[ P ×' Q ] ∘ map (strength[ P , Q ]) ∘ strength[ P , ℱ' Q ]
@@ -165,3 +167,6 @@ record IsStrongMultiplicative {C : Category} {isCartesian : IsCartesian C}
         -- defn.
         ≡⟨⟩
       letin' φ (letin' ψ (ϕ ∘ (π₁' ×'-map id'[ R ]))) ∎
+
+IsStrongMultiplicative = IsLStrongMultiplicative (suc 0ℓ)
+module IsStrongMultiplicative = IsLStrongMultiplicative

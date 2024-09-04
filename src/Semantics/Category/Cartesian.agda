@@ -7,8 +7,10 @@ open import Relation.Binary using (IsEquivalence; Setoid)
 
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-record IsCartesian (C : Category) : Set₂ where
-  open Category C
+open import Level using (0ℓ ; suc)
+
+record IsLCartesian ℓ (C : LCategory ℓ) : Set (suc ℓ) where
+  open LCategory C
 
   -- terminal object
   field
@@ -126,3 +128,6 @@ record IsCartesian (C : Category) : Set₂ where
       ⟨ π₁' ∘ ⟨ φ , ψ ⟩' , ⟨ π₂' ∘ ⟨ φ , ψ ⟩' , ω ⟩' ⟩'
         ≈⟨ ⟨,⟩'-pres-≈̇ (×'-beta-left _) (⟨,⟩'-pres-≈̇-left (×'-beta-right _) _) ⟩
       ⟨ φ , ⟨ ψ , ω ⟩' ⟩' ∎
+
+IsCartesian = IsLCartesian (suc 0ℓ)
+module IsCartesian = IsLCartesian

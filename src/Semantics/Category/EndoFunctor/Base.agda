@@ -7,8 +7,10 @@ open import Semantics.Category.Base
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-record EndoFunctor (C : Category)  : Set₂ where
-  open Category C
+open import Level using (0ℓ ; suc)
+
+record LEndoFunctor ℓ (C : LCategory ℓ)  : Set (suc ℓ) where
+  open LCategory C
 
   -- endofunctor
   field
@@ -17,3 +19,6 @@ record EndoFunctor (C : Category)  : Set₂ where
     map-pres-≈̇  : {P Q : Obj} {φ φ' : P →̇ Q} → φ ≈̇ φ' → map φ ≈̇ map φ'
     map-pres-id : {P : Obj} → map id'[ P ] ≈̇ id'
     map-pres-∘  : {P Q R : Obj} → (ψ : Q →̇ R) (φ : P →̇ Q) → map (ψ ∘ φ) ≈̇ map ψ ∘ map φ
+
+EndoFunctor = LEndoFunctor (suc 0ℓ)
+module EndoFunctor = LEndoFunctor

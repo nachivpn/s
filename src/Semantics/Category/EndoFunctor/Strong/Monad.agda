@@ -15,19 +15,21 @@ open import Semantics.Category.EndoFunctor.Strong.Multiplicative
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
-record IsStrongMonad {C : Category} {isCartesian : IsCartesian C} (F : EndoFunctor C)
-  {isStrong : IsStrong isCartesian F} {isPointed : IsPointed F} {isMultiplicative : IsMultiplicative F}
-  (isStrongPointed : IsStrongPointed F isStrong isPointed)
-  (isStrongMultiplicative : IsStrongMultiplicative F isStrong isMultiplicative)
-  (isMonad : IsMonad isPointed isMultiplicative) : Set₂ where
+open import Level using (0ℓ ; suc)
+
+record IsLStrongMonad ℓ {C : LCategory ℓ} {isCartesian : IsLCartesian ℓ C} (F : LEndoFunctor ℓ C)
+  {isStrong : IsLStrong ℓ isCartesian F} {isPointed : IsLPointed ℓ F} {isMultiplicative : IsLMultiplicative ℓ F}
+  (isStrongPointed : IsLStrongPointed ℓ F isStrong isPointed)
+  (isStrongMultiplicative : IsLStrongMultiplicative ℓ F isStrong isMultiplicative)
+  (isMonad : IsLMonad ℓ isPointed isMultiplicative) : Set (suc ℓ) where
   
-  open Category C
-  open IsCartesian isCartesian
+  open LCategory C
+  open IsLCartesian isCartesian
   open EndoFunctor F
-  open IsStrong isStrong renaming (letin' to sletin') hiding (exp-dia' ; red-dia')
-  open IsStrongPointed isStrongPointed public
-  open IsStrongMultiplicative isStrongMultiplicative public
-  open IsMonad isMonad public
+  open IsLStrong isStrong renaming (letin' to sletin') hiding (exp-dia' ; red-dia')
+  open IsLStrongPointed isStrongPointed public
+  open IsLStrongMultiplicative isStrongMultiplicative public
+  open IsLMonad isMonad public
 
   abstract
     red-dia' : {P Q R : Obj} (φ : P →̇ Q) (ψ : (P ×' Q) →̇ ℱ' R) → letin' (return' φ) ψ ≈̇ (ψ ∘ ⟨ id'[ P ] , φ ⟩')
@@ -94,3 +96,6 @@ record IsStrongMonad {C : Category} {isCartesian : IsCartesian C} (F : EndoFunct
         -- unit of ∘
         ≈⟨ ∘-unit-left _ _ ⟩
       φ ∎
+
+IsStrongMonad = IsLStrongMonad (suc 0ℓ)
+module IsStrongMonad = IsLStrongMonad

@@ -3,15 +3,15 @@ module Semantics.Category.Base where
 
 open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalence; Setoid)
 import Relation.Binary.Reasoning.Setoid as EqReasoning
-open import Level using (0ℓ)
+open import Level using (0ℓ ; suc)
 
-record Category : Set₂ where
+record LCategory ℓ : Set (suc ℓ) where
 
   infixr 19 _→̇_
 
   field
-    Obj : Set₁
-    _→̇_ : (P Q : Obj) → Set
+    Obj     : Set ℓ
+    _→̇_     : (P Q : Obj) → Set
     _≈̇_     : {P Q : Obj} → (φ ψ : P →̇ Q) → Set
     _∘_     : {P Q R : Obj} → (ψ : Q →̇ R) → (φ : P →̇ Q) → (P →̇ R)
     id'[_]  : (P : Obj) → P →̇ P
@@ -62,3 +62,7 @@ record Category : Set₂ where
 
     ∘-pres-≈̇-right : ∀ (ψ : Q →̇ R) (_ : φ ≈̇ φ') → ψ ∘ φ ≈̇ ψ ∘ φ'
     ∘-pres-≈̇-right ψ φ≈̇φ' = ∘-pres-≈̇ (≈̇-refl {φ = ψ}) φ≈̇φ'
+
+-- for legacy purposes
+Category = LCategory (suc 0ℓ)
+module Category = LCategory
