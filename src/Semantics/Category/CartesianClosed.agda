@@ -6,9 +6,9 @@ open import Semantics.Category.Cartesian
 
 open import Level using (0ℓ ; suc)
 
-record IsLCartesianClosed ℓ (C : LCategory ℓ) (isCartesian : IsLCartesian ℓ C) : Set (suc ℓ) where
-  open LCategory C
-  open IsLCartesian isCartesian public
+record IsCartesianClosedₗ {ℓ} (C : Categoryₗ ℓ) (isCartesian : IsCartesianₗ C) : Set (suc ℓ) where
+  open Categoryₗ C
+  open IsCartesianₗ isCartesian public
 
   field
     _⇒'_  : (P Q : Obj) → Obj
@@ -28,5 +28,5 @@ record IsLCartesianClosed ℓ (C : LCategory ℓ) (isCartesian : IsLCartesian �
     app'-pres-≈̇-right : ∀ {R : Obj} {P Q : Obj} (φ : R →̇ P ⇒' Q) {ψ ψ' : R →̇ P} (ψ≈̇ψ' : ψ ≈̇ ψ') → app' φ ψ ≈̇ app' φ ψ'
     app'-pres-≈̇-right φ ψ≈̇ψ' = app'-pres-≈̇ (≈̇-refl {φ = φ}) ψ≈̇ψ'
 
-IsCartesianClosed = IsLCartesianClosed (suc 0ℓ)
-module IsCartesianClosed = IsLCartesianClosed
+IsCartesianClosed = IsCartesianClosedₗ {ℓ = suc 0ℓ}
+module IsCartesianClosed = IsCartesianClosedₗ

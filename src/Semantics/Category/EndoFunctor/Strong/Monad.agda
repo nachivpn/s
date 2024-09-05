@@ -17,19 +17,19 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Level using (0ℓ ; suc)
 
-record IsLStrongMonad ℓ {C : LCategory ℓ} {isCartesian : IsLCartesian ℓ C} (F : LEndoFunctor ℓ C)
-  {isStrong : IsLStrong ℓ isCartesian F} {isPointed : IsLPointed ℓ F} {isMultiplicative : IsLMultiplicative ℓ F}
-  (isStrongPointed : IsLStrongPointed ℓ F isStrong isPointed)
-  (isStrongMultiplicative : IsLStrongMultiplicative ℓ F isStrong isMultiplicative)
-  (isMonad : IsLMonad ℓ isPointed isMultiplicative) : Set (suc ℓ) where
+record IsStrongMonadₗ {ℓ} {C : Categoryₗ ℓ} {isCartesian : IsCartesianₗ C} (F : EndoFunctorₗ C)
+  {isStrong : IsStrongₗ isCartesian F} {isPointed : IsPointedₗ F} {isMultiplicative : IsMultiplicativeₗ F}
+  (isStrongPointed : IsStrongPointedₗ F isStrong isPointed)
+  (isStrongMultiplicative : IsStrongMultiplicativeₗ F isStrong isMultiplicative)
+  (isMonad : IsMonadₗ isPointed isMultiplicative) : Set (suc ℓ) where
   
-  open LCategory C
-  open IsLCartesian isCartesian
-  open EndoFunctor F
-  open IsLStrong isStrong renaming (letin' to sletin') hiding (exp-dia' ; red-dia')
-  open IsLStrongPointed isStrongPointed public
-  open IsLStrongMultiplicative isStrongMultiplicative public
-  open IsLMonad isMonad public
+  open Categoryₗ C
+  open IsCartesianₗ isCartesian
+  open EndoFunctorₗ F
+  open IsStrongₗ isStrong renaming (letin' to sletin') hiding (exp-dia' ; red-dia')
+  open IsStrongPointedₗ isStrongPointed public
+  open IsStrongMultiplicativeₗ isStrongMultiplicative public
+  open IsMonadₗ isMonad public
 
   abstract
     red-dia' : {P Q R : Obj} (φ : P →̇ Q) (ψ : (P ×' Q) →̇ ℱ' R) → letin' (return' φ) ψ ≈̇ (ψ ∘ ⟨ id'[ P ] , φ ⟩')
@@ -97,5 +97,5 @@ record IsLStrongMonad ℓ {C : LCategory ℓ} {isCartesian : IsLCartesian ℓ C}
         ≈⟨ ∘-unit-left _ _ ⟩
       φ ∎
 
-IsStrongMonad = IsLStrongMonad (suc 0ℓ)
-module IsStrongMonad = IsLStrongMonad
+IsStrongMonad = IsStrongMonadₗ {ℓ = suc 0ℓ}
+module IsStrongMonad = IsStrongMonadₗ

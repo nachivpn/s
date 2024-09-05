@@ -9,8 +9,8 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Level using (0ℓ ; suc)
 
-record IsLCartesian ℓ (C : LCategory ℓ) : Set (suc ℓ) where
-  open LCategory C
+record IsCartesianₗ {ℓ} (C : Categoryₗ ℓ) : Set (suc ℓ) where
+  open Categoryₗ C
 
   -- terminal object
   field
@@ -129,5 +129,5 @@ record IsLCartesian ℓ (C : LCategory ℓ) : Set (suc ℓ) where
         ≈⟨ ⟨,⟩'-pres-≈̇ (×'-beta-left _) (⟨,⟩'-pres-≈̇-left (×'-beta-right _) _) ⟩
       ⟨ φ , ⟨ ψ , ω ⟩' ⟩' ∎
 
-IsCartesian = IsLCartesian (suc 0ℓ)
-module IsCartesian = IsLCartesian
+IsCartesian = IsCartesianₗ {ℓ = suc 0ℓ}
+module IsCartesian = IsCartesianₗ

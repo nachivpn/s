@@ -5,7 +5,7 @@ open import Relation.Binary using (Reflexive; Symmetric; Transitive; IsEquivalen
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 open import Level using (0ℓ ; suc)
 
-record LCategory ℓ : Set (suc ℓ) where
+record Categoryₗ ℓ : Set (suc ℓ) where
 
   infixr 19 _→̇_
 
@@ -63,6 +63,11 @@ record LCategory ℓ : Set (suc ℓ) where
     ∘-pres-≈̇-right : ∀ (ψ : Q →̇ R) (_ : φ ≈̇ φ') → ψ ∘ φ ≈̇ ψ ∘ φ'
     ∘-pres-≈̇-right ψ φ≈̇φ' = ∘-pres-≈̇ (≈̇-refl {φ = ψ}) φ≈̇φ'
 
--- for legacy purposes
-Category = LCategory (suc 0ℓ)
-module Category = LCategory
+-- aliases
+Category₀ = Categoryₗ 0ℓ
+Category₁ = Categoryₗ (suc 0ℓ)
+
+-- legacy use
+Category = Category₁
+module Category = Categoryₗ
+

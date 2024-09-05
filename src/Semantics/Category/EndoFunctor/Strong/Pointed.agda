@@ -13,13 +13,13 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Level using (0ℓ ; suc)
 
-record IsLStrongPointed ℓ {C : LCategory ℓ} {isCartesian : IsLCartesian ℓ C}
-  (F : LEndoFunctor ℓ C) (isStrong : IsLStrong ℓ isCartesian F) (isPointed : IsLPointed ℓ F) : Set (suc ℓ) where
-  open LCategory C
-  open IsLCartesian isCartesian
-  open LEndoFunctor F
-  open IsLStrong isStrong renaming (red-dia' to red-dia1')
-  open IsLPointed isPointed
+record IsStrongPointedₗ {ℓ} {C : Categoryₗ ℓ} {isCartesian : IsCartesianₗ C}
+  (F : EndoFunctorₗ C) (isStrong : IsStrongₗ isCartesian F) (isPointed : IsPointedₗ F) : Set (suc ℓ) where
+  open Categoryₗ C
+  open IsCartesianₗ isCartesian
+  open EndoFunctorₗ F
+  open IsStrongₗ isStrong renaming (red-dia' to red-dia1')
+  open IsPointedₗ isPointed
 
   field
     strength-point : {P Q : Obj} → strength[ P , Q ] ∘ id'[ P ] ×'-map point[ Q ] ≈̇ point[ P ×' Q ]
@@ -44,5 +44,5 @@ record IsLStrongPointed ℓ {C : LCategory ℓ} {isCartesian : IsLCartesian ℓ 
       ≈⟨ ∘-assoc _ _ _ ⟩
     point ∘ ψ ∘ ⟨ id' , φ ⟩' ∎
 
-IsStrongPointed = IsLStrongPointed (suc 0ℓ)
-module IsStrongPointed = IsLStrongPointed
+IsStrongPointed = IsStrongPointedₗ {ℓ = suc 0ℓ}
+module IsStrongPointed = IsStrongPointedₗ

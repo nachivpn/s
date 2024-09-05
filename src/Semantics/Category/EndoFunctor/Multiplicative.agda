@@ -11,9 +11,9 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Level using (0ℓ ; suc)
 
-record IsLMultiplicative ℓ {C : LCategory ℓ} (F : LEndoFunctor ℓ C) : Set (suc ℓ) where
-  open LCategory C
-  open LEndoFunctor F
+record IsMultiplicativeₗ {ℓ} {C : Categoryₗ ℓ} (F : EndoFunctorₗ C) : Set (suc ℓ) where
+  open Categoryₗ C
+  open EndoFunctorₗ F
 
   field
     mult[_]      : (P : Obj) → (ℱ' (ℱ' P) →̇ ℱ' P)
@@ -28,5 +28,5 @@ record IsLMultiplicative ℓ {C : LCategory ℓ} (F : LEndoFunctor ℓ C) : Set 
   join : {P : Obj} → ℱ' (ℱ' P) →̇ ℱ' P
   join = mult[ _ ]
   
-IsMultiplicative = IsLMultiplicative (suc 0ℓ)
-module IsMultiplicative = IsLMultiplicative
+IsMultiplicative = IsMultiplicativeₗ {ℓ = suc 0ℓ}
+module IsMultiplicative = IsMultiplicativeₗ

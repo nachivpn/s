@@ -11,9 +11,9 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Level using (0ℓ ; suc)
 
-record IsLPointed ℓ {C : LCategory ℓ} (F : LEndoFunctor ℓ C) : Set (suc ℓ) where
-  open LCategory C
-  open LEndoFunctor F
+record IsPointedₗ {ℓ} {C : Categoryₗ ℓ} (F : EndoFunctorₗ C) : Set (suc ℓ) where
+  open Categoryₗ C
+  open EndoFunctorₗ F
 
   field
     point[_]      : (P : Obj) → (P →̇ ℱ' P)
@@ -33,5 +33,5 @@ record IsLPointed ℓ {C : LCategory ℓ} (F : LEndoFunctor ℓ C) : Set (suc �
     → return' (g ∘ f) ≈̇ return' g ∘ f
   return'-nat g f = ≈̇-sym (∘-assoc _ g f)
 
-IsPointed = IsLPointed (suc 0ℓ)
-module IsPointed = IsLPointed
+IsPointed = IsPointedₗ {ℓ = suc 0ℓ}
+module IsPointed = IsPointedₗ

@@ -9,8 +9,8 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Level using (0ℓ ; suc)
 
-record LEndoFunctor ℓ (C : LCategory ℓ)  : Set (suc ℓ) where
-  open LCategory C
+record EndoFunctorₗ {ℓ} (C : Categoryₗ ℓ)  : Set (suc ℓ) where
+  open Categoryₗ C
 
   -- endofunctor
   field
@@ -20,5 +20,5 @@ record LEndoFunctor ℓ (C : LCategory ℓ)  : Set (suc ℓ) where
     map-pres-id : {P : Obj} → map id'[ P ] ≈̇ id'
     map-pres-∘  : {P Q R : Obj} → (ψ : Q →̇ R) (φ : P →̇ Q) → map (ψ ∘ φ) ≈̇ map ψ ∘ map φ
 
-EndoFunctor = LEndoFunctor (suc 0ℓ)
-module EndoFunctor = LEndoFunctor
+EndoFunctor = EndoFunctorₗ {ℓ = suc 0ℓ}
+module EndoFunctor = EndoFunctorₗ
