@@ -8,6 +8,10 @@ open import Relation.Binary.PropositionalEquality
 
 wkTm-pres-⊆-refl : (t : Tm Γ a) → wkTm ⊆-refl t ≡ t
 wkTm-pres-⊆-refl (var   v)    = cong  var (wkVar-pres-⊆-refl v)
+wkTm-pres-⊆-refl unit         = refl
+wkTm-pres-⊆-refl (fst t)      = cong fst (wkTm-pres-⊆-refl t)
+wkTm-pres-⊆-refl (snd t)      = cong snd (wkTm-pres-⊆-refl t)
+wkTm-pres-⊆-refl (pair t u)   = cong₂ pair (wkTm-pres-⊆-refl t) (wkTm-pres-⊆-refl u)
 wkTm-pres-⊆-refl (lam   t)    = cong  lam (wkTm-pres-⊆-refl  t)
 wkTm-pres-⊆-refl (app   t u)  = cong₂ app (wkTm-pres-⊆-refl  t) (wkTm-pres-⊆-refl u)
 wkTm-pres-⊆-refl (sletin t u) = cong₂ sletin (wkTm-pres-⊆-refl t) (wkTm-pres-⊆-refl u)
@@ -16,10 +20,15 @@ wkTm-pres-⊆-refl (jletin t u) = cong₂ jletin (wkTm-pres-⊆-refl t) (wkTm-pr
 wkTm-pres-⊆-trans : (w : Γ ⊆ Γ') (w' : Γ' ⊆ Δ) (t : Tm Γ a)
   → wkTm (w ∙ w') t ≡ wkTm w' (wkTm w t)
 wkTm-pres-⊆-trans w w' (var   v)    = cong  var (wkVar-pres-⊆-trans w w' v)
+wkTm-pres-⊆-trans w w' unit         = refl
+wkTm-pres-⊆-trans w w' (fst t)      = cong fst (wkTm-pres-⊆-trans w w' t)
+wkTm-pres-⊆-trans w w' (snd t)      = cong snd (wkTm-pres-⊆-trans w w' t)
+wkTm-pres-⊆-trans w w' (pair t u)   = cong₂ pair (wkTm-pres-⊆-trans w w' t) (wkTm-pres-⊆-trans w w' u)
 wkTm-pres-⊆-trans w w' (lam   t)    = cong  lam (wkTm-pres-⊆-trans (keep w) (keep  w') t)
 wkTm-pres-⊆-trans w w' (app   t u)  = cong₂ app (wkTm-pres-⊆-trans w w' t) (wkTm-pres-⊆-trans w w' u)
 wkTm-pres-⊆-trans w w' (sletin t u) = cong₂ sletin (wkTm-pres-⊆-trans w w' t) (wkTm-pres-⊆-trans (keep w) (keep w') u)
 wkTm-pres-⊆-trans w w' (jletin t u) = cong₂ jletin (wkTm-pres-⊆-trans w w' t) (wkTm-pres-⊆-trans (keep w) (keep w') u)
+
 
 wkSub-pres-⊆-refl : (s : Sub Γ Δ) → wkSub ⊆-refl s ≡ s
 wkSub-pres-⊆-refl []       = refl
@@ -45,6 +54,13 @@ substTm-nat : (t : Tm Γ a) (s : Sub Δ Γ) (w : Δ ⊆ Δ')
   → substTm (wkSub w s) t ≡ wkTm w (substTm s t)
 substTm-nat (var x)           s          w
   = substVar-nat x s w
+substTm-nat unit              s          w = refl
+substTm-nat (fst t)           s          w
+  = cong fst (substTm-nat t s w)
+substTm-nat (snd t)           s          w
+  = cong snd (substTm-nat t s w)
+substTm-nat (pair t u)        s          w
+  = cong₂ pair (substTm-nat t s w) (substTm-nat u s w)
 substTm-nat (lam {Γ} {a} t)   s          w
   = cong lam
       (trans
@@ -52,12 +68,12 @@ substTm-nat (lam {Γ} {a} t)   s          w
         (substTm-nat t (keepₛ s) (keep w)))
 substTm-nat (app t u)         s          w
   = cong₂ app (substTm-nat t s w) (substTm-nat u s w)
-substTm-nat (sletin t u)       s          w
+substTm-nat (sletin t u)      s         w
   = cong₂ sletin (substTm-nat t s w)
       (trans
         (cong (λ s → substTm (s `, var zero) u) wkSubFreshLemma)
         (substTm-nat u (keepₛ s) (keep w)))
-substTm-nat (jletin t u)       s          w
+substTm-nat (jletin t u)      s         w
   = cong₂ jletin (substTm-nat t s w)
       (trans
         (cong (λ s → substTm (s `, var zero) u) wkSubFreshLemma)
@@ -67,6 +83,14 @@ assoc-substTm-wkTm : (t : Tm Γ a) (s : Sub Δ' Δ) (w : Γ ⊆ Δ)
     → substTm (trimSub w s) t ≡ substTm s (wkTm w t)
 assoc-substTm-wkTm (var x)           s          w
   = assoc-substVar-wkVar x s w
+assoc-substTm-wkTm unit s w
+  = refl
+assoc-substTm-wkTm (fst t)           s          w
+  = cong fst (assoc-substTm-wkTm t s w)
+assoc-substTm-wkTm (snd t)           s          w
+  = cong snd (assoc-substTm-wkTm t s w)
+assoc-substTm-wkTm (pair t u)        s          w
+  = cong₂ pair (assoc-substTm-wkTm t s w) (assoc-substTm-wkTm u s w)
 assoc-substTm-wkTm (lam t)           s          w
   = cong lam (trans
     (cong (λ p → substTm (p `, var zero) t) (trimSub-nat s w freshWk))
@@ -115,6 +139,10 @@ substVar-pres-idₛ (succ x) = trans (substVar-nat x idₛ freshWk) (trans
 
 substTm-pres-idₛ : (t : Tm Γ a) → substTm idₛ t ≡ t
 substTm-pres-idₛ (var x)      = substVar-pres-idₛ x
+substTm-pres-idₛ unit         = refl
+substTm-pres-idₛ (fst t)      = cong fst (substTm-pres-idₛ t)
+substTm-pres-idₛ (snd t)      = cong snd (substTm-pres-idₛ t)
+substTm-pres-idₛ (pair t u)   = cong₂ pair (substTm-pres-idₛ t) (substTm-pres-idₛ u)
 substTm-pres-idₛ (lam t)      = cong lam (substTm-pres-idₛ t)
 substTm-pres-idₛ (app t u)    = cong₂ app (substTm-pres-idₛ t) (substTm-pres-idₛ u)
 substTm-pres-idₛ (sletin t u) = cong₂ sletin (substTm-pres-idₛ t) (substTm-pres-idₛ u)
@@ -153,6 +181,14 @@ substTm-pres-∙ₛ : (s : Sub Γ' Γ) (s' : Sub Δ Γ') (t : Tm Γ a)
   → substTm (s ∙ₛ s') t ≡ substTm s' (substTm s t)
 substTm-pres-∙ₛ s s'             (var x)
   = substVarPres∙ₛ s s' x
+substTm-pres-∙ₛ s s'             unit
+  = refl
+substTm-pres-∙ₛ s s'             (fst t)
+  = cong fst (substTm-pres-∙ₛ s s' t)
+substTm-pres-∙ₛ s s'             (snd t)
+  = cong snd (substTm-pres-∙ₛ s s' t)
+substTm-pres-∙ₛ s s'             (pair t u)
+  = cong₂ pair (substTm-pres-∙ₛ s s' t) (substTm-pres-∙ₛ s s' u)
 substTm-pres-∙ₛ s s'             (lam t)
   = cong lam
     (trans (cong ((λ s → substTm (s `, var zero) t)) ((dropKeepLemma s s')))

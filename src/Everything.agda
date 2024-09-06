@@ -17,6 +17,7 @@ import PFC.Term.Conversion
 import PFC.Term.NormalForm
 
 -- Calculus for joinable functors
+import JFC.Type {- temporarily -}
 import JFC.Term
 import JFC.Term.Conversion
 --import JFC.Term.NormalForm

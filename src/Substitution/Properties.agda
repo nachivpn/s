@@ -95,3 +95,9 @@ module Conversion
     ; sym   = ≈ₛ-sym
     ; trans = ≈ₛ-trans
     }
+
+  `,-pres-≈-left : s ≈ₛ s' → (t : Tm Γ a) → (s `, t) ≈ₛ (s' `, t)
+  `,-pres-≈-left s≈s' t = s≈s' `, ≈-is-equiv .≈-refl
+
+  `,-pres-≈-right : {t t' : Tm Γ a} (s : Sub Γ Δ) → t ≈ t' → (s `, t) ≈ₛ (s `, t')
+  `,-pres-≈-right s t≈t' = ≈ₛ-refl `, t≈t'

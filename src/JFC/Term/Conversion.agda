@@ -19,6 +19,18 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 data _≈_ : Tm Γ a → Tm Γ a → Set where
 
+  exp-unit  : (t : Tm Γ 𝟙)
+    → t ≈ unit
+
+  red-prod1 : (t : Tm Γ a) (u : Tm Γ b)
+    → fst (pair t u) ≈ t
+
+  red-prod2 : (t : Tm Γ a) (u : Tm Γ b)
+    → snd (pair t u) ≈ u
+
+  exp-prod : (t : Tm Γ (a × b))
+    → t ≈ pair (fst t) (snd t)
+
   red-fun : (t : Tm (Γ `, a) b) (u : Tm Γ a)
     → app (lam t) u ≈ substTm (idₛ `, u) t
 
@@ -32,6 +44,22 @@ data _≈_ : Tm Γ a → Tm Γ a → Set where
     → t ≈ sletin t (var zero)
 
   -- TODO: add necessary equations for ◇ type
+
+  cong-fst : {t t' : Tm Γ (a × b)}
+    → t ≈ t'
+    → fst t ≈ fst t'
+
+  cong-snd : {t t' : Tm Γ (a × b)}
+    → t ≈ t'
+    → snd t ≈ snd t'
+
+  cong-pair1 : {t t' : Tm Γ a} {u : Tm Γ b}
+    → t ≈ t'
+    → pair t u ≈ pair t' u
+
+  cong-pair2 : {t : Tm Γ a} {u u' : Tm Γ b}
+    → u ≈ u'
+    → pair t u ≈ pair t u'
   
   cong-lam : {t t' : Tm (Γ `, a) b}
     → t ≈ t'
@@ -90,6 +118,9 @@ Tm-setoid Γ a = record
 cong-app : ∀ (t≈t' : t ≈ t') (u≈u' : u ≈ u') → app t u ≈ app t' u'
 cong-app t≈t' u≈u' = ≈-trans (cong-app1 t≈t') (cong-app2 u≈u')
 
+cong-pair : ∀ (t≈t' : t ≈ t') (u≈u' : u ≈ u') → pair t u ≈ pair t' u'
+cong-pair t≈t' u≈u' = ≈-trans (cong-pair1 t≈t') (cong-pair2 u≈u')
+
 cong-sletin : {t t' : Tm Γ (◇ a)} {u : Tm (Γ `, a) b}
     → t ≈ t' → u ≈ u' → sletin t u ≈ sletin t' u'
 cong-sletin t≈t' u≈u' = ≈-trans (cong-sletin1 t≈t') (cong-sletin2 u≈u')
@@ -105,10 +136,18 @@ cong-jletin t≈t' u≈u' = ≈-trans (cong-jletin1 t≈t') (cong-jletin2 u≈u'
 open AdhocLemmas
 
 wkTm-pres-≈ : (w : Γ ⊆ Γ') {t t' : Tm Γ a} → t ≈ t' → wkTm w t ≈ wkTm w t'
+wkTm-pres-≈ w (exp-unit t)          = exp-unit (wkTm w t)
+wkTm-pres-≈ w (red-prod1 t u)       = red-prod1 (wkTm w t) (wkTm w u)
+wkTm-pres-≈ w (red-prod2 t u)       = red-prod2 (wkTm w t) (wkTm w u)
+wkTm-pres-≈ w (exp-prod t)          = exp-prod (wkTm w t)
 wkTm-pres-≈ w (red-fun t u)         = ≈-trans (red-fun _ _) (≡-to-≈ (red-fun-crunch-lemma w u t))
 wkTm-pres-≈ w (exp-fun _)           = ≈-trans (exp-fun _) (≡-to-≈ (cong lam (cong₂ app keepFreshLemma ≡-refl)))
 wkTm-pres-≈ w (red-dia t u u')      = ≈-trans (red-dia _ _ _) (cong-sletin2 (≡-to-≈ (red-dia-crunch-lemma w t u u')))
 wkTm-pres-≈ w (exp-dia _)           = exp-dia (wkTm w _)
+wkTm-pres-≈ w (cong-fst r)          = cong-fst (wkTm-pres-≈ w r)
+wkTm-pres-≈ w (cong-snd r)          = cong-snd (wkTm-pres-≈ w r)
+wkTm-pres-≈ w (cong-pair1 r)        = cong-pair1 (wkTm-pres-≈ w r)
+wkTm-pres-≈ w (cong-pair2 r)        = cong-pair2 (wkTm-pres-≈ w r)
 wkTm-pres-≈ w (cong-lam t≈t')       = cong-lam (wkTm-pres-≈ (_⊆_.keep w) t≈t')
 wkTm-pres-≈ w (cong-app1 t≈t')      = cong-app1 (wkTm-pres-≈ w t≈t')
 wkTm-pres-≈ w (cong-app2 t≈t')      = cong-app2 (wkTm-pres-≈ w t≈t')
@@ -134,55 +173,79 @@ keepₛ-pres-≈ₛ : s ≈ₛ s' → keepₛ {a = a} s ≈ₛ keepₛ s'
 keepₛ-pres-≈ₛ []             = ≈ₛ-refl
 keepₛ-pres-≈ₛ (s≈s' `, t≈t') = dropₛ-pres-≈ₛ (s≈s' `, t≈t') `, ≈-refl
 
-subsVar-pres-≈ₛ : {s s' : Sub Δ Γ} (x : Var Γ a) → s ≈ₛ s' → substVar s x ≈ substVar s' x
-subsVar-pres-≈ₛ zero     (_ `, t≈t') = t≈t'
-subsVar-pres-≈ₛ (succ x) (s≈s' `, _) = subsVar-pres-≈ₛ x s≈s'
+substVar-pres-≈ₛ : {s s' : Sub Δ Γ} (x : Var Γ a) → s ≈ₛ s' → substVar s x ≈ substVar s' x
+substVar-pres-≈ₛ zero     (_ `, t≈t') = t≈t'
+substVar-pres-≈ₛ (succ x) (s≈s' `, _) = substVar-pres-≈ₛ x s≈s'
 
-subsTm-pres-≈-left : {s s' : Sub Δ Γ} (t : Tm Γ a) → s ≈ₛ s' → substTm s t ≈ substTm s' t
-subsTm-pres-≈-left (var v)      s≈s'
-  = subsVar-pres-≈ₛ v s≈s'
-subsTm-pres-≈-left (lam t)      s≈s'
-  = cong-lam (subsTm-pres-≈-left t (keepₛ-pres-≈ₛ s≈s'))
-subsTm-pres-≈-left (app t u)    s≈s'
-  = cong-app (subsTm-pres-≈-left t s≈s') (subsTm-pres-≈-left u s≈s')
-subsTm-pres-≈-left (sletin t u) s≈s'
-  = cong-sletin (subsTm-pres-≈-left t s≈s') (subsTm-pres-≈-left u (keepₛ-pres-≈ₛ s≈s'))
-subsTm-pres-≈-left (jletin t u) s≈s'
-  = cong-jletin (subsTm-pres-≈-left t s≈s') (subsTm-pres-≈-left u (keepₛ-pres-≈ₛ s≈s'))
-
-subsTm-pres-≈-right : (s : Sub Δ Γ) {t t' : Tm Γ a} → t ≈ t' → substTm s t ≈ substTm s t'
-subsTm-pres-≈-right s (red-fun t u)
-  = ≈-trans (red-fun _ _) (≡-to-≈ (red-fun-crunch-subst-lemma s t u))
-subsTm-pres-≈-right s (exp-fun t)
-  = ≈-trans (exp-fun _) (cong-lam (cong-app1 (≡-to-≈ (exp-fun-crunch-subst-lemma s t))))
-subsTm-pres-≈-right s (red-dia t u u')
-  = ≈-trans (red-dia _ _ _) (cong-sletin2 (≡-to-≈ (red-dia-crunch-subst-lemma s u u')))
-subsTm-pres-≈-right s (exp-dia _)
-  = exp-dia _
-subsTm-pres-≈-right s (cong-lam t≈t')
-  = cong-lam (subsTm-pres-≈-right (keepₛ s) t≈t')
-subsTm-pres-≈-right s (cong-app1 t≈t')
-  = cong-app1 (subsTm-pres-≈-right s t≈t')
-subsTm-pres-≈-right s (cong-app2 t≈t')
-  = cong-app2 (subsTm-pres-≈-right s t≈t')
-subsTm-pres-≈-right s (cong-sletin1 t≈t')
-  = cong-sletin1  (subsTm-pres-≈-right s t≈t')
-subsTm-pres-≈-right s (cong-sletin2 t≈t')
-  = cong-sletin2  (subsTm-pres-≈-right (keepₛ s) t≈t')
-subsTm-pres-≈-right s (cong-jletin1 t≈t')
-  = cong-jletin1  (subsTm-pres-≈-right s t≈t')
-subsTm-pres-≈-right s (cong-jletin2 t≈t')
-  = cong-jletin2  (subsTm-pres-≈-right (keepₛ s) t≈t')
-subsTm-pres-≈-right s ≈-refl
+substTm-pres-≈-left : {s s' : Sub Δ Γ} (t : Tm Γ a) → s ≈ₛ s' → substTm s t ≈ substTm s' t
+substTm-pres-≈-left (var v)      s≈s'
+  = substVar-pres-≈ₛ v s≈s'
+substTm-pres-≈-left unit         s≈s'
   = ≈-refl
-subsTm-pres-≈-right s (≈-sym t≈t')
-  = ≈-sym (subsTm-pres-≈-right s t≈t')
-subsTm-pres-≈-right s (≈-trans t≈t' t≈t'')
-  = ≈-trans (subsTm-pres-≈-right s t≈t') (subsTm-pres-≈-right s t≈t'')
+substTm-pres-≈-left (fst t)      s≈s'
+  = cong-fst (substTm-pres-≈-left t s≈s')
+substTm-pres-≈-left (snd t)      s≈s'
+  = cong-snd (substTm-pres-≈-left t s≈s')
+substTm-pres-≈-left (pair t u)   s≈s'
+  = cong-pair (substTm-pres-≈-left t s≈s') (substTm-pres-≈-left u s≈s')
+substTm-pres-≈-left (lam t)      s≈s'
+  = cong-lam (substTm-pres-≈-left t (keepₛ-pres-≈ₛ s≈s'))
+substTm-pres-≈-left (app t u)    s≈s'
+  = cong-app (substTm-pres-≈-left t s≈s') (substTm-pres-≈-left u s≈s')
+substTm-pres-≈-left (sletin t u) s≈s'
+  = cong-sletin (substTm-pres-≈-left t s≈s') (substTm-pres-≈-left u (keepₛ-pres-≈ₛ s≈s'))
+substTm-pres-≈-left (jletin t u) s≈s'
+  = cong-jletin (substTm-pres-≈-left t s≈s') (substTm-pres-≈-left u (keepₛ-pres-≈ₛ s≈s'))
 
-subsTm-pres-≈ : {s s' : Sub Δ Γ} {t t' : Tm Γ a} → s ≈ₛ s' → t ≈ t' → substTm s t ≈ substTm s' t'
-subsTm-pres-≈ {s' = s'} {t} s≈s' t≈t'
-  = ≈-trans (subsTm-pres-≈-left t s≈s') (subsTm-pres-≈-right s' t≈t')
+substTm-pres-≈-right : (s : Sub Δ Γ) {t t' : Tm Γ a} → t ≈ t' → substTm s t ≈ substTm s t'
+substTm-pres-≈-right s (exp-unit t)
+  = exp-unit (substTm s t)
+substTm-pres-≈-right s (red-prod1 t u)
+  = red-prod1 (substTm s t) (substTm s u)
+substTm-pres-≈-right s (red-prod2 t u)
+  = red-prod2 (substTm s t) (substTm s u)
+substTm-pres-≈-right s (exp-prod t)
+  = exp-prod (substTm s t)
+substTm-pres-≈-right s (cong-fst r)
+  = cong-fst (substTm-pres-≈-right s r)
+substTm-pres-≈-right s (cong-snd r)
+  = cong-snd (substTm-pres-≈-right s r)
+substTm-pres-≈-right s (cong-pair1 r)
+  = cong-pair1 (substTm-pres-≈-right s r)
+substTm-pres-≈-right s (cong-pair2 r)
+  = cong-pair2 (substTm-pres-≈-right s r)
+substTm-pres-≈-right s (red-fun t u)
+  = ≈-trans (red-fun _ _) (≡-to-≈ (red-fun-crunch-subst-lemma s t u))
+substTm-pres-≈-right s (exp-fun t)
+  = ≈-trans (exp-fun _) (cong-lam (cong-app1 (≡-to-≈ (exp-fun-crunch-subst-lemma s t))))
+substTm-pres-≈-right s (red-dia t u u')
+  = ≈-trans (red-dia _ _ _) (cong-sletin2 (≡-to-≈ (red-dia-crunch-subst-lemma s u u')))
+substTm-pres-≈-right s (exp-dia _)
+  = exp-dia _
+substTm-pres-≈-right s (cong-lam t≈t')
+  = cong-lam (substTm-pres-≈-right (keepₛ s) t≈t')
+substTm-pres-≈-right s (cong-app1 t≈t')
+  = cong-app1 (substTm-pres-≈-right s t≈t')
+substTm-pres-≈-right s (cong-app2 t≈t')
+  = cong-app2 (substTm-pres-≈-right s t≈t')
+substTm-pres-≈-right s (cong-sletin1 t≈t')
+  = cong-sletin1  (substTm-pres-≈-right s t≈t')
+substTm-pres-≈-right s (cong-sletin2 t≈t')
+  = cong-sletin2  (substTm-pres-≈-right (keepₛ s) t≈t')
+substTm-pres-≈-right s (cong-jletin1 t≈t')
+  = cong-jletin1  (substTm-pres-≈-right s t≈t')
+substTm-pres-≈-right s (cong-jletin2 t≈t')
+  = cong-jletin2  (substTm-pres-≈-right (keepₛ s) t≈t')
+substTm-pres-≈-right s ≈-refl
+  = ≈-refl
+substTm-pres-≈-right s (≈-sym t≈t')
+  = ≈-sym (substTm-pres-≈-right s t≈t')
+substTm-pres-≈-right s (≈-trans t≈t' t≈t'')
+  = ≈-trans (substTm-pres-≈-right s t≈t') (substTm-pres-≈-right s t≈t'')
+
+substTm-pres-≈ : {s s' : Sub Δ Γ} {t t' : Tm Γ a} → s ≈ₛ s' → t ≈ t' → substTm s t ≈ substTm s' t'
+substTm-pres-≈ {s' = s'} {t} s≈s' t≈t'
+  = ≈-trans (substTm-pres-≈-left t s≈s') (substTm-pres-≈-right s' t≈t')
 
 --
 -- Derived lemmas for proving the fundamental theorem
