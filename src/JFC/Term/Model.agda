@@ -5,7 +5,7 @@ open import Semantics.Category.Cartesian
 open import Semantics.Category.CartesianClosed
 open import Semantics.Category.EndoFunctor.Base
 --open import Semantics.Category.EndoFunctor.Multiplicative
---open import Semantics.Category.EndoFunctor.Strong.Base
+open import Semantics.Category.EndoFunctor.Strong.Base
 --open import Semantics.Category.EndoFunctor.Strong.Multiplicative
 
 open import JFC.Term.Base
@@ -20,6 +20,9 @@ import Relation.Binary.Reasoning.Setoid as EqReasoning
 module JFC.Term.Model where
 
 open import Level using (0ℓ)
+
+infix 19 _⊢_
+
 _⊢_ : Ty → Ty → Set
 a ⊢ b = Tm [ a ] b
 
@@ -58,8 +61,8 @@ u ⟨ t ⟩ = ⊢-trans t u
 ⟨-⟩-assoc : (t : c ⊢ d) (u : b ⊢ c) (u' : a ⊢ b) → (t ⟨ u ⟩) ⟨ u' ⟩ ≈ t ⟨ u ⟨ u' ⟩ ⟩
 ⟨-⟩-assoc t u u' = ≡-to-≈ ((≡-sym (substTm-pres-∙ₛ [ u ]ₛ [ u' ]ₛ t)))
 
-Tm-Cat : Category₀
-Tm-Cat = record
+𝒯 : Category₀
+𝒯 = record
   { Obj          = Ty
   ; _→̇_          = _⊢_
   ; _≈̇_          = _≈_
@@ -84,8 +87,8 @@ Tm-Cat = record
 π₂ : (a × b) ⊢ b
 π₂ = snd (var zero)
 
-Tm-Cartesian : IsCartesianₗ Tm-Cat
-Tm-Cartesian = record
+𝒯-is-CC : IsCartesianₗ 𝒯
+𝒯-is-CC = record
   { []'           = 𝟙
   ; unit'         = unit
   ; []'-eta       = exp-unit _
@@ -132,12 +135,14 @@ wkFreshLemma t = let open EqReasoning (Tm-setoid _ _) in begin
 ⇒-eta : (t : a ⊢ (b ⇒ c)) → t ≈ curry (app (t ⟨ π₁ ⟩) π₂)
 ⇒-eta t = ≈-trans (exp-fun t) (cong-lam (cong-app (wkFreshLemma t) (≈-sym (red-prod2 _ _))))
 
-open IsCartesian Tm-Cartesian using (_×'-map_)
+open IsCartesian 𝒯-is-CC renaming
+  (_×'-map_  to _×-map_
+  ; ×'-assoc to ×-assoc)
 
-curry-nat : (t : (b × c) ⊢ d) (u : a ⊢ b) → curry t ⟨ u ⟩ ≈ curry (t ⟨ u ×'-map id ⟩)
+curry-nat : (t : (b × c) ⊢ d) (u : a ⊢ b) → curry t ⟨ u ⟩ ≈ curry (t ⟨ u ×-map id ⟩)
 curry-nat t u = cong-lam lemma
   where
-  lemma : substTm (keepₛ [ u ]ₛ) (substTm prₛ t) ≈ substTm prₛ (t ⟨ u ×'-map id ⟩)
+  lemma : substTm (keepₛ [ u ]ₛ) (substTm prₛ t) ≈ substTm prₛ (t ⟨ u ×-map id ⟩)
   lemma = let open EqReasoning (Tm-setoid _ _) in begin
     substTm (keepₛ [ u ]ₛ) (substTm prₛ t)
       ≡˘⟨ substTm-pres-∙ₛ _ _ t ⟩
@@ -149,12 +154,12 @@ curry-nat t u = cong-lam lemma
           (≈-sym (red-prod2 _ _)))) ⟩
     substTm ([ pair (substTm prₛ (u ⟨ π₁ ⟩)) (snd (pair _ (var zero))) ]ₛ) t
       ≡⟨⟩
-    substTm ([ u ×'-map id ]ₛ ∙ₛ prₛ) t
+    substTm ([ u ×-map id ]ₛ ∙ₛ prₛ) t
       ≡⟨  substTm-pres-∙ₛ _ _ t ⟩
-    substTm prₛ (t ⟨ u ×'-map id ⟩) ∎
+    substTm prₛ (t ⟨ u ×-map id ⟩) ∎
 
-Tm-CartesianClosed : IsCartesianClosedₗ Tm-Cat Tm-Cartesian
-Tm-CartesianClosed = record
+𝒯-is-CCC : IsCartesianClosedₗ 𝒯 𝒯-is-CC
+𝒯-is-CCC = record
   { _⇒'_        = _⇒_
   ; lam'        = curry
   ; lam'-pres-≈̇ = λ t≈t' → cong-lam (substTm-pres-≈-right _ t≈t')
@@ -194,7 +199,7 @@ Tm-CartesianClosed = record
   sletin (var zero) (wkTm _ t) ⟨ sletin (var zero) (wkTm _ u) ⟩
     ∎
 
-◇-Functor : EndoFunctorₗ Tm-Cat
+◇-Functor : EndoFunctorₗ 𝒯
 ◇-Functor = record
   { ℱ'_         = ◇_
   ; map_        = ◇-map
@@ -202,6 +207,121 @@ Tm-CartesianClosed = record
   ; map-pres-id = ◇-map-pres-⊢refl
   ; map-pres-∘  = ◇-map-pres-⟨-⟩
   }
+
+
+--
+-- ◇ is a strong functor
+--
+
+◇-strength[_,_] : (a b : Ty) → (a × ◇ b) ⊢ ◇ (a × b)
+◇-strength[ _ , _ ] = sletin (snd (var zero)) (pair (fst (var (succ (zero)))) (var zero))
+
+◇-strength : (a × ◇ b) ⊢ ◇ (a × b)
+◇-strength = ◇-strength[ _ , _ ]
+
+◇-strength-natural₁ : (t : a ⊢ b)
+  → ◇-strength ⟨ t ×-map id[ ◇ c ] ⟩ ≈ ◇-map (t ×-map id[ c ]) ⟨ ◇-strength ⟩
+◇-strength-natural₁ t = let open EqReasoning (Tm-setoid _ _) in begin
+  sletin (snd (pair _ _)) (pair (fst (pair _ _)) _)
+    ≈⟨ cong-sletin (red-prod2 _ _) (cong-pair1 (red-prod1 _ _)) ⟩
+  sletin _ (pair (wkTm freshWk (t ⟨ π₁ ⟩)) _)
+    ≈⟨ cong-sletin2 (cong-pair1 (wkFreshLemma (t ⟨ π₁ ⟩))) ⟩
+  sletin _ (pair (substTm prₛ (t ⟨ π₁ ⟩ ⟨ π₁ ⟩)) _)
+    ≡˘⟨ cong (λ z → sletin _ (pair z _))
+          (≡-trans
+            (substTm-pres-∙ₛ _ _ t)
+            (substTm-pres-∙ₛ _ _ (t ⟨ π₁ ⟩))) ⟩
+  sletin π₂ (pair (substTm [ fst (fst (pair _ _)) ]ₛ t) _)
+    ≈⟨ cong-sletin2 (cong-pair1
+         (substTm-pres-≈-left t
+           ([-]ₛ-pres-≈ (cong-fst (red-prod1 _ _))))) ⟩
+  sletin π₂ (pair (substTm [ fst _ ]ₛ t) (var zero))
+    ≈˘⟨ cong-sletin2 (cong-pair1
+          (substTm-pres-≈-left t ([-]ₛ-pres-≈ (red-prod1 _ _)))) ⟩
+  sletin π₂ (pair (substTm [ fst (pair (fst _) _) ]ₛ t) _)
+    ≈˘⟨ cong-sletin2 (cong-pair
+          (≡-to-≈ (≡-sym (substTm-pres-∙ₛ _ _ t)))
+          (red-prod2 _ _)) ⟩
+  sletin π₂ (pair (substTm _ (substTm [ _ ]ₛ t)) _)
+    ≈˘⟨ red-dia π₂ _ _ ⟩
+  sletin (sletin _ _) (pair (substTm [ _ ]ₛ t) _)
+    ≡⟨ cong (λ z → sletin _ (pair z _))
+         (substTm-pres-∙ₛ _ _ t) ⟩
+  sletin (sletin _ _) (pair (substTm [ _ ]ₛ (t ⟨ π₁ ⟩)) _)
+    ≡⟨ cong (λ z → sletin _ (pair z _))
+       (assoc-substTm-trimSub (t ⟨ π₁ ⟩) _ _) ⟩
+  sletin (sletin _ _) (pair (substTm _ (wkTm _ (t ⟨ π₁ ⟩))) _)
+    ∎
+
+◇-strength-natural₂ : (t : b ⊢ c)
+  → ◇-strength ⟨ id[ a ] ×-map (◇-map t) ⟩ ≈ ◇-map (id[ a ] ×-map t) ⟨ ◇-strength ⟩
+◇-strength-natural₂ t = let open EqReasoning (Tm-setoid _ _) in begin
+  sletin (snd (pair _ _)) (pair (fst (pair _ _)) _)
+    ≈⟨ cong-sletin (red-prod2 _ _) (cong-pair1 (red-prod1 _ _)) ⟩
+  sletin (sletin π₂ (substTm _ (wkTm _ t))) (pair _ _)
+    ≡˘⟨ cong (λ z → sletin (sletin _ z ) (pair _ _)) (assoc-substTm-wkTm t _ _) ⟩
+  sletin (sletin π₂ (substTm _ t)) (pair _ _)
+    ≈⟨ red-dia _ _ _ ⟩
+  sletin π₂ (pair _ (substTm [ var zero ]ₛ t))
+    ≈˘⟨ cong-sletin2 (cong-pair2 (substTm-pres-≈-left t ([-]ₛ-pres-≈ (red-prod2 _ _)))) ⟩
+  sletin π₂ (pair _ (substTm [ (snd (pair _ _)) ]ₛ t))
+    ≈˘⟨ cong-sletin2 (cong-pair (red-prod1 _ _) (≡-to-≈ (≡-sym (substTm-pres-∙ₛ _ _ t)))) ⟩
+  sletin π₂ (pair (fst (pair _ _)) (substTm _ (substTm _ t)))
+    ≈˘⟨ red-dia _ _ _ ⟩
+  sletin (sletin _ _) (pair _ (substTm [ _ ]ₛ t))
+    ≡⟨ cong (λ z → sletin _ (pair _ z)) (substTm-pres-∙ₛ _ _ t) ⟩
+  sletin _ (pair _ (substTm _ (substTm _ t)))
+    ≡⟨ cong (λ z → sletin _ (pair _ (substTm _ z))) (substTm-nat t _ _) ⟩
+  sletin _ (pair _ (substTm _ (wkTm _ (substTm _ t))))
+    ∎
+
+◇-strength-unit : ◇-map π₂ ⟨ ◇-strength[ a , b ] ⟩ ≈ π₂
+◇-strength-unit = let open EqReasoning (Tm-setoid _ _) in begin
+  sletin (sletin π₂ (pair _ _)) (snd (var zero))
+    ≈⟨ red-dia _ _ _ ⟩
+  sletin π₂ (snd (pair _ _))
+    ≈⟨ cong-sletin2 (red-prod2 _ _) ⟩
+  sletin π₂ _
+    ≈˘⟨ exp-dia _ ⟩
+  π₂ ∎
+
+◇-strength-assoc : (◇-map ×-assoc) ⟨ ◇-strength[ a × b , c ] ⟩
+  ≈ (◇-strength ⟨ id ×-map (◇-strength) ⟩ ⟨ ×-assoc ⟩)
+◇-strength-assoc = let open EqReasoning (Tm-setoid _ _) in begin
+  sletin (sletin _ (pair _ _)) (pair _ _)
+    ≈⟨ red-dia _ _ _ ⟩
+  sletin π₂ (pair
+      (fst (fst (pair _ _)))
+      (pair (snd (fst (pair _ _))) (snd (pair _ _))))
+    ≈⟨ cong-sletin2 (cong-pair
+        (cong-fst (red-prod1 _ _))
+        (cong-pair
+          (cong-snd (red-prod1 _ _))
+          (red-prod2 _ _))) ⟩
+  sletin π₂ (pair _ (pair _ _))
+    ≈˘⟨ red-dia _ _ _ ⟩
+  sletin (sletin _ _) (pair _ _)
+    ≈˘⟨ cong-sletin (cong-sletin
+          (≈-trans (cong-snd (red-prod2 _ _)) (red-prod2 _ _))
+          (cong-pair1 (≈-trans (cong-fst (red-prod2 _ _)) (red-prod1 _ _))))
+          (cong-pair1 (red-prod1 _ _)) ⟩
+  sletin
+   (sletin (snd (snd (pair _ (pair _ _))))
+   (pair (fst (snd (pair _ (pair _ _)))) _)) _
+    ≈˘⟨ cong-sletin
+          (red-prod2 _ _)
+          (cong-pair1 (red-prod1 _ _)) ⟩
+  sletin (snd (pair _ _)) (pair (fst (pair _ _ )) _)
+    ∎
+
+◇-is-strong : IsStrongₗ 𝒯-is-CC ◇-Functor
+◇-is-strong = record
+   { strength[_,_]     = λ _ _ → ◇-strength -- use implicit version for smaller goals
+   ; strength-natural₁ = ◇-strength-natural₁
+   ; strength-natural₂ = ◇-strength-natural₂
+   ; strength-assoc    = ◇-strength-assoc
+   ; strength-unit     = ◇-strength-unit
+   }
 
 --
 -- categorical completeness machinery
@@ -222,34 +342,6 @@ from-⊢ = substTm [ cₜ[ _ ] ]ₛ
 
 from-⊢-pres-≈ : {t' u' : ⟦ Γ ⟧ ⊢ a} → t' ≈ u' → from-⊢ t' ≈ from-⊢ u'
 from-⊢-pres-≈ = substTm-pres-≈-right _
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
