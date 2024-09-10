@@ -72,7 +72,7 @@ syntax ◯'-≋[]-syn 𝒫 x y = x ◯'-≋[ 𝒫 ] y
 -- ◯' 𝒫 is a presheaf
 ---------------------
 
-◯'_ : (𝒫 : Psh) → Psh 
+◯'_ : (𝒫 : Psh) → Psh
 ◯' 𝒫 = record
   { Fam           = ◯'-Fam 𝒫
   ; _≋_           = _◯'-≋_
@@ -98,8 +98,8 @@ syntax ◯'-≋[]-syn 𝒫 x y = x ◯'-≋[ 𝒫 ] y
         wk[ ◇' 𝒫 ] w'' (f .apply-◯ (⊆-trans w w'))
           ≈⟨ f .natural (⊆-trans w w') w'' ⟩
         f .apply-◯ (⊆-trans (⊆-trans w w') w'')
-          ≡⟨ cong (f .apply-◯) (⊆-trans-assoc w w' w'') ⟩  
-        f .apply-◯ (⊆-trans w (⊆-trans w' w'')) ∎ } 
+          ≡⟨ cong (f .apply-◯) (⊆-trans-assoc w w' w'') ⟩
+        f .apply-◯ (⊆-trans w (⊆-trans w' w'')) ∎ }
 
     abstract
       wk-pres-≋ : (w : Γ ⊆ Γ') {f f' : ◯'-Fam 𝒫 Γ} (f≋f' : f ◯'-≋ f') → wk w f ◯'-≋ wk w f'
@@ -152,10 +152,10 @@ syntax ◯'-≋[]-syn 𝒫 x y = x ◯'-≋[ 𝒫 ] y
 -- Presheaf functors ◯' and ◇' are naturally isomorphic
 -------------------------------------------------------
 
-module ◯'≅◇' {𝒫 : Psh} where
+module ◯'≅◇' where
 
-  ◯'≅◇'-forth : ◯' 𝒫 →̇ ◇' 𝒫
-  ◯'≅◇'-forth = record
+  ◯'≅◇'-forth[_] : (𝒫 : Psh) → ◯' 𝒫 →̇ ◇' 𝒫
+  ◯'≅◇'-forth[ 𝒫 ] = record
     { fun     = λ ◯p → ◯p .apply-◯ ⊆-refl
     ; pres-≋  = λ ◯p≋◯p' → ◯p≋◯p' .pw ⊆-refl
     ; natural = λ w p → let open EqReasoning ≋[ ◇' 𝒫 ]-setoid in
@@ -167,24 +167,42 @@ module ◯'≅◇' {𝒫 : Psh} where
       p .apply-◯ (⊆-trans w ⊆-refl)
         ≡⟨⟩
       wk[ ◯' 𝒫 ] w p .apply-◯ ⊆-refl ∎ }
-  
-  ◯'≅◇'-back : ◇' 𝒫 →̇ ◯' 𝒫
-  ◯'≅◇'-back = record
+
+  -- ◯'≅◇'-forth[_] is a natural transformation (in the category of presheaf functors)
+  ◯'≅◇'-forth-nat : (f : 𝒫 →̇ 𝒬) → ◯'≅◇'-forth[ 𝒬 ] ∘ ◯'-map f ≈̇  (◇'-map f) ∘ ◯'≅◇'-forth[ 𝒫 ]
+  ◯'≅◇'-forth-nat {𝒫} {𝒬} f = record { proof = λ p → ◇'-≋-refl }
+
+  ◯'≅◇'-back[_] : (𝒫 : Psh) → ◇' 𝒫 →̇ ◯' 𝒫
+  ◯'≅◇'-back[ 𝒫 ] = record
     { fun     = λ ◇p → record
       { fun     = λ w → wk[ ◇' 𝒫 ] w ◇p
       ; natural = λ i i' → ≋[ ◇' 𝒫 ]-sym (wk[ ◇' 𝒫 ]-pres-trans i i' ◇p) }
-    ; pres-≋  = λ ◇p≋◇p' → proof (λ w → wk[ ◇' 𝒫 ]-pres-≋ w ◇p≋◇p') 
+    ; pres-≋  = λ ◇p≋◇p' → proof (λ w → wk[ ◇' 𝒫 ]-pres-≋ w ◇p≋◇p')
     ; natural = λ w ◇p → proof (λ w' → wk[ ◇' 𝒫 ]-pres-trans w w' ◇p) }
 
-  ◯'≅◇'-back-left-inverse : ◯'≅◇'-back ∘ ◯'≅◇'-forth ≈̇ id'[ ◯' 𝒫 ]
-  ◯'≅◇'-back-left-inverse = record
+  -- ◯'≅◇'-back[_] is a natural transformation (in the category of presheaf functors)
+  ◯'≅◇'-back-nat : (f : 𝒫 →̇ 𝒬) → ◯'≅◇'-back[ 𝒬 ] ∘ ◇'-map f ≈̇  (◯'-map f) ∘ ◯'≅◇'-back[ 𝒫 ]
+  ◯'≅◇'-back-nat {𝒫} {𝒬} f = record
+    { proof = λ p → proof λ w → let open EqReasoning ≋[ ◇' 𝒬 ]-setoid in begin
+      wk[ ◇' 𝒬 ] w ((◇'-map f) .apply p)
+        ≈⟨ (◇'-map f) .natural w p ⟩
+      (◇'-map f) .apply (wk[ ◇' 𝒫 ] w p) ∎
+    }
+
+  --
+  -- ◯'≅◇'-forth and ◯'≅◇'-back are component-wise isomorphic
+  --
+
+  ◯'≅◇'-back-left-inverse : ◯'≅◇'-back[ 𝒫 ] ∘ ◯'≅◇'-forth[ 𝒫 ] ≈̇ id'[ ◯' 𝒫 ]
+  ◯'≅◇'-back-left-inverse {𝒫} = record
     { proof = λ p → proof λ w → let open EqReasoning ≋[ ◇' 𝒫 ]-setoid in begin
         wk[ ◇' 𝒫 ] w (p .apply-◯ ⊆-refl)
-          ≈⟨ ◯'≅◇'-forth .natural w p ⟩
+          ≈⟨ ◯'≅◇'-forth[ 𝒫 ] .natural w p ⟩
         p .apply-◯ (⊆-trans w ⊆-refl)
           ≡⟨ cong (p .apply-◯) (⊆-trans-unit-right w) ⟩
         p .apply-◯ w ∎
     }
 
-  ◯'≅◇'-back-right-inverse : ◯'≅◇'-forth ∘ ◯'≅◇'-back ≈̇ id'[ ◇' 𝒫 ]
-  ◯'≅◇'-back-right-inverse = record { proof = wk[ ◇' 𝒫 ]-pres-refl }
+
+  ◯'≅◇'-back-right-inverse : ◯'≅◇'-forth[ 𝒫 ] ∘ ◯'≅◇'-back[ 𝒫 ] ≈̇ id'[ ◇' 𝒫 ]
+  ◯'≅◇'-back-right-inverse {𝒫} = record { proof = wk[ ◇' 𝒫 ]-pres-refl }
