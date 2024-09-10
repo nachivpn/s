@@ -4,7 +4,7 @@ open import Semantics.Category.Base
 open import Semantics.Category.Cartesian
 open import Semantics.Category.CartesianClosed
 open import Semantics.Category.EndoFunctor.Base
---open import Semantics.Category.EndoFunctor.Multiplicative
+open import Semantics.Category.EndoFunctor.Multiplicative
 open import Semantics.Category.EndoFunctor.Strong.Base
 --open import Semantics.Category.EndoFunctor.Strong.Multiplicative
 
@@ -32,16 +32,24 @@ a ⊢ b = Tm [ a ] b
 [-]ₛ-pres-≈ : t ≈ t' → [ t ]ₛ ≈ₛ [ t' ]ₛ
 [-]ₛ-pres-≈ t≈t' = [] `, t≈t'
 
-⊢-refl[_] : (a : Ty) → a ⊢ a
-⊢-refl[ a ] = var zero
+v0ₜ[_] : (a : Ty) → Tm (Γ `, a) a
+v0ₜ[ _ ] = var v0
+
+v0ₜ : Tm (Γ `, a) a
+v0ₜ = v0ₜ[ _ ]
+
+v1ₜ : Tm ((Γ `, a) `, b) a
+v1ₜ = var v1
+
+⊢-refl[_] = v0ₜ[_]
+
+id[_]  = v0ₜ[_]
+
+id : a ⊢ a
+id = v0ₜ
 
 ⊢-trans : a ⊢ b → b ⊢ c → a ⊢ c
 ⊢-trans t u = substTm [ t ]ₛ u
-
-id[_]  = ⊢-refl[_]
-
-id : a ⊢ a
-id = ⊢-refl[ _ ]
 
 
 infix 21 _⟨_⟩
@@ -82,10 +90,10 @@ u ⟨ t ⟩ = ⊢-trans t u
 --
 
 π₁ : (a × b) ⊢ a
-π₁ = fst (var zero)
+π₁ = fst v0ₜ
 
 π₂ : (a × b) ⊢ b
-π₂ = snd (var zero)
+π₂ = snd v0ₜ
 
 𝒯-is-CC : IsCartesianₗ 𝒯
 𝒯-is-CC = record
@@ -107,7 +115,7 @@ u ⟨ t ⟩ = ⊢-trans t u
 --
 
 prₛ : Sub ([ a ] `, b) [ a × b ]
-prₛ = [ pair (var (succ zero)) (var zero) ]ₛ
+prₛ = [ pair v1ₜ v0ₜ ]ₛ
 
 curry : (a × b) ⊢ c → a ⊢ (b ⇒ c)
 curry t = lam (substTm prₛ t)
@@ -122,11 +130,11 @@ wkFreshLemma t = let open EqReasoning (Tm-setoid _ _) in begin
     ≡˘⟨ cong (wkTm freshWk) (substTm-pres-idₛ t) ⟩
   wkTm freshWk (substTm idₛ t)
     ≡⟨⟩
-  wkTm freshWk (substTm [ var zero ]ₛ t)
-    ≡˘⟨ substTm-nat t [ var zero ]ₛ freshWk ⟩
-  substTm (wkSub freshWk [ var zero ]ₛ) t
+  wkTm freshWk (substTm [ v0ₜ ]ₛ t)
+    ≡˘⟨ substTm-nat t [ v0ₜ ]ₛ freshWk ⟩
+  substTm (wkSub freshWk [ v0ₜ ]ₛ) t
     ≡⟨⟩
-  substTm [ var (succ zero) ]ₛ t
+  substTm [ v1ₜ ]ₛ t
     ≈˘⟨ substTm-pres-≈-left t ([-]ₛ-pres-≈ (red-prod1 _ _)) ⟩
   substTm ([ π₁ ]ₛ ∙ₛ prₛ) t
     ≡⟨ substTm-pres-∙ₛ _ _ t ⟩
@@ -148,11 +156,11 @@ curry-nat t u = cong-lam lemma
       ≡˘⟨ substTm-pres-∙ₛ _ _ t ⟩
     substTm (prₛ ∙ₛ keepₛ [ u ]ₛ) t
       ≡⟨⟩
-    substTm [ pair (wkTm freshWk u) (var zero) ]ₛ t
+    substTm [ pair (wkTm freshWk u) v0ₜ ]ₛ t
       ≈⟨ substTm-pres-≈-left t ([-]ₛ-pres-≈ (cong-pair
           (wkFreshLemma u)
           (≈-sym (red-prod2 _ _)))) ⟩
-    substTm ([ pair (substTm prₛ (u ⟨ π₁ ⟩)) (snd (pair _ (var zero))) ]ₛ) t
+    substTm ([ pair (substTm prₛ (u ⟨ π₁ ⟩)) (snd (pair _ v0ₜ)) ]ₛ) t
       ≡⟨⟩
     substTm ([ u ×-map id ]ₛ ∙ₛ prₛ) t
       ≡⟨  substTm-pres-∙ₛ _ _ t ⟩
@@ -176,31 +184,31 @@ curry-nat t u = cong-lam lemma
 --
 
 ◇-map : a ⊢ b → (◇ a) ⊢ (◇ b)
-◇-map t = sletin (var zero) (wkTm (keep freshWk) t)
+◇-map t = sletin v0ₜ (wkTm (keep freshWk) t)
 
 ◇-map-pres-≈ : t ≈ t' → ◇-map t ≈ ◇-map t'
 ◇-map-pres-≈ t≈t' = cong-sletin2 (wkTm-pres-≈ (keep freshWk) t≈t')
 
 ◇-map-pres-⊢refl : ◇-map id[ a ] ≈ id[ ◇ a ]
-◇-map-pres-⊢refl = ≈-sym (exp-dia (var zero))
+◇-map-pres-⊢refl = ≈-sym (exp-dia v0ₜ)
 
 ◇-map-pres-⟨-⟩ : (t : b ⊢ c) (u : a ⊢ b) → ◇-map (t ⟨ u ⟩) ≈ (◇-map t ⟨ ◇-map u ⟩ )
 ◇-map-pres-⟨-⟩ t u = let open EqReasoning (Tm-setoid _ _) in begin
   -- Agda's normalization is doing a lot in this proof;
   -- the details of which are noisy, and thus hidden.
-  sletin (var zero) (wkTm _ (substTm [ u ]ₛ t))
+  sletin v0ₜ (wkTm _ (substTm [ u ]ₛ t))
     ≡˘⟨ cong (sletin _) (substTm-nat t _ _) ⟩
-  sletin (var zero) (substTm (wkSub _ [ u ]ₛ ) t)
+  sletin v0ₜ (substTm (wkSub _ [ u ]ₛ ) t)
     ≡⟨ cong (sletin _) (substTm-pres-∙ₛ _ _ t) ⟩
-  sletin (var zero) (substTm _{-u-} (substTm _ t))
-    ≈˘⟨ red-dia _ _ _ ⟩
-  sletin (sletin (var zero) _{-u-}) (substTm _ t)   
+  sletin v0ₜ (substTm _{-u-} (substTm _ t))
+    ≈˘⟨ red-dia1 _ _ _ ⟩
+  sletin (sletin v0ₜ _{-u-}) (substTm _ t)
     ≡⟨ cong (sletin _) (assoc-substTm-trimSub t _ _) ⟩
-  sletin (var zero) (wkTm _ t) ⟨ sletin (var zero) (wkTm _ u) ⟩
+  sletin v0ₜ (wkTm _ t) ⟨ sletin v0ₜ (wkTm _ u) ⟩
     ∎
 
-◇-Functor : EndoFunctorₗ 𝒯
-◇-Functor = record
+◇ℱ : EndoFunctorₗ 𝒯
+◇ℱ = record
   { ℱ'_         = ◇_
   ; map_        = ◇-map
   ; map-pres-≈̇  = ◇-map-pres-≈
@@ -214,7 +222,7 @@ curry-nat t u = cong-lam lemma
 --
 
 ◇-strength[_,_] : (a b : Ty) → (a × ◇ b) ⊢ ◇ (a × b)
-◇-strength[ _ , _ ] = sletin (snd (var zero)) (pair (fst (var (succ (zero)))) (var zero))
+◇-strength[ _ , _ ] = sletin (snd v0ₜ) (pair (fst v1ₜ) v0ₜ)
 
 ◇-strength : (a × ◇ b) ⊢ ◇ (a × b)
 ◇-strength = ◇-strength[ _ , _ ]
@@ -235,7 +243,7 @@ curry-nat t u = cong-lam lemma
     ≈⟨ cong-sletin2 (cong-pair1
          (substTm-pres-≈-left t
            ([-]ₛ-pres-≈ (cong-fst (red-prod1 _ _))))) ⟩
-  sletin π₂ (pair (substTm [ fst _ ]ₛ t) (var zero))
+  sletin π₂ (pair (substTm [ fst _ ]ₛ t) v0ₜ)
     ≈˘⟨ cong-sletin2 (cong-pair1
           (substTm-pres-≈-left t ([-]ₛ-pres-≈ (red-prod1 _ _)))) ⟩
   sletin π₂ (pair (substTm [ fst (pair (fst _) _) ]ₛ t) _)
@@ -243,7 +251,7 @@ curry-nat t u = cong-lam lemma
           (≡-to-≈ (≡-sym (substTm-pres-∙ₛ _ _ t)))
           (red-prod2 _ _)) ⟩
   sletin π₂ (pair (substTm _ (substTm [ _ ]ₛ t)) _)
-    ≈˘⟨ red-dia π₂ _ _ ⟩
+    ≈˘⟨ red-dia1 π₂ _ _ ⟩
   sletin (sletin _ _) (pair (substTm [ _ ]ₛ t) _)
     ≡⟨ cong (λ z → sletin _ (pair z _))
          (substTm-pres-∙ₛ _ _ t) ⟩
@@ -261,13 +269,13 @@ curry-nat t u = cong-lam lemma
   sletin (sletin π₂ (substTm _ (wkTm _ t))) (pair _ _)
     ≡˘⟨ cong (λ z → sletin (sletin _ z ) (pair _ _)) (assoc-substTm-wkTm t _ _) ⟩
   sletin (sletin π₂ (substTm _ t)) (pair _ _)
-    ≈⟨ red-dia _ _ _ ⟩
-  sletin π₂ (pair _ (substTm [ var zero ]ₛ t))
+    ≈⟨ red-dia1 _ _ _ ⟩
+  sletin π₂ (pair _ (substTm [ v0ₜ ]ₛ t))
     ≈˘⟨ cong-sletin2 (cong-pair2 (substTm-pres-≈-left t ([-]ₛ-pres-≈ (red-prod2 _ _)))) ⟩
   sletin π₂ (pair _ (substTm [ (snd (pair _ _)) ]ₛ t))
     ≈˘⟨ cong-sletin2 (cong-pair (red-prod1 _ _) (≡-to-≈ (≡-sym (substTm-pres-∙ₛ _ _ t)))) ⟩
   sletin π₂ (pair (fst (pair _ _)) (substTm _ (substTm _ t)))
-    ≈˘⟨ red-dia _ _ _ ⟩
+    ≈˘⟨ red-dia1 _ _ _ ⟩
   sletin (sletin _ _) (pair _ (substTm [ _ ]ₛ t))
     ≡⟨ cong (λ z → sletin _ (pair _ z)) (substTm-pres-∙ₛ _ _ t) ⟩
   sletin _ (pair _ (substTm _ (substTm _ t)))
@@ -277,8 +285,8 @@ curry-nat t u = cong-lam lemma
 
 ◇-strength-unit : ◇-map π₂ ⟨ ◇-strength[ a , b ] ⟩ ≈ π₂
 ◇-strength-unit = let open EqReasoning (Tm-setoid _ _) in begin
-  sletin (sletin π₂ (pair _ _)) (snd (var zero))
-    ≈⟨ red-dia _ _ _ ⟩
+  sletin (sletin π₂ (pair _ _)) (snd v0ₜ)
+    ≈⟨ red-dia1 _ _ _ ⟩
   sletin π₂ (snd (pair _ _))
     ≈⟨ cong-sletin2 (red-prod2 _ _) ⟩
   sletin π₂ _
@@ -289,7 +297,7 @@ curry-nat t u = cong-lam lemma
   ≈ (◇-strength ⟨ id ×-map (◇-strength) ⟩ ⟨ ×-assoc ⟩)
 ◇-strength-assoc = let open EqReasoning (Tm-setoid _ _) in begin
   sletin (sletin _ (pair _ _)) (pair _ _)
-    ≈⟨ red-dia _ _ _ ⟩
+    ≈⟨ red-dia1 _ _ _ ⟩
   sletin π₂ (pair
       (fst (fst (pair _ _)))
       (pair (snd (fst (pair _ _))) (snd (pair _ _))))
@@ -299,7 +307,7 @@ curry-nat t u = cong-lam lemma
           (cong-snd (red-prod1 _ _))
           (red-prod2 _ _))) ⟩
   sletin π₂ (pair _ (pair _ _))
-    ≈˘⟨ red-dia _ _ _ ⟩
+    ≈˘⟨ red-dia1 _ _ _ ⟩
   sletin (sletin _ _) (pair _ _)
     ≈˘⟨ cong-sletin (cong-sletin
           (≈-trans (cong-snd (red-prod2 _ _)) (red-prod2 _ _))
@@ -314,7 +322,7 @@ curry-nat t u = cong-lam lemma
   sletin (snd (pair _ _)) (pair (fst (pair _ _ )) _)
     ∎
 
-◇-is-strong : IsStrongₗ 𝒯-is-CC ◇-Functor
+◇-is-strong : IsStrongₗ 𝒯-is-CC ◇ℱ
 ◇-is-strong = record
    { strength[_,_]     = λ _ _ → ◇-strength -- use implicit version for smaller goals
    ; strength-natural₁ = ◇-strength-natural₁
@@ -322,6 +330,55 @@ curry-nat t u = cong-lam lemma
    ; strength-assoc    = ◇-strength-assoc
    ; strength-unit     = ◇-strength-unit
    }
+
+--
+-- ◇ is joinable
+--
+
+◇-join[_] : (a : Ty) → ◇ ◇ a ⊢ ◇ a
+◇-join[ _ ] = jletin id v0ₜ
+
+◇-join : ◇ ◇ a ⊢ ◇ a
+◇-join = ◇-join[ _ ]
+
+◇-join-natural : (t : a ⊢ b)
+  → ◇-join[ b ] ⟨ ◇-map (◇-map t) ⟩ ≈ ◇-map t ⟨ ◇-join[ a ] ⟩
+◇-join-natural {a} {b} t = let open EqReasoning (Tm-setoid _ _) in begin
+  jletin (sletin id (sletin v0ₜ (wkTm _ (wkTm _ t)))) v0ₜ
+    ≡˘⟨ cong (λ z → jletin (sletin _ (sletin _ z)) _) (wkTm-pres-⊆-trans _ _ t) ⟩
+  jletin (sletin v0ₜ (sletin v0ₜ (wkTm _ t))) v0ₜ
+    -- sletin elim
+    ≈⟨ red-dia2 v0ₜ _ v0ₜ ⟩
+  jletin id (sletin v0ₜ (wkTm _ t))
+    ≈˘⟨ cong-jletin2 (cong-sletin2 (wkTm-pres-≈ _ (≡-to-≈ (substTm-pres-idₛ t)))) ⟩
+  jletin id (sletin v0ₜ (wkTm _ (substTm idₛ t)))
+    ≡˘⟨ cong (λ z → jletin v0ₜ (sletin v0ₜ z)) (substTm-nat t _ _) ⟩
+  jletin id (sletin v0ₜ (substTm [ v0ₜ ]ₛ t))
+    ≡⟨ cong (λ z → jletin v0ₜ (sletin v0ₜ z)) (substTm-nat t _ _) ⟩
+  jletin id (sletin v0ₜ (wkTm (keep freshWk) (substTm [ v0ₜ ]ₛ t)))
+    -- jletin-sletin commute
+    ≈˘⟨ com-dia v0ₜ v0ₜ _ ⟩
+  sletin (jletin id v0ₜ) (substTm [ v0ₜ ]ₛ t)
+    ≡⟨ cong (λ z → sletin _ z) (assoc-substTm-wkTm t _ _)  ⟩
+  sletin (jletin id v0ₜ) (substTm _ (wkTm _ t))
+    ∎
+
+◇-join-assoc : ◇-join[ a ] ⟨ ◇-map (◇-join[ a ]) ⟩ ≈ ◇-join[ a ] ⟨ ◇-join[ ◇  a ] ⟩
+◇-join-assoc = let open EqReasoning (Tm-setoid _ _) in begin
+  jletin (sletin v0ₜ (jletin v0ₜ v0ₜ)) v0ₜ
+    -- sletin elim
+    ≈⟨ red-dia2 _ _ _ ⟩
+  jletin v0ₜ (jletin v0ₜ v0ₜ)
+    ≈˘⟨ ass-dia _ _ _ ⟩
+  jletin (jletin v0ₜ v0ₜ) v0ₜ
+    ∎
+
+◇-is-joinable : IsMultiplicativeₗ ◇ℱ
+◇-is-joinable = record
+  { mult[_]      = λ a → ◇-join
+  ; mult-natural = ◇-join-natural
+  ; mult-assoc   = ◇-join-assoc
+  }
 
 --
 -- categorical completeness machinery
@@ -335,62 +392,10 @@ curry-nat t u = cong-lam lemma
 -- "context term" (c.f. Lemma 3.1 in [Clouston 2018])
 cₜ[_] : ∀ Γ → Tm Γ ⟦ Γ ⟧
 cₜ[ [] ]     = unit
-cₜ[ Γ `, a ] = pair (wkTm freshWk cₜ[ Γ ]) (var zero)
+cₜ[ Γ `, a ] = pair (wkTm freshWk cₜ[ Γ ]) v0ₜ
 
 from-⊢ : ⟦ Γ ⟧ ⊢ a → Tm Γ a
 from-⊢ = substTm [ cₜ[ _ ] ]ₛ
 
 from-⊢-pres-≈ : {t' u' : ⟦ Γ ⟧ ⊢ a} → t' ≈ u' → from-⊢ t' ≈ from-⊢ u'
 from-⊢-pres-≈ = substTm-pres-≈-right _
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -254,9 +254,9 @@ module AdhocLemmas where
         (sym (trans (trimSub-unit-right w) (sym (wkSub-unit-right w)))))))
 
   --
-  ass-dia-crunch-lemma : (w : Γ ⊆ Γ') (u' : Tm (Γ `, b) (◇ c))
+  aux-dia-crunch-lemma : (w : Γ ⊆ Γ') (u' : Tm (Γ `, b) c)
     → wkTm (keep freshWk[ Γ' , a ]) (wkTm (keep w) u') ≡ wkTm (keep (keep w)) (wkTm (keep freshWk[ Γ , a ]) u')
-  ass-dia-crunch-lemma w u' = trans
+  aux-dia-crunch-lemma w u' = trans
     (sym (wkTm-pres-⊆-trans _ _ _))
     (trans
       (cong₂ wkTm (cong (λ z → keep (drop z)) (⊆-trans-unit-right _)) refl)
@@ -301,9 +301,9 @@ module AdhocLemmas where
     wkSub w s ∎
 
   --
-  red-dia-crunch-lemma : (w : Γ ⊆ Γ') (t : Tm Γ (◇ a)) (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) c)
-    → substTm (wkSub freshWk idₛ `, wkTm (keep w) u) (wkTm (keep w) u') ≡ wkTm (keep w) (substTm (wkSub freshWk idₛ `, u) u')
-  red-dia-crunch-lemma w t u u' = let open ≡-Reasoning in begin
+  red-dia-crunch-lemma : (w : Γ ⊆ Γ') (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) c)
+    → substTm (dropₛ idₛ `, wkTm (keep w) u) (wkTm (keep w) u') ≡ wkTm (keep w) (substTm (dropₛ idₛ `, u) u')
+  red-dia-crunch-lemma w u u' = let open ≡-Reasoning in begin
     substTm (wkSub freshWk idₛ `, wkTm (keep w) u) (wkTm (keep w) u')
       ≡⟨ sym (assoc-substTm-wkTm u' _ _) ⟩
     substTm (trimSub (keep w) (wkSub freshWk idₛ `, wkTm (keep w) u)) u'
@@ -331,8 +331,7 @@ module AdhocLemmas where
   dropₛ-keepₛ-lemma = dropKeepLemma
 
   red-fun-crunch-subst-lemma : (s : Sub Δ Γ) (t : Tm (Γ `, a) b) (u : Tm Γ a)
-    → substTm (idₛ `, substTm s u) (substTm (keepₛ s) t)
-      ≡ substTm s (substTm (idₛ `, u) t)
+    → substTm (idₛ `, substTm s u) (substTm (keepₛ s) t) ≡ substTm s (substTm (idₛ `, u) t)
   red-fun-crunch-subst-lemma s t u = let open ≡-Reasoning in begin
     substTm _ (substTm _ t)
       ≡˘⟨ substTm-pres-∙ₛ _ _ t ⟩
@@ -371,3 +370,19 @@ module AdhocLemmas where
                (dropₛ-nat s idₛ)))
              (dropₛ-keepₛ-lemma idₛ s))))
        (substTm-pres-∙ₛ _ (keepₛ s) u'))
+
+  aux-dia-crunch-subst-lemma : (s : Sub Δ Γ) (u : Tm (Γ `, a) (◇ b)) (u' : Tm (Γ `, b) c)
+    → wkTm (keep freshWk) (substTm (keepₛ s) u') ≡ substTm (keepₛ (keepₛ {a = d} s)) (wkTm (keep freshWk) u')
+  aux-dia-crunch-subst-lemma s u u' = let open ≡-Reasoning in begin
+    wkTm (keep freshWk) (substTm (keepₛ s) u')
+      ≡˘⟨ substTm-nat u' _ _ ⟩
+    substTm (wkSub (keep freshWk) (keepₛ s)) u'
+      ≡˘⟨ cong (λ z → substTm (z `, _) u') (wkSub-pres-⊆-trans _ _ s) ⟩
+    substTm (wkSub (freshWk ∙ keep freshWk) s `, var zero) u'
+      ≡⟨ cong (λ z → substTm (z `, _) u') (wkSub-pres-⊆-trans _ _ s) ⟩
+    substTm (wkSub freshWk (dropₛ s) `, var zero) u'
+      ≡˘⟨ cong (λ z → substTm (z `, _) u') (trimSub-unit-left _) ⟩
+    substTm (trimSub (keep freshWk) (keepₛ (keepₛ s))) u'
+      ≡⟨ assoc-substTm-wkTm u' _ _ ⟩
+    substTm (keepₛ (keepₛ s)) (wkTm (keep freshWk) u')
+      ∎

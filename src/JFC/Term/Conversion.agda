@@ -36,14 +36,21 @@ data _≈_ : Tm Γ a → Tm Γ a → Set where
 
   exp-fun : (t : Tm Γ (a ⇒ b))
     → t ≈ lam (app (wkTm freshWk t) (var zero))
-    
-  red-dia : (t : Tm Γ (◇ a)) (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) c)
-    → sletin (sletin t u) u' ≈ sletin t (substTm (wkSub freshWk idₛ `, u) u')
+
+  red-dia1 : (t : Tm Γ (◇ a)) (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) c)
+    → sletin (sletin t u) u' ≈ sletin t (substTm (dropₛ idₛ `, u) u')
+
+  red-dia2 : (t : Tm Γ (◇ a)) (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) (◇ c))
+    → jletin (sletin t u) u' ≈ jletin t (substTm (dropₛ idₛ `, u) u')
 
   exp-dia : (t : Tm Γ (◇ a))
     → t ≈ sletin t (var zero)
 
-  -- TODO: add necessary equations for ◇ type
+  com-dia : (t : Tm Γ (◇ a)) (u : Tm (Γ `, a) (◇ b)) (u' : Tm (Γ `, b) c)
+    → sletin (jletin t u) u' ≈ jletin t (sletin u (wkTm (keep freshWk) u'))
+
+  ass-dia : (t : Tm Γ (◇ a)) (u : Tm (Γ `, a) (◇ b)) (u' : Tm (Γ `, b) (◇ c))
+    → jletin (jletin t u) u' ≈ jletin t (jletin u (wkTm (keep freshWk) u'))
 
   cong-fst : {t t' : Tm Γ (a × b)}
     → t ≈ t'
@@ -60,7 +67,7 @@ data _≈_ : Tm Γ a → Tm Γ a → Set where
   cong-pair2 : {t : Tm Γ a} {u u' : Tm Γ b}
     → u ≈ u'
     → pair t u ≈ pair t u'
-  
+
   cong-lam : {t t' : Tm (Γ `, a) b}
     → t ≈ t'
     → lam t ≈ lam t'
@@ -72,7 +79,7 @@ data _≈_ : Tm Γ a → Tm Γ a → Set where
   cong-app2 : {t : Tm Γ (a ⇒ b)} {u u' : Tm Γ a}
     → u ≈ u'
     → app t u ≈ app t u'
-    
+
   cong-sletin1 : {t t' : Tm Γ (◇ a)} {u : Tm (Γ `, a) b}
     → t ≈ t'
     → sletin t u ≈ sletin t' u
@@ -142,8 +149,11 @@ wkTm-pres-≈ w (red-prod2 t u)       = red-prod2 (wkTm w t) (wkTm w u)
 wkTm-pres-≈ w (exp-prod t)          = exp-prod (wkTm w t)
 wkTm-pres-≈ w (red-fun t u)         = ≈-trans (red-fun _ _) (≡-to-≈ (red-fun-crunch-lemma w u t))
 wkTm-pres-≈ w (exp-fun _)           = ≈-trans (exp-fun _) (≡-to-≈ (cong lam (cong₂ app keepFreshLemma ≡-refl)))
-wkTm-pres-≈ w (red-dia t u u')      = ≈-trans (red-dia _ _ _) (cong-sletin2 (≡-to-≈ (red-dia-crunch-lemma w t u u')))
+wkTm-pres-≈ w (red-dia1 t u u')     = ≈-trans (red-dia1 _ _ _) (cong-sletin2 (≡-to-≈ (red-dia-crunch-lemma w u u')))
+wkTm-pres-≈ w (red-dia2 t u u')     = ≈-trans (red-dia2 _ _ _) (cong-jletin2 (≡-to-≈ (red-dia-crunch-lemma w u u')))
 wkTm-pres-≈ w (exp-dia _)           = exp-dia (wkTm w _)
+wkTm-pres-≈ w (com-dia t u u')      = ≈-trans (com-dia _ _ _) (cong-jletin2 (cong-sletin2 (≡-to-≈ (aux-dia-crunch-lemma w u' ))))
+wkTm-pres-≈ w (ass-dia t u u')      = ≈-trans (ass-dia _ _ _) (cong-jletin2 (cong-jletin2 (≡-to-≈ (aux-dia-crunch-lemma w u'))))
 wkTm-pres-≈ w (cong-fst r)          = cong-fst (wkTm-pres-≈ w r)
 wkTm-pres-≈ w (cong-snd r)          = cong-snd (wkTm-pres-≈ w r)
 wkTm-pres-≈ w (cong-pair1 r)        = cong-pair1 (wkTm-pres-≈ w r)
@@ -218,10 +228,16 @@ substTm-pres-≈-right s (red-fun t u)
   = ≈-trans (red-fun _ _) (≡-to-≈ (red-fun-crunch-subst-lemma s t u))
 substTm-pres-≈-right s (exp-fun t)
   = ≈-trans (exp-fun _) (cong-lam (cong-app1 (≡-to-≈ (exp-fun-crunch-subst-lemma s t))))
-substTm-pres-≈-right s (red-dia t u u')
-  = ≈-trans (red-dia _ _ _) (cong-sletin2 (≡-to-≈ (red-dia-crunch-subst-lemma s u u')))
+substTm-pres-≈-right s (red-dia1 t u u')
+  = ≈-trans (red-dia1 _ _ _) (cong-sletin2 (≡-to-≈ (red-dia-crunch-subst-lemma s u u')))
+substTm-pres-≈-right s (red-dia2 t u u')
+  = ≈-trans (red-dia2 _ _ _) (cong-jletin2 (≡-to-≈ (red-dia-crunch-subst-lemma s u u')))
 substTm-pres-≈-right s (exp-dia _)
   = exp-dia _
+substTm-pres-≈-right s (com-dia t u u')
+  = ≈-trans (com-dia _ _ _) (cong-jletin2 (cong-sletin2 (≡-to-≈ (aux-dia-crunch-subst-lemma s u u'))))
+substTm-pres-≈-right s (ass-dia t u u')
+  = ≈-trans (ass-dia _ _ _) (cong-jletin2 (cong-jletin2 (≡-to-≈ (aux-dia-crunch-subst-lemma s u u'))))
 substTm-pres-≈-right s (cong-lam t≈t')
   = cong-lam (substTm-pres-≈-right (keepₛ s) t≈t')
 substTm-pres-≈-right s (cong-app1 t≈t')
@@ -276,4 +292,4 @@ red-fun-tr-lemma w s t u = let open EqReasoning (Tm-setoid _ _) in begin
     ≡˘⟨ cong (λ s' → substTm (s' `, u) t) (assoc-∙ₛ-wkSub _ _ _) ⟩
   substTm (wkSub w (s ∙ₛ idₛ) `, u) t
     ≡⟨ cong (λ s' → substTm (s' `, u) t) (cong (wkSub w) (∙ₛ-unit-right s)) ⟩
-  substTm (wkSub w s `, u) t ∎   
+  substTm (wkSub w s `, u) t ∎
