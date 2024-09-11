@@ -60,41 +60,29 @@ data _≈_ : Tm Γ a → Tm Γ a → Set where
     → t ≈ t'
     → snd t ≈ snd t'
 
-  cong-pair1 : {t t' : Tm Γ a} {u : Tm Γ b}
+  cong-pair : {t t' : Tm Γ a} {u u' : Tm Γ b}
     → t ≈ t'
-    → pair t u ≈ pair t' u
-
-  cong-pair2 : {t : Tm Γ a} {u u' : Tm Γ b}
     → u ≈ u'
-    → pair t u ≈ pair t u'
+    → pair t u ≈ pair t' u'
 
   cong-lam : {t t' : Tm (Γ `, a) b}
     → t ≈ t'
     → lam t ≈ lam t'
 
-  cong-app1 : {t t' : Tm Γ (a ⇒ b)} {u : Tm Γ a}
+  cong-app : {t t' : Tm Γ (a ⇒ b)} {u u' : Tm Γ a}
     → t ≈ t'
-    → app t u ≈ app t' u
-
-  cong-app2 : {t : Tm Γ (a ⇒ b)} {u u' : Tm Γ a}
     → u ≈ u'
-    → app t u ≈ app t u'
+    → app t u ≈ app t' u'
 
-  cong-sletin1 : {t t' : Tm Γ (◇ a)} {u : Tm (Γ `, a) b}
+  cong-sletin : {t t' : Tm Γ (◇ a)} {u u' : Tm (Γ `, a) b}
     → t ≈ t'
-    → sletin t u ≈ sletin t' u
-
-  cong-sletin2 : {t : Tm Γ (◇ a)} {u u' : Tm (Γ `, a) b}
     → u ≈ u'
-    → sletin t u ≈ sletin t u'
+    → sletin t u ≈ sletin t' u'
 
-  cong-jletin1 : {t t' : Tm Γ (◇ a)} {u : Tm (Γ `, a) (◇ b)}
+  cong-jletin : {t t' : Tm Γ (◇ a)} {u u' : Tm (Γ `, a) (◇ b)}
     → t ≈ t'
-    → jletin t u ≈ jletin t' u
-
-  cong-jletin2 : {t : Tm Γ (◇ a)} {u u' : Tm (Γ `, a) (◇ b)}
     → u ≈ u'
-    → jletin t u ≈ jletin t u'
+    → jletin t u ≈ jletin t' u'
 
   ≈-refl : {t : Tm Γ a}
     → t ≈ t
@@ -122,19 +110,29 @@ Tm-setoid Γ a = record
 ≡-to-≈ : ∀ {t u : Tm Γ a} → t ≡ u → t ≈ u
 ≡-to-≈ ≡-refl = ≈-refl
 
-cong-app : ∀ (t≈t' : t ≈ t') (u≈u' : u ≈ u') → app t u ≈ app t' u'
-cong-app t≈t' u≈u' = ≈-trans (cong-app1 t≈t') (cong-app2 u≈u')
+cong-pair1 : {t t' : Tm Γ a} {u : Tm Γ b} → t ≈ t' → pair t u ≈ pair t' u
+cong-pair1 t≈t' = cong-pair t≈t' ≈-refl
 
-cong-pair : ∀ (t≈t' : t ≈ t') (u≈u' : u ≈ u') → pair t u ≈ pair t' u'
-cong-pair t≈t' u≈u' = ≈-trans (cong-pair1 t≈t') (cong-pair2 u≈u')
+cong-pair2 : {t : Tm Γ a} {u u' : Tm Γ b} → u ≈ u' → pair t u ≈ pair t u'
+cong-pair2 u≈u' = cong-pair ≈-refl u≈u'
 
-cong-sletin : {t t' : Tm Γ (◇ a)} {u : Tm (Γ `, a) b}
-    → t ≈ t' → u ≈ u' → sletin t u ≈ sletin t' u'
-cong-sletin t≈t' u≈u' = ≈-trans (cong-sletin1 t≈t') (cong-sletin2 u≈u')
+cong-app1 : {t t' : Tm Γ (a ⇒ b)} {u : Tm Γ a} → t ≈ t' → app t u ≈ app t' u
+cong-app1 t≈t' = cong-app t≈t' ≈-refl
 
-cong-jletin : {t t' : Tm Γ (◇ a)} {u : Tm (Γ `, a) (◇ b)}
-    → t ≈ t' → u ≈ u' → jletin t u ≈ jletin t' u'
-cong-jletin t≈t' u≈u' = ≈-trans (cong-jletin1 t≈t') (cong-jletin2 u≈u')
+cong-app2 : {t : Tm Γ (a ⇒ b)} {u u' : Tm Γ a} → u ≈ u' → app t u ≈ app t u'
+cong-app2 u≈u' = cong-app ≈-refl u≈u'
+
+cong-sletin1 : {t t' : Tm Γ (◇ a)} {u : Tm (Γ `, a) b} → t ≈ t' → sletin t u ≈ sletin t' u
+cong-sletin1 t≈t' = cong-sletin t≈t' ≈-refl
+
+cong-sletin2 : {t : Tm Γ (◇ a)} {u u' : Tm (Γ `, a) b} → u ≈ u' → sletin t u ≈ sletin t u'
+cong-sletin2 u≈u' = cong-sletin ≈-refl u≈u'
+
+cong-jletin1 : {t t' : Tm Γ (◇ a)} {u : Tm (Γ `, a) (◇ b)} → t ≈ t' → jletin t u ≈ jletin t' u
+cong-jletin1 t≈t' = cong-jletin t≈t' ≈-refl
+
+cong-jletin2 : {t : Tm Γ (◇ a)} {u u' : Tm (Γ `, a) (◇ b)} → u ≈ u' → jletin t u ≈ jletin t u'
+cong-jletin2 u≈u' = cong-jletin ≈-refl u≈u'
 
 --
 -- Derived equations
@@ -143,31 +141,27 @@ cong-jletin t≈t' u≈u' = ≈-trans (cong-jletin1 t≈t') (cong-jletin2 u≈u'
 open AdhocLemmas
 
 wkTm-pres-≈ : (w : Γ ⊆ Γ') {t t' : Tm Γ a} → t ≈ t' → wkTm w t ≈ wkTm w t'
-wkTm-pres-≈ w (exp-unit t)          = exp-unit (wkTm w t)
-wkTm-pres-≈ w (red-prod1 t u)       = red-prod1 (wkTm w t) (wkTm w u)
-wkTm-pres-≈ w (red-prod2 t u)       = red-prod2 (wkTm w t) (wkTm w u)
-wkTm-pres-≈ w (exp-prod t)          = exp-prod (wkTm w t)
-wkTm-pres-≈ w (red-fun t u)         = ≈-trans (red-fun _ _) (≡-to-≈ (red-fun-crunch-lemma w u t))
-wkTm-pres-≈ w (exp-fun _)           = ≈-trans (exp-fun _) (≡-to-≈ (cong lam (cong₂ app keepFreshLemma ≡-refl)))
-wkTm-pres-≈ w (red-dia1 t u u')     = ≈-trans (red-dia1 _ _ _) (cong-sletin2 (≡-to-≈ (red-dia-crunch-lemma w u u')))
-wkTm-pres-≈ w (red-dia2 t u u')     = ≈-trans (red-dia2 _ _ _) (cong-jletin2 (≡-to-≈ (red-dia-crunch-lemma w u u')))
-wkTm-pres-≈ w (exp-dia _)           = exp-dia (wkTm w _)
-wkTm-pres-≈ w (com-dia t u u')      = ≈-trans (com-dia _ _ _) (cong-jletin2 (cong-sletin2 (≡-to-≈ (aux-dia-crunch-lemma w u' ))))
-wkTm-pres-≈ w (ass-dia t u u')      = ≈-trans (ass-dia _ _ _) (cong-jletin2 (cong-jletin2 (≡-to-≈ (aux-dia-crunch-lemma w u'))))
-wkTm-pres-≈ w (cong-fst r)          = cong-fst (wkTm-pres-≈ w r)
-wkTm-pres-≈ w (cong-snd r)          = cong-snd (wkTm-pres-≈ w r)
-wkTm-pres-≈ w (cong-pair1 r)        = cong-pair1 (wkTm-pres-≈ w r)
-wkTm-pres-≈ w (cong-pair2 r)        = cong-pair2 (wkTm-pres-≈ w r)
-wkTm-pres-≈ w (cong-lam t≈t')       = cong-lam (wkTm-pres-≈ (_⊆_.keep w) t≈t')
-wkTm-pres-≈ w (cong-app1 t≈t')      = cong-app1 (wkTm-pres-≈ w t≈t')
-wkTm-pres-≈ w (cong-app2 t≈t')      = cong-app2 (wkTm-pres-≈ w t≈t')
-wkTm-pres-≈ w (cong-sletin1 t≈t')   = cong-sletin1 (wkTm-pres-≈ w t≈t')
-wkTm-pres-≈ w (cong-sletin2 t≈t')   = cong-sletin2 (wkTm-pres-≈ (_⊆_.keep w) t≈t')
-wkTm-pres-≈ w (cong-jletin1 t≈t')   = cong-jletin1 (wkTm-pres-≈ w t≈t')
-wkTm-pres-≈ w (cong-jletin2 t≈t')   = cong-jletin2 (wkTm-pres-≈ (_⊆_.keep w) t≈t')
-wkTm-pres-≈ w ≈-refl                = ≈-refl
-wkTm-pres-≈ w (≈-sym t≈t')          = ≈-sym (wkTm-pres-≈ w t≈t')
-wkTm-pres-≈ w (≈-trans t≈t' t'≈t'') = ≈-trans (wkTm-pres-≈ w t≈t') (wkTm-pres-≈ w t'≈t'')
+wkTm-pres-≈ w (exp-unit t)            = exp-unit (wkTm w t)
+wkTm-pres-≈ w (red-prod1 t u)         = red-prod1 (wkTm w t) (wkTm w u)
+wkTm-pres-≈ w (red-prod2 t u)         = red-prod2 (wkTm w t) (wkTm w u)
+wkTm-pres-≈ w (exp-prod t)            = exp-prod (wkTm w t)
+wkTm-pres-≈ w (red-fun t u)           = ≈-trans (red-fun _ _) (≡-to-≈ (red-fun-crunch-lemma w u t))
+wkTm-pres-≈ w (exp-fun _)             = ≈-trans (exp-fun _) (≡-to-≈ (cong lam (cong₂ app keepFreshLemma ≡-refl)))
+wkTm-pres-≈ w (red-dia1 t u u')       = ≈-trans (red-dia1 _ _ _) (cong-sletin2 (≡-to-≈ (red-dia-crunch-lemma w u u')))
+wkTm-pres-≈ w (red-dia2 t u u')       = ≈-trans (red-dia2 _ _ _) (cong-jletin2 (≡-to-≈ (red-dia-crunch-lemma w u u')))
+wkTm-pres-≈ w (exp-dia _)             = exp-dia (wkTm w _)
+wkTm-pres-≈ w (com-dia t u u')        = ≈-trans (com-dia _ _ _) (cong-jletin2 (cong-sletin2 (≡-to-≈ (aux-dia-crunch-lemma w u' ))))
+wkTm-pres-≈ w (ass-dia t u u')        = ≈-trans (ass-dia _ _ _) (cong-jletin2 (cong-jletin2 (≡-to-≈ (aux-dia-crunch-lemma w u'))))
+wkTm-pres-≈ w (cong-fst r)            = cong-fst (wkTm-pres-≈ w r)
+wkTm-pres-≈ w (cong-snd r)            = cong-snd (wkTm-pres-≈ w r)
+wkTm-pres-≈ w (cong-pair t≈t' u≈u')   = cong-pair (wkTm-pres-≈ w t≈t') (wkTm-pres-≈ w u≈u')
+wkTm-pres-≈ w (cong-lam t≈t')         = cong-lam (wkTm-pres-≈ (keep w) t≈t')
+wkTm-pres-≈ w (cong-app t≈t' u≈u')    = cong-app (wkTm-pres-≈ w t≈t') (wkTm-pres-≈ w u≈u')
+wkTm-pres-≈ w (cong-sletin t≈t' u≈u') = cong-sletin (wkTm-pres-≈ w t≈t') (wkTm-pres-≈ (keep w) u≈u')
+wkTm-pres-≈ w (cong-jletin t≈t' u≈u') = cong-jletin (wkTm-pres-≈ w t≈t') (wkTm-pres-≈ (keep w) u≈u')
+wkTm-pres-≈ w ≈-refl                  = ≈-refl
+wkTm-pres-≈ w (≈-sym t≈t')            = ≈-sym (wkTm-pres-≈ w t≈t')
+wkTm-pres-≈ w (≈-trans t≈t' t'≈t'')   = ≈-trans (wkTm-pres-≈ w t≈t') (wkTm-pres-≈ w t'≈t'')
 
 --
 -- Substitution conversion and its properties
@@ -220,10 +214,8 @@ substTm-pres-≈-right s (cong-fst r)
   = cong-fst (substTm-pres-≈-right s r)
 substTm-pres-≈-right s (cong-snd r)
   = cong-snd (substTm-pres-≈-right s r)
-substTm-pres-≈-right s (cong-pair1 r)
-  = cong-pair1 (substTm-pres-≈-right s r)
-substTm-pres-≈-right s (cong-pair2 r)
-  = cong-pair2 (substTm-pres-≈-right s r)
+substTm-pres-≈-right s (cong-pair r r')
+  = cong-pair (substTm-pres-≈-right s r) (substTm-pres-≈-right s r')
 substTm-pres-≈-right s (red-fun t u)
   = ≈-trans (red-fun _ _) (≡-to-≈ (red-fun-crunch-subst-lemma s t u))
 substTm-pres-≈-right s (exp-fun t)
@@ -240,18 +232,12 @@ substTm-pres-≈-right s (ass-dia t u u')
   = ≈-trans (ass-dia _ _ _) (cong-jletin2 (cong-jletin2 (≡-to-≈ (aux-dia-crunch-subst-lemma s u u'))))
 substTm-pres-≈-right s (cong-lam t≈t')
   = cong-lam (substTm-pres-≈-right (keepₛ s) t≈t')
-substTm-pres-≈-right s (cong-app1 t≈t')
-  = cong-app1 (substTm-pres-≈-right s t≈t')
-substTm-pres-≈-right s (cong-app2 t≈t')
-  = cong-app2 (substTm-pres-≈-right s t≈t')
-substTm-pres-≈-right s (cong-sletin1 t≈t')
-  = cong-sletin1  (substTm-pres-≈-right s t≈t')
-substTm-pres-≈-right s (cong-sletin2 t≈t')
-  = cong-sletin2  (substTm-pres-≈-right (keepₛ s) t≈t')
-substTm-pres-≈-right s (cong-jletin1 t≈t')
-  = cong-jletin1  (substTm-pres-≈-right s t≈t')
-substTm-pres-≈-right s (cong-jletin2 t≈t')
-  = cong-jletin2  (substTm-pres-≈-right (keepₛ s) t≈t')
+substTm-pres-≈-right s (cong-app t≈t' u≈u')
+  = cong-app (substTm-pres-≈-right s t≈t') (substTm-pres-≈-right s u≈u')
+substTm-pres-≈-right s (cong-sletin t≈t' u≈u')
+  = cong-sletin  (substTm-pres-≈-right s t≈t') (substTm-pres-≈-right (keepₛ s) u≈u')
+substTm-pres-≈-right s (cong-jletin t≈t' u≈u')
+  = cong-jletin (substTm-pres-≈-right s t≈t') (substTm-pres-≈-right (keepₛ s) u≈u')
 substTm-pres-≈-right s ≈-refl
   = ≈-refl
 substTm-pres-≈-right s (≈-sym t≈t')
