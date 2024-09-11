@@ -6,7 +6,7 @@ open import Semantics.Category.CartesianClosed
 open import Semantics.Category.EndoFunctor.Base
 open import Semantics.Category.EndoFunctor.Multiplicative
 open import Semantics.Category.EndoFunctor.Strong.Base
---open import Semantics.Category.EndoFunctor.Strong.Multiplicative
+open import Semantics.Category.EndoFunctor.Strong.Multiplicative
 
 open import JFC.Term.Base
 open import JFC.Term.Properties
@@ -216,7 +216,6 @@ curry-nat t u = cong-lam lemma
   ; map-pres-∘  = ◇-map-pres-⟨-⟩
   }
 
-
 --
 -- ◇ is a strong functor
 --
@@ -379,6 +378,28 @@ curry-nat t u = cong-lam lemma
   ; mult-natural = ◇-join-natural
   ; mult-assoc   = ◇-join-assoc
   }
+
+--
+-- ◇ is strong joinable
+--
+
+◇-strength-mult : ◇-join[ a × b ] ⟨ ◇-map (◇-strength) ⟨  ◇-strength ⟩ ⟩ ≈ ◇-strength[ a , b ] ⟨ (id[ a ] ×-map ◇-join[ b ]) ⟩
+◇-strength-mult = let open EqReasoning (Tm-setoid _ _) in begin
+  jletin (sletin (sletin _ _) _) v0ₜ
+    ≈⟨ red-dia2 _ _ _ ⟩
+  jletin (sletin _ _) _
+    ≈⟨ red-dia2 _ _ _ ⟩
+  jletin _ (sletin (snd (pair _ _)) (pair (fst (pair _ _)) _))
+    ≈⟨ cong-jletin2 (cong-sletin (red-prod2 _ _) (cong-pair1 (red-prod1 _ _))) ⟩
+  jletin _ (sletin _ _)
+    ≈˘⟨ com-dia _ _ _ ⟩
+  sletin (jletin _ _) (pair _ v0ₜ)
+    ≈˘⟨ cong-sletin (red-prod2 _ _) (cong-pair1 (red-prod1 _ _)) ⟩
+  sletin (snd (pair _ _)) (pair (fst (pair _ _)) v0ₜ)
+    ∎
+
+◇-is-strong-joinable : IsStrongMultiplicativeₗ ◇ℱ ◇-is-strong ◇-is-joinable
+◇-is-strong-joinable = record { strength-mult = ◇-strength-mult }
 
 --
 -- categorical completeness machinery
