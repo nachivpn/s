@@ -44,6 +44,7 @@ import Semantics.Category.EndoFunctor.Strong.Monad
 -- Categorical semantics for the calculi
 import SFC.Evaluation
 import PFC.Evaluation
+import JFC.Evaluation
 import MLC.Evaluation
 
 -- Intuitionistic possible-world frames
