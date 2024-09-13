@@ -21,8 +21,9 @@ record IsStrongMultiplicativeₗ {ℓ} {C : Categoryₗ ℓ} {isCartesian : IsCa
   open IsStrongₗ isStrong renaming (letin' to sletin'
       ; letin'-nat₂ to sletin'-nat₂
       ; letin'-pres-≈̇ to sletin'-pres-≈̇
-      ; letin'-nat₁ to sletin'-nat₁)
-    using (strength[_,_] ; strength ; strength-natural₁ ; red-dia')
+      ; letin'-nat₁ to sletin'-nat₁
+      ; red-dia' to red-dia1')
+    using (strength[_,_] ; strength ; strength-natural₁)
   open IsMultiplicativeₗ isMultiplicative
 
   field
@@ -51,12 +52,12 @@ record IsStrongMultiplicativeₗ {ℓ} {C : Categoryₗ ℓ} {isCartesian : IsCa
     --letin'-nat₂ φ ψ ω = {!!}
 
   abstract
-    comm-dia' : {P Q R S : Obj} (φ : P →̇ ℱ' Q) (ψ : (P ×' Q) →̇ ℱ' R) (ϕ : (P ×' R) →̇ ℱ' S)
+    com-dia' : {P Q R S : Obj} (φ : P →̇ ℱ' Q) (ψ : (P ×' Q) →̇ ℱ' R) (ϕ : (P ×' R) →̇ S)
       → sletin' (letin' φ ψ) ϕ ≈̇ letin' φ (sletin' ψ (ϕ ∘ (π₁' ×'-map id')))
-    comm-dia' {P} {Q} {R} {S} φ ψ ϕ = let
+    com-dia' {P} {Q} {R} {S} φ ψ ϕ = let
       f : P →̇ ℱ' (P ×' Q)
       f = strength[ P , Q ] ∘ ⟨ id' , φ ⟩'
-      open EqReasoning (→̇-setoid P (ℱ' ℱ' S)) in begin
+      open EqReasoning (→̇-setoid P (ℱ' S)) in begin
       sletin' (letin' φ ψ) ϕ
         -- defn.
         ≡⟨⟩
@@ -77,7 +78,7 @@ record IsStrongMultiplicativeₗ {ℓ} {C : Categoryₗ ℓ} {isCartesian : IsCa
         ≡⟨⟩
       map ϕ ∘ mult  ∘ sletin' (sletin' φ ψ) strength
         -- strength
-        ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (red-dia' _ _ _)) ⟩
+        ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (red-dia1' _ _ _)) ⟩
       map ϕ ∘ mult ∘ sletin' φ (strength ∘ ⟨ π₁' , ψ ⟩')
         -- defn.
         ≡⟨⟩
@@ -147,7 +148,7 @@ record IsStrongMultiplicativeₗ {ℓ} {C : Categoryₗ ℓ} {isCartesian : IsCa
         ≡⟨⟩
       mult ∘ sletin' (letin' φ ψ) ϕ
         -- sletin' commutes with letin' in a way
-        ≈⟨ ∘-pres-≈̇-right _ (comm-dia' _ _ _) ⟩
+        ≈⟨ ∘-pres-≈̇-right _ (com-dia' _ _ _) ⟩
       mult ∘ letin' φ (sletin' ψ (ϕ ∘ (π₁' ×'-map id')))
         -- defn.
         ≡⟨⟩
@@ -167,6 +168,13 @@ record IsStrongMultiplicativeₗ {ℓ} {C : Categoryₗ ℓ} {isCartesian : IsCa
         -- defn.
         ≡⟨⟩
       letin' φ (letin' ψ (ϕ ∘ (π₁' ×'-map id'[ R ]))) ∎
+
+  red-dia2' : {P Q R S : Obj} (φ : P →̇ ℱ' Q) (ψ : (P ×' Q) →̇ R) (ϕ : (P ×' R) →̇ ℱ' S)
+    → letin' (sletin' φ ψ) ϕ ≈̇ letin' φ (ϕ ∘ ⟨ π₁' , ψ ⟩')
+  red-dia2' {P} {Q} {R} {S} φ ψ ϕ = let open EqReasoning (→̇-setoid P (ℱ' S)) in begin
+    mult ∘ sletin' (sletin' φ ψ) ϕ
+      ≈⟨ ∘-pres-≈̇-right mult (red-dia1' φ ψ ϕ) ⟩
+    mult ∘ sletin' φ (ϕ ∘ ⟨ π₁' , ψ ⟩') ∎
 
 IsStrongMultiplicative = IsStrongMultiplicativeₗ {ℓ = suc 0ℓ}
 module IsStrongMultiplicative = IsStrongMultiplicativeₗ

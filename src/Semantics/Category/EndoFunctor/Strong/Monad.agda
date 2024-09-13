@@ -27,8 +27,8 @@ record IsStrongMonadₗ {ℓ} {C : Categoryₗ ℓ} {isCartesian : IsCartesian�
   open IsCartesianₗ isCartesian
   open EndoFunctorₗ F
   open IsStrongₗ isStrong renaming (letin' to sletin') hiding (exp-dia' ; red-dia')
-  open IsStrongPointedₗ isStrongPointed public
-  open IsStrongMultiplicativeₗ isStrongMultiplicative public
+  open IsStrongPointedₗ isStrongPointed public hiding (red-dia2')
+  open IsStrongMultiplicativeₗ isStrongMultiplicative public hiding (red-dia2')
   open IsMonadₗ isMonad public
 
   abstract
