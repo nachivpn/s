@@ -84,6 +84,18 @@ record IsCartesianₗ {ℓ} (C : Categoryₗ ℓ) : Set (suc ℓ) where
         ≈⟨ ⟨,⟩'-pres-≈̇ (∘-pres-≈̇-left (×'-beta-left _) _) (∘-pres-≈̇-left (×'-beta-right _) _) ⟩
       ⟨ φ ∘ ω , ψ ∘ ω ⟩' ∎
 
+    fst'-pres-≈̇ : {φ φ' : R →̇ (P ×' Q)} (φ≈̇φ' : φ ≈̇ φ') → fst' φ ≈̇ fst' φ'
+    fst'-pres-≈̇ φ≈̇φ' = ∘-pres-≈̇-right _ φ≈̇φ'
+
+    fst'-nat : (φ : R →̇ (P ×' Q)) (ω : R' →̇ R) → fst' φ ∘ ω ≈̇ fst' (φ ∘ ω)
+    fst'-nat φ ω = ∘-assoc π₁' φ ω
+
+    snd'-pres-≈̇ : {φ φ' : R →̇ (P ×' Q)} (φ≈̇φ' : φ ≈̇ φ') → snd' φ ≈̇ snd' φ'
+    snd'-pres-≈̇ φ≈̇φ' = ∘-pres-≈̇-right _ φ≈̇φ'
+
+    snd'-nat : (φ : R →̇ (P ×' Q)) (ω : R' →̇ R) → snd' φ ∘ ω ≈̇ snd' (φ ∘ ω)
+    snd'-nat φ ω = ∘-assoc π₂' φ ω
+
     ×'-map-pres-≈̇ : {φ φ' : P →̇ P'} (φ≈̇φ' : φ ≈̇ φ') {ψ ψ' : Q →̇ Q'} (ψ≈̇ψ' : ψ ≈̇ ψ') → φ ×'-map ψ ≈̇ φ' ×'-map ψ'
     ×'-map-pres-≈̇ {φ = φ} {φ'} φ≈̇φ' {ψ} {ψ'} ψ≈̇ψ' = let open EqReasoning (→̇-setoid _ _) in begin
       φ ×'-map ψ                ≡⟨⟩
