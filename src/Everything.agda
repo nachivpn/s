@@ -68,6 +68,6 @@ import Semantics.Presheaf.Possibility.Strong.Monad
 -- Normalization algorithms
 import SFC.Norm
 import PFC.Norm
-import JFC.Norm.Base
+import JFC.Norm
 import MLC.Norm
 

@@ -265,9 +265,9 @@ module AdhocLemmas where
         (cong₂ wkTm (cong (λ z → keep (drop z)) (⊆-trans-unit-left _)) refl))))
 
   --
-  letin-collecAcc-crunch-lemma : (w : (Γ `, c) ⊆ Δ) (t : Tm Δ a) (u : Tm (Γ `, a) b)
+  collectAcc-crunch-lemma : (w : (Γ `, c) ⊆ Δ) (t : Tm Δ a) (u : Tm (Γ `, a) b)
     → substTm (embWk w `, t) (wkTm (keep freshWk) u) ≡ substTm (embWk (freshWk ∙ w) `, t) u
-  letin-collecAcc-crunch-lemma w t u = let open ≡-Reasoning in begin
+  collectAcc-crunch-lemma w t u = let open ≡-Reasoning in begin
       substTm (embWk w `, t) (wkTm (keep freshWk) u)
         ≡˘⟨ assoc-substTm-wkTm u (embWk w `, t) (keep freshWk) ⟩
       substTm (trimSub (keep freshWk) (embWk w `, t)) u
@@ -283,15 +283,11 @@ module AdhocLemmas where
       substTm (embWk (freshWk ∙ w) `, t) u ∎
 
   --
-  red-ass-dia-crunch-lemma : (w : Γ ⊆ Θ) (s : Sub Γ Δ) (t : Tm Θ a)
-    → wkSub freshWk s ∙ₛ (embWk w `, t) ≡ wkSub w s
-  red-ass-dia-crunch-lemma w s t = let open ≡-Reasoning in begin
-    wkSub freshWk s ∙ₛ (embWk w `, t)
-      ≡˘⟨ assoc-wkSub-∙ₛ s (embWk w `, t) freshWk ⟩
-    s ∙ₛ trimSub freshWk (embWk w `, t)
-      ≡⟨⟩
-    s ∙ₛ trimSub ⊆-refl (embWk w)
-      ≡⟨ cong (s ∙ₛ_) (trimSub-unit-left (embWk w)) ⟩
+  comp-dia-crunch-lemma : (w : Γ ⊆ Θ) (s : Sub Γ Δ) (t : Tm Θ a)
+    → dropₛ s ∙ₛ (embWk w `, t) ≡ wkSub w s
+  comp-dia-crunch-lemma w s t = let open ≡-Reasoning in begin
+    dropₛ s ∙ₛ (embWk w `, t)
+      ≡⟨ dropₛ-trims s (embWk w) t ⟩
     s ∙ₛ embWk w
       ≡˘⟨ cong (s ∙ₛ_) (wkSub-unit-right w) ⟩
     s ∙ₛ wkSub w idₛ
@@ -299,6 +295,7 @@ module AdhocLemmas where
     wkSub w (s ∙ₛ idₛ)
       ≡⟨ cong (wkSub w) (∙ₛ-unit-right s) ⟩
     wkSub w s ∎
+    
 
   --
   red-dia-crunch-lemma : (w : Γ ⊆ Γ') (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) c)
@@ -351,7 +348,7 @@ module AdhocLemmas where
   exp-fun-crunch-subst-lemma s t = sym (trans
       (trans
         (sym (assoc-substTm-wkTm t (keepₛ s) freshWk))
-        (cong (λ z → substTm z t) (trimSub-unit-left (wkSub freshWk s))))
+        (cong (λ z → substTm z t) (trimSub-unit-left (dropₛ s))))
       (substTm-nat t s freshWk))
   
   red-dia-crunch-subst-lemma : ∀ (s : Sub Δ Γ) (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) c)
