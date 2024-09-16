@@ -20,7 +20,7 @@ import PFC.Term.NormalForm
 import JFC.Type {- temporarily -}
 import JFC.Term
 import JFC.Term.Conversion
---import JFC.Term.NormalForm
+import JFC.Term.NormalForm
 import JFC.Term.Model
 
 -- Calculus for monads
@@ -68,4 +68,6 @@ import Semantics.Presheaf.Possibility.Strong.Monad
 -- Normalization algorithms
 import SFC.Norm
 import PFC.Norm
+import JFC.Norm.Base
 import MLC.Norm
+
