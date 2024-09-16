@@ -20,10 +20,7 @@ module JFC.Evaluation
   (𝒞-is-CCC              : IsCartesianClosed 𝒞 𝒞-is-CC)
   (◇'                    : EndoFunctor 𝒞)
   {◇'-is-strong          : IsStrong 𝒞-is-CC ◇'}
-  {◇'-is-pointed         : IsPointed ◇'}
   {◇'-is-joinable        : IsMultiplicative ◇'}
-  {◇'-is-monad           : IsMonad ◇'-is-pointed ◇'-is-joinable}
-  {◇'-is-strong-point    : IsStrongPointed ◇' ◇'-is-strong ◇'-is-pointed}
   (◇'-is-strong-joinable : IsStrongMultiplicative ◇' ◇'-is-strong ◇'-is-joinable)
   (ι'                    : Category.Obj 𝒞)
   where
