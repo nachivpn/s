@@ -1,4 +1,4 @@
-name: diamond
+name: s
 depend:
   -- agda-2.6.2.2
   standard-library-2.0
