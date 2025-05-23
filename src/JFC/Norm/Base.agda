@@ -8,7 +8,7 @@ open import Relation.Binary.PropositionalEquality
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
 open import Data.Unit
-open import Data.Product using (∃; _,_; -,_ ; proj₁ ; proj₂) 
+open import Data.Product using (∃; _,_; -,_ ; proj₁ ; proj₂)
 open import Data.Product using () renaming (∃ to Σ; _×_ to _∧_)
 
 open import PUtil using (Σ×-≡,≡,≡→≡˘)
@@ -45,7 +45,7 @@ factor-is-a-triple w m = ≡-refl
 factor-pres-⊆-refl : (m : Γ ⊲ Δ) → factor ⊆-refl m ≡ (-, m , ⊆-refl)
 factor-pres-⊆-refl m = Σ×-≡,≡,≡→≡˘ (factorC-pres-⊆-refl m , factor⊲-pres-⊆-refl m , factor⊆-pres-⊆-refl m)
   where
-  
+
   factorC-pres-⊆-refl : (m : Γ ⊲ Δ) → Δ ≡ factorC ⊆-refl m
   factorC-pres-⊆-refl (single n) = ≡-refl
   factorC-pres-⊆-refl (cons x m) = factorC-pres-⊆-refl m
@@ -59,7 +59,7 @@ factor-pres-⊆-refl m = Σ×-≡,≡,≡→≡˘ (factorC-pres-⊆-refl m , fac
   factor⊆-pres-⊆-refl : (m : Γ ⊲ Δ) → subst (Δ ⊆_) (factorC-pres-⊆-refl m) ⊆-refl ≡ factor⊆ ⊆-refl m
   factor⊆-pres-⊆-refl (single n) = ≡-refl
   factor⊆-pres-⊆-refl (cons x m) = factor⊆-pres-⊆-refl m
-  
+
 factor-pres-⊆-trans : (w : Γ ⊆ Γ') (w' : Γ' ⊆ Γ'') (m : Γ ⊲ Δ)
   → factor (w ∙ w') m ≡ (-, (factor⊲ w' (factor⊲ w m) , (factor⊆ w m) ∙ (factor⊆ w' (factor⊲ w m))))
 factor-pres-⊆-trans w w' m =  Σ×-≡,≡,≡→≡˘ (factorC-pres-⊆-trans w w' m , factor⊲-pres-⊆-trans w w' m , factor⊆-pres-⊆-trans w w' m)
@@ -181,9 +181,9 @@ Nf'- a = record
           ; wk            = wkNf
           ; wk-pres-≋     = λ w → cong (wkNf w)
           ; wk-pres-refl  = wkNf-pres-⊆-refl
-          ; wk-pres-trans = wkNf-pres-⊆-trans 
+          ; wk-pres-trans = wkNf-pres-⊆-trans
           }
-          
+
 open import JFC.Evaluation PshCat PshCat-is-CCC ◇'-is-PshFunctor ◇'-is-strong-multiplicative (Ne'- ι)
 
 open Eval (Ne'- ι) hiding (Sub' ; Tm')
@@ -209,13 +209,13 @@ eval = evalTm
 register-fun : Ne Γ (◇ a) → ◇' (Ne'- a) ₀ Γ
 register-fun n = elem (_ , single n , var zero)
 
-register-natural : Natural (Ne'- (◇ a)) (◇' (Ne'- a)) register-fun 
+register-natural : Natural (Ne'- (◇ a)) (◇' (Ne'- a)) register-fun
 register-natural w p = proof (≡-refl , (≡-refl , ≡-refl))
 
 register : Ne'- (◇ a) →̇ ◇' (Ne'- a)
 register = record
   { fun     = register-fun
-  ; pres-≋  = λ p≋p' → proof (≡-refl , cong single p≋p' , ≡-refl) 
+  ; pres-≋  = λ p≋p' → proof (≡-refl , cong single p≋p' , ≡-refl)
   ; natural = register-natural
   }
 
@@ -226,7 +226,7 @@ collectNfAcc (cons n m) n0 = jletin n (collectNfAcc m n0)
 collectNf-fun : (◇' Nf'- a) ₀ Γ → Nf'- (◇ a) ₀ Γ
 collectNf-fun (elem (Δ , m , n)) = collectNfAcc m n
 
-collectNf-pres-≋ : Pres-≋ (◇' (Nf'- a)) (Nf'- (◇ a)) collectNf-fun 
+collectNf-pres-≋ : Pres-≋ (◇' (Nf'- a)) (Nf'- (◇ a)) collectNf-fun
 collectNf-pres-≋ (proof (≡-refl , ≡-refl , ≡-refl)) = ≡-refl
 
 collectNfAcc-nat : (w : Γ ⊆ Γ') (m : Γ ⊲ Δ) (n : Nf Δ a)
@@ -268,13 +268,13 @@ module _ where
       reflect-fun b (app (wkNe (w ∙ w') n) (reify-fun a (wk[ evalTy a ] w' p)))     ∎
     }
   reflect-fun (◇ a)   n = ◇'-map-fun (reflect-fun a) (register-fun n)
-  
+
   reify-fun ι         n  = up n
   reify-fun 𝟙         _  = unit
-  reify-fun (a × b)   p  = pair (reify-fun a (π₁' .apply p)) (reify-fun b (π₂' .apply p)) 
+  reify-fun (a × b)   p  = pair (reify-fun a (π₁' .apply p)) (reify-fun b (π₂' .apply p))
   reify-fun (a ⇒ b)   f  = lam (reify-fun b (f .apply freshWk (reflect-fun a (var zero))))
   reify-fun (◇ a)     x  = collectNf-fun (◇'-map-fun (reify-fun a) x)
-  
+
   reflect-pres-≋  = λ a n≡n' → ≋[ evalTy a ]-reflexive (cong (reflect-fun a) n≡n')
 
   reflect-natural ι       w n = ≋[ evalTy ι ]-refl
@@ -290,8 +290,8 @@ module _ where
          ≡⟨⟩
        reflect-fun (a ⇒ b) (wkNe w n) .apply w' p ∎
     }
-  reflect-natural (◇ a) w n = ◇'-map-natural (reflect-natural a) w (register-fun n) 
-  
+  reflect-natural (◇ a) w n = ◇'-map-natural (reflect-natural a) w (register-fun n)
+
   reify-pres-≋ ι       x≋x' = cong up  x≋x'
   reify-pres-≋ 𝟙       x≋x' = ≡-refl
   reify-pres-≋ (a × b) x≋x' = cong₂ pair (reify-pres-≋ a (π₁' .apply-≋ x≋x')) (reify-pres-≋ b (π₂' .apply-≋ x≋x'))
@@ -324,7 +324,7 @@ module _ where
       ≡⟨ collectNf-pres-≋ (◇'-map-natural (reify-natural a) w x) ⟩
     collectNf-fun (◇'-map-fun (reify-fun a) (wk[ Ty'- (◇ a) ] w x))
       ≡⟨⟩
-    reify-fun (◇ a) (wk[ Ty'- (◇ a) ] w x) ∎ 
+    reify-fun (◇ a) (wk[ Ty'- (◇ a) ] w x) ∎
 
 reflect : (a : Ty) → Ne'- a →̇ Ty'- a
 reflect a = record

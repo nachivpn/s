@@ -43,7 +43,7 @@ open import JFC.Term
 module Eval (ι' : Ty') where
   evalTy : (a : Ty) → Ty'
   evalTy ι       = ι'
-  evalTy 𝟙       = []' 
+  evalTy 𝟙       = []'
   evalTy (a × b) = evalTy a ×' evalTy b
   evalTy (a ⇒ b) = evalTy a ⇒' evalTy b
   evalTy (◇ a)   = ℱ'₀ evalTy a
@@ -69,7 +69,7 @@ module Eval (ι' : Ty') where
   evalTm (snd t)      = snd' (evalTm t)
   evalTm (lam t)      = lam' (evalTm t)
   evalTm (app t u)    = app' (evalTm t) (evalTm u)
-  evalTm (sletin t u) = sletin' (evalTm t) (evalTm u) 
+  evalTm (sletin t u) = sletin' (evalTm t) (evalTm u)
   evalTm (jletin t u) = jletin' (evalTm t) (evalTm u)
 
   evalSub : (σ : Sub Δ Γ) → evalCtx Δ →̇ evalCtx Γ

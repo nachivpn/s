@@ -2,7 +2,7 @@
 module SFC.Norm.Soundness where
 
 open import Data.Unit using (⊤ ; tt)
-open import Data.Product using (Σ; _×_; _,_; -,_ ; proj₁ ; proj₂) 
+open import Data.Product using (Σ; _×_; _,_; -,_ ; proj₁ ; proj₂)
 open import Relation.Binary.PropositionalEquality using (_≡_ ; refl ; sym ; trans ; cong ; cong₂)
 import Relation.Binary.Reasoning.Setoid as EqReasoning
 
@@ -45,13 +45,13 @@ quotTm {Γ} {a} f = reifyTm a .apply (f .apply (idEnv Γ))
 
 registerTm : {a : Ty} → Ne'- (◇ a) →̇ ◇' (Tm'- a)
 registerTm = (◇'-map embNe) ∘ register
-       
+
 module Core
   (collectTm     : {a : Ty} → ◇' (Tm'- a) →̇ Tm'- (◇ a))
   (collect-comm  : {a : Ty} → collectTm ∘ ◇'-map embNf ≈̇ embNf ∘ collectNf {a})
   (register-exp  : {a : Ty} → embNe ≈̇ collectTm {a} ∘ registerTm)
   where
-  
+
   ℒ : (a : Ty) → (t : Tm Γ a) → (x : Ty' Γ a) → Set
   ℒ {_} ι       t n =
     t ≈ reifyTm ι .apply n
@@ -72,11 +72,11 @@ module Core
   ℒ-prepend (a ⇒ b) t≈u uLf
     = λ w uLy → ℒ-prepend b (cong-app1≈ (wk[ Tm'- (a ⇒ b) ]-pres-≋ w t≈u)) (uLf w uLy)
   ℒ-prepend (◇ a)   t≈u (u' , u≈_ , u'Lx)
-    = u' , ≈-trans t≈u u≈_ , u'Lx 
+    = u' , ≈-trans t≈u u≈_ , u'Lx
 
   ℒ-build   : (a : Ty) → {t : Tm Γ a} {x : Ty' Γ a} → ℒ a t x → t ≈ reifyTm a .apply x
   ℒ-reflect : (a : Ty) (n : Ne Γ a) → ℒ a (embNe .apply n) (reflect a .apply n)
-  
+
   ℒ-build ι        tLx
     = tLx
   ℒ-build (a ⇒ b)  tLx
@@ -93,7 +93,7 @@ module Core
        → (uℒx : ℒ a u x)
        → ℒ a t x
   ℒ-cast refl uLx = uLx
- 
+
   wkTm-pres-ℒ : {t : Tm Γ a} {x : Ty' Γ a}
     → (w : Γ ⊆ Γ')
     → (tLx : ℒ a t x)
@@ -113,11 +113,11 @@ module Core
     → (sLδ : ℒₛ Δ s δ)
     → ℒₛ Δ (wkSub w s) (wkSub' Δ w δ)
   wkSub-pres-ℒₛ {s = []}       w p
-    = tt 
+    = tt
   wkSub-pres-ℒₛ {s = _s `, t}  w (sLδ , tLx)
     = wkSub-pres-ℒₛ w sLδ , wkTm-pres-ℒ w tLx
 
-  -- 
+  --
   idℒₛ : ∀ Δ → ℒₛ Δ idₛ (idEnv Δ)
   idℒₛ []       = tt
   idℒₛ (Δ `, a) = wkSub-pres-ℒₛ freshWk (idℒₛ Δ) , ℒ-reflect a (var zero)
@@ -127,13 +127,13 @@ module Core
   Fund {Δ} {a} t = ∀ {Γ} {s : Sub Γ Δ} {δ : Sub' Γ Δ}
     → (sLδ : ℒₛ Δ s δ) → ℒ a (substTm s t) (eval t .apply δ)
 
-  --  
+  --
   module Sound (fund : {Δ : Ctx} {a : Ty} → (t : Tm Δ a) → Fund t) where
 
     --
     quotTm-retracts-eval : (t : Tm Γ a) → t ≈ quotTm (eval t)
     quotTm-retracts-eval t = ℒ-build _ (ℒ-prepend _ (≡-to-≈ (sym (substTm-pres-idₛ t))) (fund t (idℒₛ _)))
-  
+
     -- normalization is sound
     norm-sound : {t u : Tm Γ a} → norm t ≡ norm u → t ≈ u
     norm-sound {Γ} {a} {t} {u} nt≡nu = ≈-trans

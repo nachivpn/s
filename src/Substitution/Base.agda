@@ -69,7 +69,7 @@ module Substitution.Base
   idₛ = embWk ⊆-refl
 
   idₛ[_] = λ Γ → idₛ {Γ}
-    
+
   module Composition
     (substTm     : {Δ Γ : Ctx} → {a : Ty} → (σ : Sub Δ Γ) → (t : Tm Γ a) → Tm Δ a)
     where

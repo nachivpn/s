@@ -37,7 +37,7 @@ point'[ 𝒫 ] = record
   ; natural = ◇'-point'-fun-natural
   }
   where
-  
+
   ◇'-point'-fun : 𝒫 ₀ Γ → ◇'-Fam 𝒫 Γ
   ◇'-point'-fun x = elem (_ , (R-refl , x))
 
@@ -46,7 +46,7 @@ point'[ 𝒫 ] = record
     ◇'-point'-fun-pres-≋ x≋y = proof (refl , refl , x≋y)
 
     ◇'-point'-fun-natural : (w : Γ ⊆ Γ') (p : 𝒫 ₀ Γ)
-      → wk[ ◇' 𝒫 ] w (◇'-point'-fun p) ≋[ ◇' 𝒫 ] ◇'-point'-fun (wk[ 𝒫 ] w p) 
+      → wk[ ◇' 𝒫 ] w (◇'-point'-fun p) ≋[ ◇' 𝒫 ] ◇'-point'-fun (wk[ 𝒫 ] w p)
     ◇'-point'-fun-natural w _p rewrite (factor-pres-R-refl w) = proof (refl , refl , ≋[ 𝒫 ]-refl)
 
 abstract

@@ -32,8 +32,8 @@ private
 
 mult'[_] : ∀ 𝒫 → (◇' ◇' 𝒫 →̇ ◇' 𝒫)
 mult'[ 𝒫 ] = record
-  { fun     = ◇'-mult'-fun 
-  ; pres-≋  = ◇'-mult'-fun-pres-≋  
+  { fun     = ◇'-mult'-fun
+  ; pres-≋  = ◇'-mult'-fun-pres-≋
   ; natural = ◇'-mult'-natural
   }
   where
@@ -41,7 +41,7 @@ mult'[ 𝒫 ] = record
   ◇'-mult'-fun (elem (Δ , ΓRΔ , (elem (Δ' , ΔRΔ' , p)))) = elem (Δ' , R-trans ΓRΔ ΔRΔ' , p)
 
   abstract
-    ◇'-mult'-fun-pres-≋ : {p p' : ◇'-Fam (◇' 𝒫) Γ} 
+    ◇'-mult'-fun-pres-≋ : {p p' : ◇'-Fam (◇' 𝒫) Γ}
       → p ◇'-≋[ ◇' 𝒫 ] p'
       → ◇'-mult'-fun p ◇'-≋[ 𝒫 ] ◇'-mult'-fun p'
     ◇'-mult'-fun-pres-≋ (proof (refl , refl , (proof (refl , refl , p≋p')))) = proof (refl , refl , p≋p')
@@ -53,6 +53,6 @@ mult'[ 𝒫 ] = record
 abstract
 -- mult' is a natural transformation from the composition of functors ◇' ∘ ◇' to ◇'
   mult'-natural : (t :  𝒫 →̇  𝒬) → mult'[ 𝒬 ] ∘ (◇'-map (◇'-map t)) ≈̇ (◇'-map t) ∘ mult'[ 𝒫 ]
-  mult'-natural {𝒫} {𝒬} t = record { proof = λ _p → ≋[ ◇' 𝒬 ]-refl } 
-  
+  mult'-natural {𝒫} {𝒬} t = record { proof = λ _p → ≋[ ◇' 𝒬 ]-refl }
+
 mult' = λ {𝒫} → mult'[ 𝒫 ]

@@ -10,7 +10,7 @@ open import Relation.Binary.Construct.Closure.Equivalence
   using (setoid)
 import Relation.Binary.Construct.Closure.Equivalence.Properties
   as EquivalenceProperties
-  
+
 open import Relation.Binary.PropositionalEquality
   using    (_≡_ ; cong ; cong₂)
   renaming (refl to ≡-refl ; sym to ≡-sym ; trans to ≡-trans)
@@ -145,9 +145,9 @@ red-fun-tr-lemma w s t u = let open EqReasoning (Tm-setoid _ _) in begin
     ≡˘⟨ cong (λ s' → substTm (s' `, u) t) (assoc-∙ₛ-wkSub _ _ _) ⟩
   substTm (wkSub w (s ∙ₛ idₛ) `, u) t
     ≡⟨ cong (λ s' → substTm (s' `, u) t) (cong (wkSub w) (∙ₛ-unit-right s)) ⟩
-  substTm (wkSub w s `, u) t ∎   
+  substTm (wkSub w s `, u) t ∎
 
-red-dia-tr-lemma : (s : Sub Γ Δ) (n : Tm Γ (◇ a)) (t' : Tm (Γ `, a) b) (u : Tm (Δ `, b) c) 
+red-dia-tr-lemma : (s : Sub Γ Δ) (n : Tm Γ (◇ a)) (t' : Tm (Γ `, a) b) (u : Tm (Δ `, b) c)
   → letin (letin n t') (substTm (dropₛ s `, var zero) u) ≈ letin n (substTm (dropₛ s `, t') u)
 red-dia-tr-lemma s n t' u = let open EqReasoning (Tm-setoid _ _) in begin
   letin (letin n t') (substTm (dropₛ s `, var zero) u)
@@ -165,4 +165,4 @@ red-dia-tr-lemma s n t' u = let open EqReasoning (Tm-setoid _ _) in begin
     ≡˘⟨ cong (letin n) (cong (λ s' → substTm (s' `, t') u) (assoc-∙ₛ-wkSub s idₛ freshWk)) ⟩
   letin n (substTm (dropₛ (s ∙ₛ idₛ) `, t') u)
     ≡⟨ cong (letin n) (cong (λ s' → substTm (dropₛ s' `, t') u) (∙ₛ-unit-right s)) ⟩
-  letin n (substTm (dropₛ s `, t') u) ∎ 
+  letin n (substTm (dropₛ s `, t') u) ∎

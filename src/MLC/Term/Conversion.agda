@@ -24,7 +24,7 @@ data _≈_ : Tm Γ a → Tm Γ a → Set where
 
   exp-fun : (t : Tm Γ (a ⇒ b))
     → t ≈ lam (app (wkTm freshWk t) (var zero))
-    
+
   red-dia : (t : Tm Γ a)  (u : Tm (Γ `, a) (◇ b))
     → letin (return t) u ≈ substTm (idₛ `, t) u
 
@@ -33,7 +33,7 @@ data _≈_ : Tm Γ a → Tm Γ a → Set where
 
   ass-dia : (t : Tm Γ (◇ a)) (u : Tm (Γ `, a) (◇ b)) (u' : Tm (Γ `, b) (◇ c))
     → letin (letin t u) u' ≈ letin t (letin u (wkTm (keep freshWk) u'))
-  
+
   cong-lam : {t t' : Tm (Γ `, a) b}
     → t ≈ t'
     → lam t ≈ lam t'
@@ -49,7 +49,7 @@ data _≈_ : Tm Γ a → Tm Γ a → Set where
   cong-return : {t t' : Tm Γ a}
     → t ≈ t'
     → return t ≈ return t'
-    
+
   cong-letin1 : {t t' : Tm Γ (◇ a)} {u : Tm (Γ `, a) (◇ b)}
     → t ≈ t'
     → letin t u ≈ letin t' u
@@ -154,4 +154,4 @@ red-fun-tr-lemma w s t u = let open EqReasoning (Tm-setoid _ _) in begin
     ≡˘⟨ cong (λ s' → substTm (s' `, u) t) (assoc-∙ₛ-wkSub _ _ _) ⟩
   substTm (wkSub w (s ∙ₛ idₛ) `, u) t
     ≡⟨ cong (λ s' → substTm (s' `, u) t) (cong (wkSub w) (∙ₛ-unit-right s)) ⟩
-  substTm (wkSub w s `, u) t ∎   
+  substTm (wkSub w s `, u) t ∎

@@ -31,7 +31,7 @@ data Cont : Set₁ where
   id   : Cont
   rec  : Cont
   val  : ISet → Cont
-  ext  : Ty → Cont → Cont   
+  ext  : Ty → Cont → Cont
   _×'_ : Cont → Cont → Cont
   _⊎'_ : Cont → Cont → Cont
   ∃'_  : ((a : Ty) → Cont) → Cont
@@ -188,5 +188,4 @@ module _ where
   from+ : Γ ⊲+' Δs → Γ ⊲+ Δs
   from+ (lfp (inj₁ p)) = nil p
   from+ (lfp (inj₂ (a , b , n , m1 , m2))) = case n (from+ m1) (from+ m2)
-
 

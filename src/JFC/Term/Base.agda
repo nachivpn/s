@@ -40,7 +40,7 @@ data Tm : Ctx → Ty → Set where
          → (u : Tm (Γ `, a) b)
           --------------------
         → Tm Γ (◇ b)
-        
+
   jletin : (t : Tm Γ (◇ a))
         → (u : Tm (Γ `, a) (◇ b))
           -----------------------

@@ -25,7 +25,7 @@ data Tm : Ctx → Ty → Set where
   return : (t : Tm Γ a)
            ------------
          → Tm Γ (◇ a)
-  
+
   letin : (t : Tm Γ (◇ a))
         → (u : Tm (Γ `, a) b)
           -------------------

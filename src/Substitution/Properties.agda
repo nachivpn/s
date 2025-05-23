@@ -48,7 +48,7 @@ substVar-nat : (x : Var Γ a) (s : Sub Δ Γ) (w : Δ ⊆ Δ')
 substVar-nat zero     (s `, t) w = refl
 substVar-nat (succ x) (s `, t) w = substVar-nat x s w
 
--- 
+--
 assoc-substVar-wkVar : (x : Var Γ a) (s : Sub Δ' Δ) (w : Γ ⊆ Δ)
   → substVar (trimSub w s) x ≡ substVar s (wkVar w x)
 assoc-substVar-wkVar zero     (s `, x)  (drop w)

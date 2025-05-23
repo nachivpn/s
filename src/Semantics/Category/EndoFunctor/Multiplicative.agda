@@ -24,9 +24,9 @@ record IsMultiplicativeₗ {ℓ} {C : Categoryₗ ℓ} (F : EndoFunctorₗ C) : 
   mult = mult[ _ ]
 
   join[_]   = mult[_]
-  
+
   join : {P : Obj} → ℱ' (ℱ' P) →̇ ℱ' P
   join = mult[ _ ]
-  
+
 IsMultiplicative = IsMultiplicativeₗ {ℓ = suc 0ℓ}
 module IsMultiplicative = IsMultiplicativeₗ

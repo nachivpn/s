@@ -43,7 +43,7 @@ private
   ; natural = λ w p×◇q → ◇'-strength-fun-natural w (π₁' .apply p×◇q) (π₂' .apply p×◇q)
   }
   where
-  
+
   ◇'-strength-fun : 𝒫 ₀ Γ → ◇'-Fam 𝒬 Γ → ◇'-Fam (𝒫 ×' 𝒬) Γ
   ◇'-strength-fun p (elem (Δ , r , q)) = elem (Δ , r , elem (wk[ 𝒫 ] (R-to-⊆ r) p , q))
 
@@ -64,10 +64,10 @@ private
             ≡˘⟨ cong (λ w → wk[ 𝒫 ] w p) (factor-pres-R-to-⊆ w _) ⟩
           wk[ 𝒫 ] (⊆-trans w (R-to-⊆ (factorR w _))) p
             ≈⟨  wk[ 𝒫 ]-pres-trans w (R-to-⊆ (factorR w _)) p ⟩
-          wk[ 𝒫 ] (R-to-⊆ (factorR w _)) (wk[ 𝒫 ] w p)          
+          wk[ 𝒫 ] (R-to-⊆ (factorR w _)) (wk[ 𝒫 ] w p)
            ∎)
         , ≋[ 𝒬 ]-refl))))
-        
+
 ◇'-is-strong : IsStrong PshCat-is-CC ◇'-is-PshFunctor
 ◇'-is-strong = record
   { strength[_,_]     = ◇'-strength

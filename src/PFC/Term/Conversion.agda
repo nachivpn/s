@@ -33,7 +33,7 @@ data _≈_ : Tm Γ a → Tm Γ a → Set where
 
   exp-dia : (t : Tm Γ (◇ a))
     → t ≈ letin t (var zero)
-    
+
   cong-lam : {t t' : Tm (Γ `, a) b}
     → t ≈ t'
     → lam t ≈ lam t'
@@ -49,7 +49,7 @@ data _≈_ : Tm Γ a → Tm Γ a → Set where
   cong-return : {t t' : Tm Γ a}
     → t ≈ t'
     → return t ≈ return t'
-    
+
   cong-letin1 : {t t' : Tm Γ (◇ a)} {u : Tm (Γ `, a) b}
     → t ≈ t'
     → letin t u ≈ letin t' u
@@ -154,9 +154,9 @@ red-fun-tr-lemma w s t u = let open EqReasoning (Tm-setoid _ _) in begin
     ≡˘⟨ cong (λ s' → substTm (s' `, u) t) (assoc-∙ₛ-wkSub _ _ _) ⟩
   substTm (wkSub w (s ∙ₛ idₛ) `, u) t
     ≡⟨ cong (λ s' → substTm (s' `, u) t) (cong (wkSub w) (∙ₛ-unit-right s)) ⟩
-  substTm (wkSub w s `, u) t ∎   
+  substTm (wkSub w s `, u) t ∎
 
-red-dia1-tr-lemma : (s : Sub Γ Δ) (n : Tm Γ (◇ a)) (t' : Tm (Γ `, a) b) (u : Tm (Δ `, b) c) 
+red-dia1-tr-lemma : (s : Sub Γ Δ) (n : Tm Γ (◇ a)) (t' : Tm (Γ `, a) b) (u : Tm (Δ `, b) c)
   → letin (letin n t') (substTm (dropₛ s `, var zero) u) ≈ letin n (substTm (dropₛ s `, t') u)
 red-dia1-tr-lemma s n t' u = let open EqReasoning (Tm-setoid _ _) in begin
   letin (letin n t') (substTm (dropₛ s `, var zero) u)
@@ -174,10 +174,10 @@ red-dia1-tr-lemma s n t' u = let open EqReasoning (Tm-setoid _ _) in begin
     ≡˘⟨ cong (letin n) (cong (λ s' → substTm (s' `, t') u) (assoc-∙ₛ-wkSub s idₛ freshWk)) ⟩
   letin n (substTm (dropₛ (s ∙ₛ idₛ) `, t') u)
     ≡⟨ cong (letin n) (cong (λ s' → substTm (dropₛ s' `, t') u) (∙ₛ-unit-right s)) ⟩
-  letin n (substTm (dropₛ s `, t') u) ∎ 
+  letin n (substTm (dropₛ s `, t') u) ∎
 
-red-dia2-tr-lemma : (s : Sub Γ Δ) (t : Tm Γ a) (u : Tm (Δ `, a) b) 
-  → letin (return t) (substTm (keepₛ s) u) ≈ return (substTm (wkSub ⊆-refl s `, t) u) 
+red-dia2-tr-lemma : (s : Sub Γ Δ) (t : Tm Γ a) (u : Tm (Δ `, a) b)
+  → letin (return t) (substTm (keepₛ s) u) ≈ return (substTm (wkSub ⊆-refl s `, t) u)
 red-dia2-tr-lemma s t u = let open EqReasoning (Tm-setoid _ _) in begin
   letin (return t) (substTm (keepₛ s) u)
     ≈⟨ red-dia2 t (substTm (keepₛ s) u) ⟩

@@ -18,7 +18,7 @@ wkTm-pres-⊆-trans : (w : Γ ⊆ Γ') (w' : Γ' ⊆ Δ) (t : Tm Γ a)
 wkTm-pres-⊆-trans w w' (var   v)   = cong  var (wkVar-pres-⊆-trans w w' v)
 wkTm-pres-⊆-trans w w' (lam   t)   = cong  lam (wkTm-pres-⊆-trans (keep w) (keep  w') t)
 wkTm-pres-⊆-trans w w' (app   t u) = cong₂ app (wkTm-pres-⊆-trans w w' t) (wkTm-pres-⊆-trans w w' u)
-wkTm-pres-⊆-trans w w' (return t)  = cong return (wkTm-pres-⊆-trans w w' t) 
+wkTm-pres-⊆-trans w w' (return t)  = cong return (wkTm-pres-⊆-trans w w' t)
 wkTm-pres-⊆-trans w w' (letin t u) = cong₂ letin (wkTm-pres-⊆-trans w w' t) (wkTm-pres-⊆-trans (keep w) (keep w') u)
 
 wkSub-pres-⊆-refl : (s : Sub Γ Δ) → wkSub ⊆-refl s ≡ s
@@ -53,7 +53,7 @@ substTm-nat (lam {Γ} {a} t)   s          w
 substTm-nat (app t u)         s          w
   = cong₂ app (substTm-nat t s w) (substTm-nat u s w)
 substTm-nat (return t)        s          w
-  = cong return (substTm-nat t s w) 
+  = cong return (substTm-nat t s w)
 substTm-nat (letin t u)       s          w
   = cong₂ letin (substTm-nat t s w)
       (trans
@@ -71,7 +71,7 @@ assoc-substTm-wkTm (lam t)           s          w
 assoc-substTm-wkTm (app t u)         s          w
   = cong₂ app (assoc-substTm-wkTm t s w) (assoc-substTm-wkTm u s w)
 assoc-substTm-wkTm (return t)        s          w
-  = cong return (assoc-substTm-wkTm t s w) 
+  = cong return (assoc-substTm-wkTm t s w)
 assoc-substTm-wkTm (letin t u)       s          w
   = cong₂ letin
       (assoc-substTm-wkTm t s w)
@@ -110,7 +110,7 @@ substTm-pres-idₛ : (t : Tm Γ a) → substTm idₛ t ≡ t
 substTm-pres-idₛ (var x)     = substVar-pres-idₛ x
 substTm-pres-idₛ (lam t)     = cong lam (substTm-pres-idₛ t)
 substTm-pres-idₛ (app t u)   = cong₂ app (substTm-pres-idₛ t) (substTm-pres-idₛ u)
-substTm-pres-idₛ (return t)  = cong return (substTm-pres-idₛ t) 
+substTm-pres-idₛ (return t)  = cong return (substTm-pres-idₛ t)
 substTm-pres-idₛ (letin t u) = cong₂ letin (substTm-pres-idₛ t) (substTm-pres-idₛ u)
 
 -- TBD: rename
@@ -128,7 +128,7 @@ assoc-wkSub-∙ₛ []               s'          w
   = refl
 assoc-wkSub-∙ₛ (s `, x)         s'          w
   = cong₂ _`,_ (assoc-wkSub-∙ₛ s s' w) (assoc-substTm-wkTm x s' w)
-  
+
 substVarPres∙ₛ : (s : Sub Γ' Γ) (s' : Sub Δ Γ') (x : Var Γ a)
   → substVar (s ∙ₛ s') x ≡ substTm s' (substVar s x)
 substVarPres∙ₛ (s `, x) s' zero      = refl
@@ -141,7 +141,7 @@ private
     (trans
       ((cong (s' ∙ₛ_) (sym (trimSub-unit-left (dropₛ s)))))
       (assoc-wkSub-∙ₛ s' (keepₛ s) freshWk))
-      
+
 substTm-pres-∙ₛ : (s : Sub Γ' Γ) (s' : Sub Δ Γ') (t : Tm Γ a)
   → substTm (s ∙ₛ s') t ≡ substTm s' (substTm s t)
 substTm-pres-∙ₛ s s'             (var x)
@@ -153,7 +153,7 @@ substTm-pres-∙ₛ s s'             (lam t)
 substTm-pres-∙ₛ s s'             (app t u)
   = cong₂ app (substTm-pres-∙ₛ s s' t) (substTm-pres-∙ₛ s s' u)
 substTm-pres-∙ₛ s s'             (return t)
-  = cong return (substTm-pres-∙ₛ s s' t) 
+  = cong return (substTm-pres-∙ₛ s s' t)
 substTm-pres-∙ₛ s s'             (letin t u)
   = cong₂ letin
       (substTm-pres-∙ₛ s s' t)
@@ -174,7 +174,7 @@ module AdhocLemmas where
     (trans
       (sym (wkTm-pres-⊆-trans _ _ _))
       (cong₂ wkTm (cong drop (trans (⊆-trans-unit-right _) (sym (⊆-trans-unit-left _)))) refl))
-    (wkTm-pres-⊆-trans _ _ _) 
+    (wkTm-pres-⊆-trans _ _ _)
 
   --
   red-fun-crunch-lemma : (w  : Γ ⊆ Δ) (u : Tm Γ a) (t : Tm (Γ `, a) b)

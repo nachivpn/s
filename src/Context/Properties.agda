@@ -4,7 +4,7 @@ module Context.Properties (Ty : Set) where
 open import Relation.Binary.PropositionalEquality
   using    (_≡_ ; refl ; cong ; cong₂ ; module ≡-Reasoning)
   renaming (sym to ≡-sym ; trans to ≡-trans ; isEquivalence to ≡-equiv)
-  
+
 open import Context.Base Ty
 
 open import Semantics.Kripke.Frame

@@ -20,7 +20,7 @@ record MFrame {W : Set} {_⊆_ : W → W → Set} (IF : IFrame W _⊆_) (_R_ : W
   --
   -- Factorisation conditions
   --
-  
+
   field
       factor : {w w' v : W} → w ⊆ w' → w R v → ∃ λ v' → w' R v' × v ⊆ v'
 
@@ -32,7 +32,7 @@ record MFrame {W : Set} {_⊆_ : W → W → Set} (IF : IFrame W _⊆_) (_R_ : W
     factor-pres-⊆-refl  : {w v : W}
       → (m : w R v) → factor ⊆-refl m ≡ (v , m , ⊆-refl)
     factor-pres-⊆-trans : {w w' w'' v : W} → (i : w ⊆ w') (i' : w' ⊆ w'') (m : w R v)
-      → factor (⊆-trans i i') m ≡ (-, (factorR i' (factorR i m) , (⊆-trans (factor⊆ i m) (factor⊆ i' (factorR i m)))))  
+      → factor (⊆-trans i i') m ≡ (-, (factorR i' (factorR i m) , (⊆-trans (factor⊆ i m) (factor⊆ i' (factorR i m)))))
 
 -- Inclusive, reflexive and transitive factorising frames
 module _ {W : Set} {_⊆_ : W → W → Set} {_R_ : W → W → Set} {IF : IFrame W _⊆_} (MF : MFrame IF _R_) where
@@ -44,13 +44,13 @@ module _ {W : Set} {_⊆_ : W → W → Set} {_R_ : W → W → Set} {IF : IFram
       R-to-⊆             : {w v : W} → w R v → w ⊆ v
       factor-pres-R-to-⊆ : {w w' v : W} → (i : w ⊆ w') → (m : w R v) → (⊆-trans i (R-to-⊆ (factorR i m))) ≡ ⊆-trans (R-to-⊆ m) (factor⊆ i m)
 
-  record ReflexiveMFrame : Set where    
+  record ReflexiveMFrame : Set where
     field
       R-refl             : {w : W} → w R w
       factor-pres-R-refl : {w w' : W} (i : w ⊆ w') → factor i R-refl ≡ (w' , R-refl , i)
 
     R-refl[_] : (w : W) → w R w ; R-refl[ w ] = R-refl {w}
-    
+
   record TransitiveMFrame : Set where
     field
       R-trans             : {w w' w'' : W} → w R w' → w' R w'' → w R w''
@@ -61,21 +61,21 @@ module _ {W : Set} {_⊆_ : W → W → Set} {_R_ : W → W → Set} {IF : IFram
   record InclusiveReflexiveMFrame (IMF : InclusiveMFrame) (RMF : ReflexiveMFrame) : Set where
     open InclusiveMFrame IMF
     open ReflexiveMFrame RMF
-    
+
     field
       R-to-⊆-pres-refl  : {w : W} → R-to-⊆ R-refl[ w ] ≡ ⊆-refl
 
   record InclusiveTransitiveMFrame (IMF : InclusiveMFrame) (TMF : TransitiveMFrame) : Set where
     open InclusiveMFrame IMF
     open TransitiveMFrame TMF
-    
+
     field
       R-to-⊆-pres-trans : ∀ {w v u} → (r : w R v) →  (r' : v R u) → R-to-⊆ (R-trans r r') ≡ ⊆-trans (R-to-⊆ r) (R-to-⊆ r')
 
   record ReflexiveTransitiveMFrame (RMF : ReflexiveMFrame) (TMF : TransitiveMFrame) : Set where
     open ReflexiveMFrame RMF
     open TransitiveMFrame TMF
-    
+
     field
       R-refl-unit-left  : {w v : W} (r : w R v) → R-trans r R-refl ≡ r
       R-refl-unit-right : {w v : W} (r : w R v) → R-trans R-refl r ≡ r

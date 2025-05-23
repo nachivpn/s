@@ -21,7 +21,7 @@ open import Data.Product using (_×_; _,_) renaming (proj₁ to fst; proj₂ to 
 
 open import Semantics.Presheaf.Base IF
 open import Semantics.Presheaf.Possibility.Base MF
-open import Semantics.Presheaf.Possibility.Pointed MF RMF 
+open import Semantics.Presheaf.Possibility.Pointed MF RMF
   renaming (point'[_] to return'[_] ; point' to return') public
 open import Semantics.Presheaf.Possibility.Multiplicative MF TMF
   renaming (mult'[_] to join'[_]; mult' to join'; mult'-assoc to join'-assoc) public

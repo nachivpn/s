@@ -163,7 +163,7 @@ assoc-wkSub-∙ₛ []               s'          w
   = refl
 assoc-wkSub-∙ₛ (s `, x)         s'          w
   = cong₂ _`,_ (assoc-wkSub-∙ₛ s s' w) (assoc-substTm-wkTm x s' w)
-  
+
 substVarPres∙ₛ : (s : Sub Γ' Γ) (s' : Sub Δ Γ') (x : Var Γ a)
   → substVar (s ∙ₛ s') x ≡ substTm s' (substVar s x)
 substVarPres∙ₛ (s `, x) s' zero      = refl
@@ -176,7 +176,7 @@ private
     (trans
       ((cong (s' ∙ₛ_) (sym (trimSub-unit-left (dropₛ s)))))
       (assoc-wkSub-∙ₛ s' (keepₛ s) freshWk))
-      
+
 substTm-pres-∙ₛ : (s : Sub Γ' Γ) (s' : Sub Δ Γ') (t : Tm Γ a)
   → substTm (s ∙ₛ s') t ≡ substTm s' (substTm s t)
 substTm-pres-∙ₛ s s'             (var x)
@@ -230,7 +230,7 @@ dropₛ-trims s s' t = trans
 
 dropₛ-nat : (s : Sub Γ Δ) (s' : Sub Γ' Γ) → dropₛ {a = a} (s ∙ₛ s') ≡ s ∙ₛ dropₛ s'
 dropₛ-nat s s' = assoc-∙ₛ-wkSub s s' freshWk
-      
+
 module AdhocLemmas where
 
   --
@@ -240,7 +240,7 @@ module AdhocLemmas where
     (trans
       (sym (wkTm-pres-⊆-trans _ _ _))
       (cong₂ wkTm (cong drop (trans (⊆-trans-unit-right _) (sym (⊆-trans-unit-left _)))) refl))
-    (wkTm-pres-⊆-trans _ _ _) 
+    (wkTm-pres-⊆-trans _ _ _)
 
   --
   red-fun-crunch-lemma : (w  : Γ ⊆ Δ) (u : Tm Γ a) (t : Tm (Γ `, a) b)
@@ -295,7 +295,7 @@ module AdhocLemmas where
     wkSub w (s ∙ₛ idₛ)
       ≡⟨ cong (wkSub w) (∙ₛ-unit-right s) ⟩
     wkSub w s ∎
-    
+
 
   --
   red-dia-crunch-lemma : (w : Γ ⊆ Γ') (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) c)
@@ -310,11 +310,11 @@ module AdhocLemmas where
     substTm (wkSub freshWk (trimSub w idₛ) `, wkTm (keep w) u) u'
       ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (cong (wkSub _) (trimSub-unit-right w))) (refl {x = u'}) ⟩
     substTm (wkSub freshWk (embWk w) `, wkTm (keep w) u) u'
-      ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (cong (wkSub _) (sym (wkSub-unit-right w)))) (refl {x = u'}) ⟩      
+      ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (cong (wkSub _) (sym (wkSub-unit-right w)))) (refl {x = u'}) ⟩
     substTm (wkSub freshWk (wkSub w idₛ) `, wkTm (keep w) u) u'
      ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (sym (wkSub-pres-⊆-trans w freshWk idₛ))) (refl {x = u'}) ⟩
-    substTm (wkSub (w ∙ freshWk) idₛ `, wkTm (keep w) u) u'  
-     ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (cong₂ wkSub (cong drop (trans (⊆-trans-unit-right w) (sym (⊆-trans-unit-left w)) )) refl)) (refl {x = u'}) ⟩     
+    substTm (wkSub (w ∙ freshWk) idₛ `, wkTm (keep w) u) u'
+     ≡⟨ cong₂ substTm (cong (_`, wkTm (keep w) u) (cong₂ wkSub (cong drop (trans (⊆-trans-unit-right w) (sym (⊆-trans-unit-left w)) )) refl)) (refl {x = u'}) ⟩
     substTm (wkSub (drop (⊆-refl ∙ w)) idₛ `, wkTm (keep w) u) u'
      ≡⟨⟩
     substTm (wkSub (freshWk ∙ keep w) idₛ `, wkTm (keep w) u) u'
@@ -340,7 +340,7 @@ module AdhocLemmas where
       ≡˘⟨ cong (λ z → substTm (z `, substTm s u) t) (∙ₛ-unit-left s)  ⟩
     substTm ((idₛ ∙ₛ s) `, substTm s u) t
       ≡⟨ substTm-pres-∙ₛ (idₛ `, u) s t ⟩
-    substTm s (substTm (idₛ `, u) t) ∎  
+    substTm s (substTm (idₛ `, u) t) ∎
 
   exp-fun-crunch-subst-lemma : (s : Sub Δ Γ) (t : Tm Γ (a ⇒ b))
     → wkTm freshWk[ Δ , a ] (substTm s t)
@@ -350,7 +350,7 @@ module AdhocLemmas where
         (sym (assoc-substTm-wkTm t (keepₛ s) freshWk))
         (cong (λ z → substTm z t) (trimSub-unit-left (dropₛ s))))
       (substTm-nat t s freshWk))
-  
+
   red-dia-crunch-subst-lemma : ∀ (s : Sub Δ Γ) (u : Tm (Γ `, a) b) (u' : Tm (Γ `, b) c)
     → substTm (dropₛ {a = a} idₛ `, substTm (keepₛ s) u) (substTm (keepₛ s) u')
     ≡ substTm (keepₛ s) (substTm (dropₛ idₛ `, u) u')

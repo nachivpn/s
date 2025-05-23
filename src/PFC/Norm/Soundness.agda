@@ -2,7 +2,7 @@
 module PFC.Norm.Soundness where
 
 open import Data.Unit using (⊤ ; tt)
-open import Data.Product using (Σ; _×_; _,_; -,_ ; proj₁ ; proj₂) 
+open import Data.Product using (Σ; _×_; _,_; -,_ ; proj₁ ; proj₂)
 open import Relation.Binary.PropositionalEquality
   using    (_≡_ ; cong ; cong₂ ; module ≡-Reasoning ; subst ; subst₂)
   renaming (refl to ≡-refl ; sym to ≡-sym ; trans to ≡-trans ; isEquivalence to ≡-equiv)
@@ -78,7 +78,7 @@ module Core
 
   ℒ-build   : (a : Ty) → {t : Tm Γ a} {x : Ty' Γ a} → ℒ a t x → t ≈ reifyTm a .apply x
   ℒ-reflect : (a : Ty) (n : Ne Γ a) → ℒ a (embNe .apply n) (reflect a .apply n)
-  
+
   ℒ-build ι        tLx
     = tLx
   ℒ-build (a ⇒ b)  tLx
@@ -95,7 +95,7 @@ module Core
        → (uℒx : ℒ a u x)
        → ℒ a t x
   ℒ-cast ≡-refl uLx = uLx
- 
+
   wkTm-pres-ℒ : {t : Tm Γ a} {x : Ty' Γ a}
     → (w : Γ ⊆ Γ')
     → (tLx : ℒ a t x)
@@ -108,18 +108,18 @@ module Core
     = wkTm (factor⊆ w r) u
       , ≈-trans (wkTm-pres-≈ w tr) (collectTm .natural w (elem (Δ , r , u)))
       , wkTm-pres-ℒ (factor⊆ w r) uLx
-  
+
   --
   wkSub-pres-ℒₛ : {s : Sub Γ Δ} {δ : Sub' Γ Δ}
     → (w : Γ ⊆ Γ')
     → (sLδ : ℒₛ Δ s δ)
     → ℒₛ Δ (wkSub w s) (wkSub' Δ w δ)
   wkSub-pres-ℒₛ {s = []}       w p
-    = tt 
+    = tt
   wkSub-pres-ℒₛ {s = _s `, t}  w (sLδ , tLx)
     = wkSub-pres-ℒₛ w sLδ , wkTm-pres-ℒ w tLx
 
-  -- 
+  --
   idℒₛ : ∀ Δ → ℒₛ Δ idₛ (idEnv Δ)
   idℒₛ []       = tt
   idℒₛ (Δ `, a) = wkSub-pres-ℒₛ freshWk (idℒₛ Δ) , ℒ-reflect a (var zero)
@@ -129,13 +129,13 @@ module Core
   Fund {Δ} {a} t = ∀ {Γ} {s : Sub Γ Δ} {δ : Sub' Γ Δ}
     → (sLδ : ℒₛ Δ s δ) → ℒ a (substTm s t) (eval t .apply δ)
 
-  --  
+  --
   module Sound (fund : {Δ : Ctx} {a : Ty} → (t : Tm Δ a) → Fund t) where
 
     --
     quotTm-retracts-eval : (t : Tm Γ a) → t ≈ quotTm (eval t)
     quotTm-retracts-eval t = ℒ-build _ (ℒ-prepend _ (≡-to-≈ (≡-sym (substTm-pres-idₛ t))) (fund t (idℒₛ _)))
-  
+
     -- normalization is sound
     norm-sound : {t u : Tm Γ a} → norm t ≡ norm u → t ≈ u
     norm-sound {Γ} {a} {t} {u} nt≡nu = ≈-trans

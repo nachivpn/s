@@ -47,7 +47,7 @@ factor-is-a-triple w m = ≡-refl
 factor-pres-⊆-refl : (m : Γ ⊲ Δ) → factor ⊆-refl m ≡ (-, m , ⊆-refl)
 factor-pres-⊆-refl m = Σ×-≡,≡,≡→≡˘ (factorC-pres-⊆-refl m , factor⊲-pres-⊆-refl m , factor⊆-pres-⊆-refl m)
   where
-  
+
   factorC-pres-⊆-refl : (m : Γ ⊲ Δ) → Δ ≡ factorC ⊆-refl m
   factorC-pres-⊆-refl nil        = ≡-refl
   factorC-pres-⊆-refl (cons x m) = factorC-pres-⊆-refl m
@@ -201,7 +201,7 @@ Nf'- a = record
           ; wk            = wkNf
           ; wk-pres-≋     = λ w → cong (wkNf w)
           ; wk-pres-refl  = wkNf-pres-⊆-refl
-          ; wk-pres-trans = wkNf-pres-⊆-trans 
+          ; wk-pres-trans = wkNf-pres-⊆-trans
           }
 
 open import MLC.Evaluation PshCat PshCat-is-CCC ◇'-is-PshFunctor ◇'-is-strong-monad (Ne'- ι)
@@ -229,13 +229,13 @@ eval = evalTm
 register-fun : Ne Γ (◇ a) → ◇' (Ne'- a) ₀ Γ
 register-fun n = elem (_ , cons n nil , var zero)
 
-register-natural : Natural (Ne'- (◇ a)) (◇' (Ne'- a)) register-fun 
+register-natural : Natural (Ne'- (◇ a)) (◇' (Ne'- a)) register-fun
 register-natural w p = proof (≡-refl , (≡-refl , ≡-refl))
 
 register : Ne'- (◇ a) →̇ ◇' (Ne'- a)
 register = record
   { fun     = register-fun
-  ; pres-≋  = λ p≋p' → proof (≡-refl , cong₂ cons p≋p' ≡-refl , ≡-refl) 
+  ; pres-≋  = λ p≋p' → proof (≡-refl , cong₂ cons p≋p' ≡-refl , ≡-refl)
   ; natural = register-natural
   }
 
@@ -246,7 +246,7 @@ collectNfAcc (cons n m) n0 = letin n (collectNfAcc m n0)
 collectNf-fun : (◇' Nf'- a) ₀ Γ → Nf'- (◇ a) ₀ Γ
 collectNf-fun (elem (Δ , m , n)) = collectNfAcc m (return n)
 
-collectNf-pres-≋ : Pres-≋ (◇' (Nf'- a)) (Nf'- (◇ a)) collectNf-fun 
+collectNf-pres-≋ : Pres-≋ (◇' (Nf'- a)) (Nf'- (◇ a)) collectNf-fun
 collectNf-pres-≋ (proof (≡-refl , ≡-refl , ≡-refl)) = ≡-refl
 
 collectNfAcc-nat : (w : Γ ⊆ Γ') (m : Γ ⊲ Δ) (n : Nf Δ (◇ a))
@@ -286,11 +286,11 @@ module _ where
       reflect-fun b (app (wkNe (w ∙ w') n) (reify-fun a (wk[ evalTy a ] w' p)))     ∎
     }
   reflect-fun (◇ a)   n = ◇'-map-fun (reflect-fun a) (register-fun n)
-  
+
   reify-fun ι         n  = up  n
   reify-fun (a ⇒ b)   f  = lam (reify-fun b (f .apply freshWk (reflect-fun a (var zero))))
   reify-fun (◇ a)     x  = collectNf-fun (◇'-map-fun (reify-fun a) x)
-  
+
   reflect-pres-≋  = λ a n≡n' → ≋[ evalTy a ]-reflexive (cong (reflect-fun a) n≡n')
 
   reflect-natural ι       w n = ≋[ evalTy ι ]-refl
@@ -304,8 +304,8 @@ module _ where
          ≡⟨⟩
        reflect-fun (a ⇒ b) (wkNe w n) .apply w' p ∎
     }
-  reflect-natural (◇ a) w n = ◇'-map-natural (reflect-natural a) w (register-fun n) 
-  
+  reflect-natural (◇ a) w n = ◇'-map-natural (reflect-natural a) w (register-fun n)
+
   reify-pres-≋ ι       x≋x' = cong up  x≋x'
   reify-pres-≋ (a ⇒ b) x≋x' = cong lam (reify-pres-≋ b (x≋x' .pw freshWk[ _ , a ] _))
   reify-pres-≋ (◇ a)   x≋x' = collectNf-pres-≋ (◇'-map-fun-pres-≋ (reify-pres-≋ a) x≋x')
@@ -334,7 +334,7 @@ module _ where
       ≡⟨ collectNf-pres-≋ (◇'-map-natural (reify-natural a) w x) ⟩
     collectNf-fun (◇'-map-fun (reify-fun a) (wk[ Ty'- (◇ a) ] w x))
       ≡⟨⟩
-    reify-fun (◇ a) (wk[ Ty'- (◇ a) ] w x) ∎ 
+    reify-fun (◇ a) (wk[ Ty'- (◇ a) ] w x) ∎
 
 reflect : (a : Ty) → Ne'- a →̇ Ty'- a
 reflect a = record

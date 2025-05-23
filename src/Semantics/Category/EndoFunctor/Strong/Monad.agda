@@ -22,7 +22,7 @@ record IsStrongMonadₗ {ℓ} {C : Categoryₗ ℓ} {isCartesian : IsCartesian�
   (isStrongPointed : IsStrongPointedₗ F isStrong isPointed)
   (isStrongMultiplicative : IsStrongMultiplicativeₗ F isStrong isMultiplicative)
   (isMonad : IsMonadₗ isPointed isMultiplicative) : Set (suc ℓ) where
-  
+
   open Categoryₗ C
   open IsCartesianₗ isCartesian
   open EndoFunctorₗ F
@@ -39,7 +39,7 @@ record IsStrongMonadₗ {ℓ} {C : Categoryₗ ℓ} {isCartesian : IsCartesian�
         ≡⟨⟩
       join[ R ] ∘ (map ψ ∘ strength[ P , Q ]) ∘ ⟨ id'[ P ] , point[ Q ] ∘ φ ⟩'
         -- assoc
-        ≈⟨ ∘-pres-≈̇-right _ (∘-assoc _ _ _) ⟩        
+        ≈⟨ ∘-pres-≈̇-right _ (∘-assoc _ _ _) ⟩
       join[ R ] ∘ map ψ ∘ strength[ P , Q ] ∘ ⟨ id'[ P ] , point[ Q ] ∘ φ ⟩'
         -- cartesian crunching prep.
         ≈˘⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (⟨,⟩'-pres-≈̇-left (∘-unit-left P _) _))) ⟩
@@ -48,7 +48,7 @@ record IsStrongMonadₗ {ℓ} {C : Categoryₗ ℓ} {isCartesian : IsCartesian�
         ≈˘⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (×'-map-∘-⟨,⟩' _ _ _ _))) ⟩
       join[ R ] ∘ map ψ ∘ strength[ P , Q ] ∘ (id'[ P ] ×'-map point[ Q ] ) ∘ ⟨ id'[ P ] , φ ⟩'
         -- strong-pointedness
-        ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (≈̇-trans (≈̇-sym (∘-assoc _ _ _)) (∘-pres-≈̇-left strength-point _)))  ⟩        
+        ≈⟨ ∘-pres-≈̇-right _ (∘-pres-≈̇-right _ (≈̇-trans (≈̇-sym (∘-assoc _ _ _)) (∘-pres-≈̇-left strength-point _)))  ⟩
       join[ R ] ∘ map ψ ∘ point[ P ×' Q ] ∘ ⟨ id'[ P ] , φ ⟩'
         -- assoc
         ≈˘⟨ ∘-pres-≈̇-right _ (∘-assoc _ _ _) ⟩
@@ -62,7 +62,7 @@ record IsStrongMonadₗ {ℓ} {C : Categoryₗ ℓ} {isCartesian : IsCartesian�
         -- right unit of monad
         ≈⟨ ∘-pres-≈̇-left join-unit-left _ ⟩
       id'[ ℱ' R ] ∘ ψ ∘ ⟨ id'[ P ] , φ ⟩'
-        -- unit of ∘ 
+        -- unit of ∘
         ≈⟨ ∘-unit-left (ℱ' R) _ ⟩
       ψ ∘ ⟨ id'[ P ] , φ ⟩' ∎
 

@@ -18,7 +18,7 @@ record IsPointedₗ {ℓ} {C : Categoryₗ ℓ} (F : EndoFunctorₗ C) : Set (su
   field
     point[_]      : (P : Obj) → (P →̇ ℱ' P)
     point-natural : {P Q : Obj} → (t : P →̇ Q) → point[ Q ] ∘ t ≈̇ map t ∘ point[ P ]
-    
+
   point : {P : Obj} → P →̇ ℱ' P
   point = point[ _ ]
 

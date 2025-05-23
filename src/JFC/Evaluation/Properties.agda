@@ -366,7 +366,7 @@ abstract
     jletin' (evalTm t) (sletin' (evalTm u) (evalTm (wkTm (keep freshWk[ Γ , a ]) u')))
       ∎
   evalTm-sound (cong-lam s)            = lam'-pres-≈̇ (evalTm-sound s)
-  evalTm-sound (cong-app t≈t' u≈u')    = app'-pres-≈̇ (evalTm-sound t≈t') (evalTm-sound u≈u') 
+  evalTm-sound (cong-app t≈t' u≈u')    = app'-pres-≈̇ (evalTm-sound t≈t') (evalTm-sound u≈u')
   evalTm-sound (cong-sletin t≈t' u≈u') = sletin'-pres-≈̇ (evalTm-sound t≈t') (evalTm-sound u≈u')
   evalTm-sound (cong-jletin t≈t' u≈u') = jletin'-pres-≈̇ (evalTm-sound t≈t') (evalTm-sound u≈u')
   evalTm-sound ≈-refl                  = ≈̇-refl

@@ -65,7 +65,7 @@ syntax ◇'-≋[]-syn 𝒫 x y = x ◇'-≋[ 𝒫 ] y
 -- ◇' 𝒫 is a presheaf
 ---------------------
 
-◇'_ : (𝒫 : Psh) → Psh 
+◇'_ : (𝒫 : Psh) → Psh
 ◇' 𝒫 = record
          { Fam           = ◇'-Fam 𝒫
          ; _≋_           = _◇'-≋_
@@ -83,9 +83,9 @@ syntax ◇'-≋[]-syn 𝒫 x y = x ◇'-≋[ 𝒫 ] y
      ; sym   = ◇'-≋-sym
      ; trans = ◇'-≋-trans
      }
-  
+
    wk-◇' : w ⊆ w' → ◇'-Fam 𝒫 w → ◇'-Fam 𝒫 w'
-   wk-◇' i (elem (v , r , p)) = elem (factorW i r , (factorR i r) , wk[ 𝒫 ] (factor⊆ i r) p) 
+   wk-◇' i (elem (v , r , p)) = elem (factorW i r , (factorR i r) , wk[ 𝒫 ] (factor⊆ i r) p)
 
    abstract
      wk-◇'-pres-≋ : (i : w ⊆ w') {x y : ◇'-Fam 𝒫 w} → x ◇'-≋ y → wk-◇' i x ◇'-≋ wk-◇' i y
@@ -114,12 +114,12 @@ abstract
 
   ◇'-map-fun-pres-≈̇ : {t t' : 𝒫 →̇ 𝒬} → t ≈̇ t' → (p : ◇'-Fam 𝒫 w) → ◇'-map-fun (t .apply) p ◇'-≋[ 𝒬 ] ◇'-map-fun (t' .apply) p
   ◇'-map-fun-pres-≈̇ {𝒫} t≈̇t' (elem (v , r , p)) = proof (≡-refl , (≡-refl , apply-sq t≈̇t' ≋[ 𝒫 ]-refl))
-    
+
 ◇'-map_ : {𝒫 𝒬 : Psh} → (t : 𝒫 →̇ 𝒬) → (◇' 𝒫 →̇ ◇' 𝒬)
 ◇'-map_ {𝒫} {𝒬} t = record
   { fun     = ◇'-map-fun (t .apply)
-  ; pres-≋  = ◇'-map-fun-pres-≋ (t .apply-≋) 
-  ; natural = ◇'-map-natural (t .natural) 
+  ; pres-≋  = ◇'-map-fun-pres-≋ (t .apply-≋)
+  ; natural = ◇'-map-natural (t .natural)
   }
 
 ◇'-is-PshFunctor : EndoFunctor PshCat
@@ -141,7 +141,4 @@ abstract
 
     ◇'-map-pres-∘ : {𝒫 𝒬 ℛ : Psh} (t' : 𝒬 →̇ ℛ) (t : 𝒫 →̇ 𝒬) → ◇'-map (t' ∘ t) ≈̇ ◇'-map t' ∘ ◇'-map t
     ◇'-map-pres-∘ _t' _t = record { proof = λ p → ◇'-≋-refl }
-
-
-
 
