@@ -1,1 +1,3 @@
-# Kripke semantics for strong functors
+# Lax modal lambda calculi
+
+Agad mechanization accompanying the paper. See src/Everything.agda.
