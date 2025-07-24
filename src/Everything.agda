@@ -11,12 +11,12 @@ import SFC.Term
 import SFC.Term.Conversion
 import SFC.Term.NormalForm
 
--- Calculus for pointed functors (λRL in the paper)
+-- Calculus for pointed functors (λSRL in the paper)
 import PFC.Term
 import PFC.Term.Conversion
 import PFC.Term.NormalForm
 
--- Calculus for joinable functors (λJL in the paper)
+-- Calculus for joinable functors (λSJL in the paper)
 import JFC.Type {- temporarily -}
 import JFC.Term
 import JFC.Term.Conversion
