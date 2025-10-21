@@ -1,3 +1,5 @@
 # Lax modal lambda calculi
 
-Agad mechanization accompanying the paper. See src/Everything.agda.
+Agda mechanization accompanying the paper titled [Lax Modal Lambda Calculi](https://nachivpn.me/lmlc.pdf) (to appear at CSL 2026). 
+
+See src/Everything.agda.
